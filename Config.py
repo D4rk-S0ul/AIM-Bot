@@ -4,5 +4,5 @@ prefix = "!"
 # Debug
 debug = False
 
-#RIp Role ID
-rip_role_id = 915333863214051369
+# RIP Role ID
+rip_role_id = 939633923305132182
