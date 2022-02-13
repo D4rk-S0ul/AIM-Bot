@@ -1,0 +1,4 @@
+py-cord==2.0.0b4
+discord-ui==5.1.6
+async-timeout==3.0.1
+discord~=1.7.3
