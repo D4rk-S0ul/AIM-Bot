@@ -24,7 +24,8 @@ class ThreadSystem(commands.Cog):
         member_mentions = []
         for member in members:
             member_mentions.append(member.mention)
-        await ctx.send()
+        for member_mention in member_mentions:
+            ctx.send(member_mention)
 
 
 def setup(bot):
