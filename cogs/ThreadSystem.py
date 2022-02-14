@@ -17,14 +17,11 @@ class ThreadSystem(commands.Cog):
         for member in members:
             member_mentions.append(member.mention)
         returned_string = ""
-        msg = ""
+        msg = await thread.send("Adding users...")
 
         for member_mention in member_mentions:
             if len(returned_string + member_mention) > 2000:
-                if msg == "":
-                    msg = await thread.send(returned_string)
-                else:
-                    await msg.edit(returned_string)
+                await msg.edit(returned_string)
                 returned_string = member_mention
             else:
                 returned_string += member_mention + " "
