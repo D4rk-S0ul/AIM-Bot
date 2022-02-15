@@ -79,3 +79,4 @@ class ThreadSystem(commands.Cog):
 
 def setup(bot):
     bot.add_cog(ThreadSystem(bot))
+
