@@ -30,17 +30,17 @@ class ThreadSystem(commands.Cog):
             return
         member_mentions = [member.mention for member in members]
         returned_string = ""
-        msg = await thread.send("Adding users...")
+        ping_msg = await thread.send("Adding users...")
 
         for member_mention in member_mentions:
             if len(returned_string + member_mention) > 2000:
-                await msg.edit(returned_string)
+                await ping_msg.edit(returned_string)
                 returned_string = member_mention + " "
             else:
                 returned_string += member_mention + " "
         if len(returned_string) != 0:
-            await msg.edit(returned_string)
-        await msg.delete()
+            await ping_msg.edit(returned_string)
+        await ping_msg.delete()
 
     @commands.command()
     async def addMembers(self, ctx, arg1: discord.Thread):
@@ -60,17 +60,17 @@ class ThreadSystem(commands.Cog):
                 return
             member_mentions = [member.mention for member in members]
             returned_string = ""
-            msg = await thread.send("Adding users...")
+            ping_msg = await thread.send("Adding users...")
 
             for member_mention in member_mentions:
                 if len(returned_string + member_mention) > 2000:
-                    await msg.edit(returned_string)
+                    await ping_msg.edit(returned_string)
                     returned_string = member_mention + " "
                 else:
                     returned_string += member_mention + " "
             if len(returned_string) != 0:
-                await msg.edit(returned_string)
-            await msg.delete()
+                await ping_msg.edit(returned_string)
+            await ping_msg.delete()
 
 
 def setup(bot):
