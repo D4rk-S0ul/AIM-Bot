@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 from discord.ext import commands
 
@@ -26,9 +28,9 @@ class ThreadSystem(commands.Cog):
             await thread.edit(auto_archive_duration=1440)
         rip_role = thread.guild.get_role(rip_role_id)
         members = [m for m in thread.guild.members if rip_role in m.roles]
-        member_mentions = []
-        for member in members:
-            member_mentions.append(member.mention)
+        if len(members) == 0:
+            return
+        member_mentions = [member.mention for member in members]
         returned_string = ""
         msg = await thread.send("Adding users...")
 
@@ -38,9 +40,7 @@ class ThreadSystem(commands.Cog):
                 returned_string = member_mention
             else:
                 returned_string += member_mention + " "
-        if msg == "" and len(returned_string) > 0:
-            await thread.send(returned_string)
-        elif msg != "" and len(returned_string) > 0:
+        if len(returned_string) != 0:
             await msg.edit(returned_string)
         await msg.delete()
 
@@ -58,9 +58,9 @@ class ThreadSystem(commands.Cog):
                 await thread.edit(auto_archive_duration=1440)
             rip_role = thread.guild.get_role(rip_role_id)
             members = [m for m in thread.guild.members if rip_role in m.roles]
-            member_mentions = []
-            for member in members:
-                member_mentions.append(member.mention)
+            if len(members) == 0:
+                return
+            member_mentions = [member.mention for member in members]
             returned_string = ""
             msg = await thread.send("Adding users...")
 
@@ -70,9 +70,7 @@ class ThreadSystem(commands.Cog):
                     returned_string = member_mention
                 else:
                     returned_string += member_mention + " "
-            if msg == "" and len(returned_string) > 0:
-                await thread.send(returned_string)
-            elif msg != "" and len(returned_string) > 0:
+            if len(returned_string) != 0:
                 await msg.edit(returned_string)
             await msg.delete()
 
