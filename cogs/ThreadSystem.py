@@ -1,4 +1,4 @@
-import asyncio
+import time
 
 import discord
 from discord.ext import commands
@@ -37,7 +37,7 @@ class ThreadSystem(commands.Cog):
         for member_mention in member_mentions:
             if len(returned_string + member_mention) > 2000:
                 await msg.edit(returned_string)
-                returned_string = member_mention
+                returned_string = member_mention + " "
             else:
                 returned_string += member_mention + " "
         if len(returned_string) != 0:
@@ -67,7 +67,7 @@ class ThreadSystem(commands.Cog):
             for member_mention in member_mentions:
                 if len(returned_string + member_mention) > 2000:
                     await msg.edit(returned_string)
-                    returned_string = member_mention
+                    returned_string = member_mention + " "
                 else:
                     returned_string += member_mention + " "
             if len(returned_string) != 0:
