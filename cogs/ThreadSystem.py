@@ -31,13 +31,15 @@ class ThreadSystem(commands.Cog):
         member_mentions = [member.mention for member in members]
         returned_string = ""
         ping_msg = await thread.send("Adding users...")
-
+        counter = 0
         for member_mention in member_mentions:
-            if len(returned_string + member_mention) > 2000:
+            if len(returned_string + member_mention) > 2000 or counter == 10:
                 await ping_msg.edit(returned_string)
                 returned_string = member_mention + " "
+                counter = 1
             else:
                 returned_string += member_mention + " "
+                counter += 1
         if len(returned_string) != 0:
             await ping_msg.edit(returned_string)
         await ping_msg.delete()
@@ -61,13 +63,15 @@ class ThreadSystem(commands.Cog):
             member_mentions = [member.mention for member in members]
             returned_string = ""
             ping_msg = await thread.send("Adding users...")
-
+            counter = 0
             for member_mention in member_mentions:
-                if len(returned_string + member_mention) > 2000:
+                if len(returned_string + member_mention) > 2000 or counter == 10:
                     await ping_msg.edit(returned_string)
                     returned_string = member_mention + " "
+                    counter = 1
                 else:
                     returned_string += member_mention + " "
+                    counter += 1
             if len(returned_string) != 0:
                 await ping_msg.edit(returned_string)
             await ping_msg.delete()
