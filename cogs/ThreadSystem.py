@@ -43,6 +43,8 @@ class ThreadSystem(commands.Cog):
         if len(returned_string) != 0:
             await ping_msg.edit(returned_string)
         await ping_msg.delete()
+        await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n"
+                          "RIP 💀")
 
     @commands.command()
     async def addMembers(self, ctx, arg1: discord.Thread):
@@ -75,6 +77,8 @@ class ThreadSystem(commands.Cog):
             if len(returned_string) != 0:
                 await ping_msg.edit(returned_string)
             await ping_msg.delete()
+            await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n"
+                              "RIP 💀")
 
 
 def setup(bot):
