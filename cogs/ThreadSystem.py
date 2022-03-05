@@ -12,6 +12,8 @@ class ThreadSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_thread_join(self, thread_input):
+        if thread_input.category_id not in allowed_parent_category_ids and thread_input.parent_id not in allowed_parent_channel_ids:
+            return
         if self.flag:
             self.flag = False
             return
@@ -27,8 +29,6 @@ class ThreadSystem(commands.Cog):
         await self.add_members(arg1)
 
     async def add_members(self, thread):
-        if thread.category_id not in allowed_parent_category_ids and thread.parent_id not in allowed_parent_channel_ids:
-            return
         await thread.join()
         if thread.guild.premium_tier == 3:
             await thread.edit(auto_archive_duration=10080)
