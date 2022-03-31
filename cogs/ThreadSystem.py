@@ -16,9 +16,11 @@ class ThreadSystem(commands.Cog):
             return
         if self.flag:
             self.flag = False
+            print("Flag deactivated!")
             return
         if not self.flag:
             self.flag = True
+            print("Flag activated!")
         await self.add_members(thread_input)
 
     @commands.command()
