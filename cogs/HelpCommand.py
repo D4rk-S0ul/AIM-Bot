@@ -1,7 +1,7 @@
 from discord import commands
 
 
-class MessageSystem(commands.Cog):
+class HelpCommand(commands.Cog):
 
     def __init__(self, bot):
         self.client = bot
@@ -16,4 +16,4 @@ class MessageSystem(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(MessageSystem(bot))
+    bot.add_cog(HelpCommand(bot))
