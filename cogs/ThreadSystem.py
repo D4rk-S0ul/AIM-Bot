@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 
-from Config import rip_role_id, mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids
+from Config import rip_role_id, rip_mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids, \
+    rsds_mod_role_id
 
 
 class ThreadSystem(commands.Cog):
@@ -25,8 +26,9 @@ class ThreadSystem(commands.Cog):
 
     @commands.command()
     async def addMembers(self, ctx, arg1: discord.Thread):
-        mod_role = ctx.guild.get_role(mod_role_id)
-        if mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
+        rsds_mod_role = ctx.guild.get_role(rsds_mod_role_id)
+        if rip_mod_role not in ctx.author.roles and rsds_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
             return
         await self.add_members(arg1)
 
