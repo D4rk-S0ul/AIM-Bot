@@ -16,7 +16,8 @@ class MessageSystem(commands.Cog):
             return
         msg = await channel.fetch_message(msg_id)
         msg_content = " ".join(msg_content_input)
-        await msg.edit(msg_content)
+        msg_output = msg_content.replace("/n ", "\r\n")
+        await channel.send(msg_output)
 
     @commands.command()
     async def sendMsg(self, ctx, channel: discord.TextChannel, *msg_content_input):
@@ -25,7 +26,8 @@ class MessageSystem(commands.Cog):
         if rip_mod_role not in ctx.author.roles and rsds_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
             return
         msg_content = " ".join(msg_content_input)
-        await channel.send(msg_content)
+        msg_output = msg_content.replace("/n ", "\r\n")
+        await channel.send(msg_output)
 
 
 def setup(bot):
