@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 from Config import rip_role_id, rip_mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids, \
-    rsds_mod_role_id
+    sea_mod_role_id
 
 
 class ThreadSystem(commands.Cog):
@@ -27,8 +27,8 @@ class ThreadSystem(commands.Cog):
     @commands.command()
     async def addMembers(self, ctx, arg1: discord.Thread):
         rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        rsds_mod_role = ctx.guild.get_role(rsds_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and rsds_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
+        if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
             return
         await self.add_members(arg1)
 
@@ -61,6 +61,7 @@ class ThreadSystem(commands.Cog):
         await ping_msg.delete()
         await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n"
                           "RIP 💀")
+
 
 def setup(bot):
     bot.add_cog(ThreadSystem(bot))
