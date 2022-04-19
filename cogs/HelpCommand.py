@@ -13,9 +13,9 @@ class HelpCommand(commands.Cog):
                        f"`{prefix}addMembers #thread:`\r\n"
                        f"   Adds member with RIP Role to the #thread\r\n"
                        f"`{prefix}sendMsg #channel [Message Content]:`\r\n"
-                       f"   Sends a message containing the message content in #channel\r\n"
+                       f"   Sends a message containing the message content in #channel (`/n` for new line)\r\n"
                        f"`{prefix}editMsg #channel [Message ID] [Message Content]:`\r\n"
-                       f"   Edits the message associated with the message ID in #channel")
+                       f"   Edits the message associated with the message ID in #channel (`/n` for new line)")
 
 
 def setup(bot):
