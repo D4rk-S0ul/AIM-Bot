@@ -53,19 +53,17 @@ class MessageSystem(commands.Cog):
 
         try:
             await ctx.send("What should be the new content of the message?")
-            msg = await self.client.wait_for('message', timeout=time, check=check)
+            content_msg = await self.client.wait_for('message', timeout=time, check=check)
         except asyncio.TimeoutError:
             await ctx.send(f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
                            "faster next time!")
             return
         else:
-            answer = msg.content
+            answer = content_msg.content
 
         if answer.lower() == "cancel":
             ctx.send("The process was canceled successfully!")
             return
-
-        await channel.send(answer)
 
         await msg.edit(answer)
 
