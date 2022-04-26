@@ -33,7 +33,7 @@ class MessageSystem(commands.Cog):
             answer = msg.content
 
         if answer.lower() == "cancel":
-            ctx.send("The process was canceled successfully!")
+            await ctx.send("The process was canceled successfully!")
             return
 
         await channel.send(answer)
@@ -62,7 +62,7 @@ class MessageSystem(commands.Cog):
             answer = content_msg.content
 
         if answer.lower() == "cancel":
-            ctx.send("The process was canceled successfully!")
+            await ctx.send("The process was canceled successfully!")
             return
 
         await msg.edit(answer)
