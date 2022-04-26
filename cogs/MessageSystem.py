@@ -46,18 +46,13 @@ class MessageSystem(commands.Cog):
             return
         msg = await channel.fetch_message(msg_id)
 
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        rsds_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and rsds_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
-            return
-
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
 
         answer = ""
 
         try:
-            await ctx.send("What should be the content of the message?")
+            await ctx.send("What should be the new content of the message?")
             msg = await self.client.wait_for('message', timeout=time, check=check)
         except asyncio.TimeoutError:
             await ctx.send(f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
