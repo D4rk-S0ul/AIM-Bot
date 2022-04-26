@@ -46,11 +46,6 @@ class MessageSystem(commands.Cog):
             return
         msg = await channel.fetch_message(msg_id)
 
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        rsds_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and rsds_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
-            return
-
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
 
