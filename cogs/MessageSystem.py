@@ -52,7 +52,7 @@ class MessageSystem(commands.Cog):
         answer = ""
 
         try:
-            await ctx.send("What should be the content of the message?")
+            await ctx.send("What should be the new content of the message?")
             msg = await self.client.wait_for('message', timeout=time, check=check)
         except asyncio.TimeoutError:
             await ctx.send(f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
