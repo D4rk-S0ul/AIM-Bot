@@ -22,7 +22,9 @@ class HelpCommand(commands.Cog):
                        f"`{prefix}editMsg #channel [Message ID]:`\r\n"
                        f"   Edits the message associated with the message ID in #channel\r\n"
                        f"`{prefix}archive #channel:`\r\n"
-                       f"   Sends a message using the archive format in #channel")
+                       f"   Sends a message using the archive format in #channel\r\n"
+                       f"`{prefix}editArchive #channel [Message ID]:`\r\n"
+                       f"   Edits the message associated with the message ID in #channel using the archive format\r\n")
 
 
 def setup(bot):
