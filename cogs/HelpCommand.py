@@ -1,5 +1,5 @@
 from discord.ext import commands
-from Config import prefix, rip_id, sea_id
+from Config import prefix, rip_id, sea_id, sea_projects_channel_id
 
 
 class HelpCommand(commands.Cog):
@@ -24,7 +24,11 @@ class HelpCommand(commands.Cog):
                        f"`{prefix}archive #channel:`\r\n"
                        f"   Sends a message using the archive format in #channel\r\n"
                        f"`{prefix}editArchive #channel [Message ID]:`\r\n"
-                       f"   Edits the message associated with the message ID in #channel using the archive format\r\n")
+                       f"   Edits the message associated with the message ID in #channel using the archive format\r\n"
+                       f"`{prefix}addProject [Project]:`\r\n"
+                       f"   Adds the project to the <#{sea_projects_channel_id}>\r\n"
+                       f"`{prefix}removeProject [ProjectNumber]:`\r\n"
+                       f"   Removes the object with the corresponding number from the <#{sea_projects_channel_id}>\r\n")
 
 
 def setup(bot):

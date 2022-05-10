@@ -28,5 +28,11 @@ rip_id = 933075515881951292
 # SEA Server ID
 sea_id = 959162264081014814
 
+# SEA Projects List Channel ID
+sea_projects_channel_id = 959198464900747304
+
+# SEA Projects List Message ID
+sea_projects_message_id = 964890739366563891
+
 # Time before timeout
 time = 300
