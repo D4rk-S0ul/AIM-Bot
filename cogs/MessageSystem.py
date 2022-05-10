@@ -37,6 +37,7 @@ class MessageSystem(commands.Cog):
             return
 
         await channel.send(answer)
+        await ctx.send(f"Successfully send the message in {channel}.")
 
     @commands.command()
     async def editMsg(self, ctx, channel: discord.TextChannel, msg_id: int):
@@ -66,6 +67,7 @@ class MessageSystem(commands.Cog):
             return
 
         await msg.edit(answer)
+        await ctx.send(f"Successfully edited the message in {channel}.")
 
     @commands.command()
     async def archive(self, ctx, channel: discord.TextChannel):
@@ -108,6 +110,7 @@ class MessageSystem(commands.Cog):
                            f"`Brief Description:` {description}\r\n"
                            "\r\n"
                            f"{resource}")
+        await ctx.send(f"Successfully send the archive message in {channel}.")
 
     @commands.command()
     async def editArchive(self, ctx, channel: discord.TextChannel, msg_id: int):
@@ -152,6 +155,7 @@ class MessageSystem(commands.Cog):
                            f"`Brief Description:` {description}\r\n"
                            "\r\n"
                            f"{resource}")
+        await ctx.send(f"Successfully edited the archive message in {channel}.")
 
     @commands.command()
     async def addProject(self, ctx, *project_args: str):
@@ -176,7 +180,7 @@ class MessageSystem(commands.Cog):
         if project_number <= 0 or project_number >= len(project_list):
             await ctx.send("Please use a number that can be linked to an existing project.")
             return
-        removed_project = project_list.pop(project_number)
+        removed_project = project_list.pop(project_number)[3:]
         updated_msg = '\r\n'.join(project_list)
         await msg.edit(updated_msg)
         await ctx.send(f'Successfully removed the project "{removed_project}" from the project list.')
