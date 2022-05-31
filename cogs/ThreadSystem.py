@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 from Config import rip_role_id, rip_mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids, \
-    sea_mod_role_id, rip_id, sea_id, sea_role_id
+    sea_mod_role_id, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
 
 
 async def add_members(thread, ping_id):
@@ -52,6 +52,12 @@ class ThreadSystem(commands.Cog):
         if not self.flag:
             self.flag = True
             print("Flag activated!")
+
+        sea_projects_channel = thread_input.guild.get_channel(sea_projects_channel_id)
+        msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
+        await msg.edit(f"{msg.content}\r\n"
+                       f" - {thread_input.name}")
+
         ping = 0
         if thread_input.guild.id == rip_id:
             ping = rip_role_id
