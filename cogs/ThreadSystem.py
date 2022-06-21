@@ -70,6 +70,17 @@ class ThreadSystem(commands.Cog):
 
         await add_members(thread)
 
+    @commands.Cog.listener()
+    async def on_message(self, ctx):
+        channel = ctx.channel
+        if not isinstance(channel,discord.Thread):
+            return
+        if channel.parent.category_id not in allowed_parent_category_ids and channel.parent_id not in allowed_parent_channel_ids:
+            return
+
+        if ctx.content.startswith("<@939623859693441154>"):
+            await add_members(channel)
+
     @commands.command()
     async def addMembers(self, ctx, thread: discord.Thread):
         rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
