@@ -78,7 +78,7 @@ class ThreadSystem(commands.Cog):
         if channel.parent.category_id not in allowed_parent_category_ids and channel.parent_id not in allowed_parent_channel_ids:
             return
 
-        if ctx.content.startswith("<@939623859693441154>"):
+        if f"<@{self.client.user.id}>" in ctx.content:
             await add_members(channel)
 
     @commands.command()
