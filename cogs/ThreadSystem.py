@@ -64,17 +64,9 @@ class ThreadSystem(commands.Cog):
         self.flag = False
 
     @commands.Cog.listener()
-    async def on_thread_join(self, thread):
+    async def on_thread_create(self, thread):
         if thread.category_id not in allowed_parent_category_ids and thread.parent_id not in allowed_parent_channel_ids:
             return
-
-        if self.flag:
-            self.flag = False
-            print("Flag deactivated!")
-            return
-        if not self.flag:
-            self.flag = True
-            print("Flag activated!")
 
         await add_members(thread)
 
