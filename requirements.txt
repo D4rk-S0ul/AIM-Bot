@@ -1,2 +1,2 @@
-py-cord==git+https://github.com/Pycord-Development/pycord
+pycord==2.0.0rc1
 async-timeout==3.0.1
