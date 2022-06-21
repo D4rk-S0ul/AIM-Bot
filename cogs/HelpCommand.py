@@ -26,7 +26,7 @@ class HelpCommand(commands.Cog):
                        f"`{prefix}editArchive #channel [Message ID]:`\r\n"
                        f"   Edits the message associated with the message ID in #channel using the archive format\r\n"
                        f"`{prefix}addProject [Project]:`\r\n"
-                       f"   Adds the project to the <#{sea_projects_channel_id}>\r\n"
+                       f"   Adds the project to the <#{sea_projects_channel_id}> (SEA only)\r\n"
                        f"`{prefix}removeProject [ProjectNumber]:`\r\n"
                        f"   Removes the object with the corresponding number from the <#{sea_projects_channel_id}>\r\n")
 

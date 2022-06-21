@@ -30,6 +30,7 @@ async def add_members(thread):
         await ping_msg.edit(returned_string)
     await ping_msg.delete()
     await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n")
+
     if ping_id == rip_role_id:
         await rip_tasks(thread)
     elif ping_id == sea_role_id:
@@ -66,6 +67,7 @@ class ThreadSystem(commands.Cog):
     async def on_thread_join(self, thread):
         if thread.category_id not in allowed_parent_category_ids and thread.parent_id not in allowed_parent_channel_ids:
             return
+
         if self.flag:
             self.flag = False
             print("Flag deactivated!")
