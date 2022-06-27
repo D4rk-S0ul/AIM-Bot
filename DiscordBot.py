@@ -13,5 +13,5 @@ for filename in os.listdir('cogs'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 
-token = os.environ.get("RIP_TOKEN")
+token = os.environ.get("AIM_TOKEN")
 bot.run(token)
