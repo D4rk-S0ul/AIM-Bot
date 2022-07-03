@@ -29,7 +29,7 @@ sea_id = 959162264081014814
 sea_projects_channel_id = 959198464900747304
 
 # SEA Projects List Message ID
-sea_projects_message_id = 964890739366563891
+sea_projects_message_id = 993116077225680937
 
 # Time before timeout
 time = 300
