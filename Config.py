@@ -42,5 +42,8 @@ tags = {
     "laufCrafting": "https://youtu.be/OHleXZuhYng",
     "lavaPlacement": "https://cdn.discordapp.com/attachments/751512715872436416/1005946160386687108/LavaPlacememt.png",
     "stables": "<:PauseMan:1005005749191184385>",
-    "treasure": "https://youtu.be/HGcDSFKHOtw"
+    "treasure": "https://youtu.be/HGcDSFKHOtw",
+    "vietnamese": "Guide: https://docs.google.com/document/d/1el7XoX9-wv1boIQ8haIO6XYSoAkEQoh0X1Rd8_PcN70/edit\r\n"
+                  "Keyboard Doc: https://docs.google.com/document/d/1V2Uk4wDZknr6U9KbYJEc0JRYO7OWmhtmNIK0swTzXxs/edit\r\n"
+                  "Resource Pack: https://drive.google.com/file/d/1NXiqmJ40-Oi3LcLQgc8LNlgGhr0TrRG4/view"
 }
