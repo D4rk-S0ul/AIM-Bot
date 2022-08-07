@@ -33,3 +33,14 @@ sea_projects_message_id = 993116077225680937
 
 # Time before timeout
 time = 300
+
+# Tags
+tags = {
+    "bridge": "https://youtu.be/uvvhKX_KnT8",
+    "dynamicRD": "https://youtu.be/qfwyFWTY3ds",
+    "housing": "https://youtu.be/B2SLviws-3c",
+    "laufCrafting": "https://youtu.be/OHleXZuhYng",
+    "lavaPlacement": "https://cdn.discordapp.com/attachments/751512715872436416/1005946160386687108/LavaPlacememt.png",
+    "stables": "<:PauseMan:1005005749191184385>",
+    "treasure": "https://youtu.be/HGcDSFKHOtw"
+}
