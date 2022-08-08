@@ -9,16 +9,15 @@ class TagSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, ctx):
-        if not ctx.content.startswitch("!"):
-            return
-        if ctx.content.lower().startswith(f"{prefix}tags"):
-            msg = "**Tags:**\r\n" + ", ".join(tags.keys())
-            await ctx.channel.send(msg)
-        else:
-            for key in tags:
-                if ctx.content.lower().startswith(f"{prefix}{key.lower()}"):
-                    await ctx.channel.send(tags[key])
-                    return
+        if ctx.content.startswitch("!"):
+            if ctx.content.lower().startswith(f"{prefix}tags"):
+                msg = "**Tags:**\r\n" + ", ".join(tags.keys())
+                await ctx.channel.send(msg)
+            else:
+                for key in tags:
+                    if ctx.content.lower().startswith(f"{prefix}{key.lower()}"):
+                        await ctx.channel.send(tags[key])
+                        return
 
 
 def setup(bot):
