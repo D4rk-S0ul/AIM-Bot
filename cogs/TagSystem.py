@@ -1,6 +1,7 @@
 from discord.ext import commands
 from Config import prefix, tags
 
+
 class TagSystem(commands.Cog):
 
     def __init__(self, bot):
@@ -8,6 +9,8 @@ class TagSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, ctx):
+        if not ctx.content.startswitch("!"):
+            return
         if ctx.content.lower().startswith(f"{prefix}tags"):
             msg = "**Tags:**\r\n" + ", ".join(tags.keys())
             await ctx.channel.send(msg)
