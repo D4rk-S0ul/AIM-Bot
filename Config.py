@@ -41,9 +41,19 @@ tags = {
     "housing": "<https://youtu.be/B2SLviws-3c>",
     "laufCrafting": "<https://youtu.be/OHleXZuhYng>",
     "lavaPlacement": "https://cdn.discordapp.com/attachments/751512715872436416/1005946160386687108/LavaPlacememt.png",
+    "ninjaBot": "Bot: <https://github.com/Ninjabrain1/Ninjabrain-Bot/releases/>\r\n"
+                "Tutorial: <https://youtu.be/Rx8i7e5lu7g>",
+    "ninjabrainBot": "Bot: <https://github.com/Ninjabrain1/Ninjabrain-Bot/releases/>\r\n"
+                "Tutorial: <https://youtu.be/Rx8i7e5lu7g>",
+    "rawalle": "<https://github.com/joe-ldp/Rawalle/releases/>",
     "stables": "<:PauseMan:1005005749191184385>",
+    "subPixel": "Left wide: -0.01\r\n"
+                "Middle wide: +0.01\r\n"
+                "Right wide: Do nothing",
     "treasure": "<https://youtu.be/HGcDSFKHOtw>",
     "vietnamese": "Guide: <https://docs.google.com/document/d/1el7XoX9-wv1boIQ8haIO6XYSoAkEQoh0X1Rd8_PcN70/edit>\r\n"
                   "Keyboard Doc: <https://docs.google.com/document/d/1V2Uk4wDZknr6U9KbYJEc0JRYO7OWmhtmNIK0swTzXxs/edit>\r\n"
-                  "Resource Pack: <https://drive.google.com/file/d/1NXiqmJ40-Oi3LcLQgc8LNlgGhr0TrRG4/view>"
+                  "Resource Pack: <https://drive.google.com/file/d/1NXiqmJ40-Oi3LcLQgc8LNlgGhr0TrRG4/view>",
+    "wall": "Rawalle: <https://github.com/joe-ldp/Rawalle/releases/>\r\n"
+            "Specnr's wall: <https://github.com/Specnr/MultiResetWall/releases/>"
 }
