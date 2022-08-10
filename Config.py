@@ -57,10 +57,10 @@ tags = {
                 "so you want them on tier 2 aggro. Use cases for this are: Manhunt, where you're aggroing piglins "
                 "without armour, bridge manhunt, stables manhunt, treasure bridge, etc. Punching a pig is not "
                 "beneficial in crookst boomer or when you are wearing gold armour.",
-    "preemptive": "Video: <https://youtu.be/2dWq2wXy43M>"
+    "preemptive": "Video: <https://youtu.be/2dWq2wXy43M>\r\n"
                   "Document: <https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit"
                   "?usp=sharing>",
-    "preemptiveNav": "Video: <https://youtu.be/2dWq2wXy43M>"
+    "preemptiveNav": "Video: <https://youtu.be/2dWq2wXy43M>\r\n"
                   "Document: <https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit"
                   "?usp=sharing>",
     "rawalle": "<https://github.com/joe-ldp/Rawalle/releases/>",
