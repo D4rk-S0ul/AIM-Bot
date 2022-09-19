@@ -1,20 +1,55 @@
 import discord
 from discord.ext import commands
 
-from Config import rip_role_id, rip_mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids, \
-    sea_mod_role_id, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
+from Config import rip_role_id, rip_mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids, sea_mod_role_id, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
+
+
+def is_mod(ctx):
+    rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
+    sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
+    if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles:
+        return False
+    return True
+
+
+def is_whitelisted_thread(thread):
+    if not isinstance(thread,discord.Thread):
+        return False
+    if thread.parent.category_id not in allowed_parent_category_ids and thread.parent_id not in allowed_parent_channel_ids:
+        return False
+    return True
+
+
+def server_getter(thread):
+    if thread.guild.id == rip_id:
+        return "rip"
+    if thread.guild.id == sea_id:
+        return "sea"
+
+  
+def ping_role_getter(server, thread):
+    if server == "rip":
+        return thread.guilt.get_role(rip_role_id)
+    if server == "sea":
+        return thread.guilt.get_role(sea_role_id)
+    return "unknown"
 
 
 async def add_members(thread):
     await thread.join()
     await thread.edit(auto_archive_duration=10080)
-    ping_id = ping_id_getter(thread)
-    ping_role = thread.guild.get_role(ping_id)
-    members = [m for m in thread.guild.members if ping_role in m.roles]
+    server = server_getter(thread)
+    if server == "unknown":
+        print("Unknown server!")
+        return
+    ping_role = ping_role_getter(server, thread)
+    
+    members = [member for member in thread.guild.members if ping_role in member.roles]
     if len(members) == 0:
         print("Coundn't find any members with the ping role!")
         return
     member_mentions = [member.mention for member in members]
+    
     returned_string = ""
     ping_msg = await thread.send("Adding users...")
     counter = 0
@@ -31,17 +66,10 @@ async def add_members(thread):
     await ping_msg.delete()
     await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n")
 
-    if ping_id == rip_role_id:
+    if server == "rip":
         await rip_tasks(thread)
-    elif ping_id == sea_role_id:
+    elif server == "sea":
         await sea_tasks(thread)
-
-
-def ping_id_getter(thread):
-    if thread.guild.id == rip_id:
-        return rip_role_id
-    elif thread.guild.id == sea_id:
-        return sea_role_id
 
 
 async def rip_tasks(thread):
@@ -65,30 +93,24 @@ class ThreadSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread):
-        if thread.category_id not in allowed_parent_category_ids and thread.parent_id not in allowed_parent_channel_ids:
+        if not is_whitelisted_thread(thread):
             return
 
         await add_members(thread)
 
     @commands.Cog.listener()
     async def on_message(self, ctx):
-        channel = ctx.channel
-        if not isinstance(channel,discord.Thread):
-            return
-        if channel.parent.category_id not in allowed_parent_category_ids and channel.parent_id not in allowed_parent_channel_ids:
+        thread = ctx.channel
+        if not is_whitelisted_thread(thread):
             return
 
         if f"<@{self.client.user.id}>" in ctx.content:
-            await add_members(channel)
+            await add_members(thread)
 
     @commands.command()
     async def addMembers(self, ctx, thread: discord.Thread):
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
-            return
-
-        await add_members(thread)
+        if is_mod(ctx):
+            await add_members(thread)
 
 
 def setup(bot):
