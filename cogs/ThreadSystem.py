@@ -104,7 +104,7 @@ class ThreadSystem(commands.Cog):
         if not is_whitelisted_thread(thread):
             return
 
-        if f"<@{self.client.user.id}>" in ctx.content:
+        if ctx.content.startswith(f"<@{self.client.user.id}>"):
             await add_members(thread)
 
     @commands.command()
