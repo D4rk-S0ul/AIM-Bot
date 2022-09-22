@@ -1,0 +1,25 @@
+import discord
+from discord.ext import commands
+from discord.commands import slash_command, message_command
+from discord import Option
+
+
+class MiscTasks(commands.Cog):
+
+    def __init__(self, bot):
+        self.client = bot
+
+    @slash_command(name="pin", description="Pins the message specified!", guild_ids=[915333299981934692])
+    async def slash_pin(self, ctx,
+                        message: Option(discord.Message, "The message you want to pin", required=True)):
+        await message.pin()
+        await ctx.respond("Pinned message succesfully!", ephemeral=True)
+
+    @message_command(name="Pin Message",guild_ids=[915333299981934692])
+    async def msg_pin(self, ctx, message: discord.Message):
+        await message.pin()
+        await ctx.respond("Pinned message succesfully!", ephemeral=True)
+
+
+def setup(bot):
+    bot.add_cog(MiscTasks(bot))
