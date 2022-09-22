@@ -5,6 +5,14 @@ from discord.ext import commands
 from Config import rip_mod_role_id, sea_mod_role_id, time, sea_projects_channel_id, sea_projects_message_id
 
 
+def is_mod(ctx):
+    rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
+    sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
+    if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles:
+        return False
+    return True
+
+
 class MessageSystem(commands.Cog):
 
     def __init__(self, bot):
@@ -12,13 +20,11 @@ class MessageSystem(commands.Cog):
 
     @commands.command()
     async def sendMsg(self, ctx, channel: discord.TextChannel):
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        if not is_mod(ctx):
             return
 
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
 
         answer = ""
 
@@ -41,14 +47,13 @@ class MessageSystem(commands.Cog):
 
     @commands.command()
     async def editMsg(self, ctx, channel: discord.TextChannel, msg_id: int):
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        if not is_mod(ctx):
             return
+        
         msg = await channel.fetch_message(msg_id)
 
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
 
         answer = ""
 
@@ -71,9 +76,7 @@ class MessageSystem(commands.Cog):
 
     @commands.command()
     async def archive(self, ctx, channel: discord.TextChannel):
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        if not is_mod(ctx):
             return
 
         questions = ["Please enter the title:", "Please enter the contributor(s):", "Please enter a brief description:",
@@ -81,8 +84,8 @@ class MessageSystem(commands.Cog):
 
         answers = []
 
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
 
         for i in questions:
 
@@ -114,9 +117,7 @@ class MessageSystem(commands.Cog):
 
     @commands.command()
     async def editArchive(self, ctx, channel: discord.TextChannel, msg_id: int):
-        rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        if not is_mod(ctx):
             return
 
         msg = await channel.fetch_message(msg_id)
@@ -126,8 +127,8 @@ class MessageSystem(commands.Cog):
 
         answers = []
 
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
 
         for i in questions:
 
@@ -159,9 +160,9 @@ class MessageSystem(commands.Cog):
 
     @commands.command()
     async def addProject(self, ctx, *project_args: str):
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        if not is_mod(ctx):
             return
+        
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
         msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
         project = ' '.join(project_args)
@@ -171,9 +172,9 @@ class MessageSystem(commands.Cog):
 
     @commands.command()
     async def removeProject(self, ctx, project_number: int):
-        sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-        if sea_mod_role not in ctx.author.roles and ctx.author.id != 672768917885681678:
+        if not is_mod(ctx):
             return
+        
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
         msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
         project_list = msg.content.splitlines()
@@ -184,9 +185,6 @@ class MessageSystem(commands.Cog):
         updated_msg = '\r\n'.join(project_list)
         await msg.edit(updated_msg)
         await ctx.send(f'Successfully removed the project "{removed_project}" from the project list.')
-
-
-
 
 
 def setup(bot):
