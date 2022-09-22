@@ -11,7 +11,7 @@ class MiscTasks(commands.Cog):
 
     @slash_command(name="pin", description="Pins the message specified!")
     async def slash_pin(self, ctx,
-                        message: Option(discord.Message, "The message you want to pin", required=True)):
+                        message: Option(discord.Message, "Enter the message link or ID!", required=True)):
         await message.pin()
         await ctx.respond("Pinned message succesfully!", ephemeral=True)
 
