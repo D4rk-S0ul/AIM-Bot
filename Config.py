@@ -79,5 +79,9 @@ tags = {
                   "Resource Pack: <https://drive.google.com/file/d/1NXiqmJ40-Oi3LcLQgc8LNlgGhr0TrRG4/view>",
     "wall": "Rawalle: <https://github.com/joe-ldp/Rawalle/releases/>\r\n"
             "Specnr's wall: <https://github.com/Specnr/MultiResetWall/releases/>",
-    "woodlight": "<https://youtu.be/QFNvgd32TYY>"
+    "woodLight": "<https://youtu.be/QFNvgd32TYY>",
+    "zero": "Video: <https://youtu.be/YTVctKuUWbI> \r\n"
+            "Document: <https://docs.google.com/document/d/1Umtj4jo69FnHz68cgp9TCrfDS-14Ummhi6ZDEXg4XGY/view>",
+    "zeroCycle": "Video: <https://youtu.be/YTVctKuUWbI> \r\n"
+            "Document: <https://docs.google.com/document/d/1Umtj4jo69FnHz68cgp9TCrfDS-14Ummhi6ZDEXg4XGY/view>"
 }
