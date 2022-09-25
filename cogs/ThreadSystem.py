@@ -22,24 +22,24 @@ def is_whitelisted_thread(thread):
 
 def server_getter(thread):
     if thread.guild.id == rip_id:
-        return "rip"
+        return "RIP"
     if thread.guild.id == sea_id:
-        return "sea"
+        return "SEA"
 
   
 def ping_role_getter(server, thread):
-    if server == "rip":
-        return thread.guilt.get_role(rip_role_id)
-    if server == "sea":
-        return thread.guilt.get_role(sea_role_id)
-    return "unknown"
+    if server == "RIP":
+        return thread.guild.get_role(rip_role_id)
+    if server == "SEA":
+        return thread.guild.get_role(sea_role_id)
+    return "Unknown"
 
 
 async def add_members(thread):
     await thread.join()
     await thread.edit(auto_archive_duration=10080)
     server = server_getter(thread)
-    if server == "unknown":
+    if server == "Unknown":
         print("Unknown server!")
         return
     ping_role = ping_role_getter(server, thread)
@@ -66,9 +66,9 @@ async def add_members(thread):
     await ping_msg.delete()
     await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n")
 
-    if server == "rip":
+    if server == "RIP":
         await rip_tasks(thread)
-    elif server == "sea":
+    elif server == "SEA":
         await sea_tasks(thread)
 
 
