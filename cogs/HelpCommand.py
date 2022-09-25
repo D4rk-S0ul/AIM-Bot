@@ -3,6 +3,13 @@ from Config import prefix, rip_id, sea_id, sea_projects_channel_id
 from discord import slash_command
 
 
+def server_getter(ctx):
+    if ctx.guild.id == rip_id:
+        return "RIP"
+    if ctx.guild.id == sea_id:
+        return "SEA"
+
+
 class HelpCommand(commands.Cog):
 
     def __init__(self, bot):
@@ -10,11 +17,7 @@ class HelpCommand(commands.Cog):
 
     @slash_command(description="Shows a list of commands")
     async def help(self, ctx):
-        server = ""
-        if ctx.guild.id == rip_id:
-            server = "RIP"
-        elif ctx.guild.id == sea_id:
-            server = "SEA"
+        server = server_getter(ctx)
         await ctx.responde("**Commands:**\r\n"
                            f"`{prefix}addMembers #thread:`\r\n"
                            f"   Adds member with {server} Role to the #thread\r\n"
