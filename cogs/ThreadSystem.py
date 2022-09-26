@@ -1,7 +1,10 @@
 import discord
+from discord import Option
 from discord.ext import commands
+from discord.commands import slash_command
 
-from Config import rip_role_id, rip_mod_role_id, allowed_parent_channel_ids, allowed_parent_category_ids, sea_mod_role_id, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
+from Config import rip_role_id, rip_mod_role_id, blocked_parent_category_ids, \
+    sea_mod_role_id, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
 
 
 def is_mod(ctx):
@@ -12,10 +15,10 @@ def is_mod(ctx):
     return True
 
 
-def is_whitelisted_thread(thread):
-    if not isinstance(thread,discord.Thread):
+def is_allowed_thread(thread):
+    if not isinstance(thread, discord.Thread):
         return False
-    if thread.parent.category_id not in allowed_parent_category_ids and thread.parent_id not in allowed_parent_channel_ids:
+    if thread.parent.category_id in blocked_parent_category_ids:
         return False
     return True
 
@@ -26,7 +29,7 @@ def server_getter(thread):
     if thread.guild.id == sea_id:
         return "SEA"
 
-  
+
 def ping_role_getter(server, thread):
     if server == "RIP":
         return thread.guild.get_role(rip_role_id)
@@ -43,13 +46,13 @@ async def add_members(thread):
         print("Unknown server!")
         return
     ping_role = ping_role_getter(server, thread)
-    
+
     members = [member for member in thread.guild.members if ping_role in member.roles]
     if len(members) == 0:
         print("Coundn't find any members with the ping role!")
         return
     member_mentions = [member.mention for member in members]
-    
+
     returned_string = ""
     ping_msg = await thread.send("Adding users...")
     counter = 0
@@ -93,24 +96,20 @@ class ThreadSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread):
-        if not is_whitelisted_thread(thread):
+        if not is_allowed_thread(thread):
             return
 
         await add_members(thread)
 
-    @commands.Cog.listener()
-    async def on_message(self, ctx):
-        thread = ctx.channel
-        if not is_whitelisted_thread(thread):
+    @slash_command(name="add_members", description="Adds the members to the thread specified!")
+    async def addMembers(self, ctx,
+                               thread: Option(discord.Thread, "Discord Thread", required=True)):
+        if thread is None:
+            thread = ctx.channel
+        if not is_allowed_thread(thread):
             return
-
-        if ctx.content.startswith(f"<@{self.client.user.id}>"):
-            await add_members(thread)
-
-    @commands.command()
-    async def addMembers(self, ctx, thread: discord.Thread):
-        if is_mod(ctx):
-            await add_members(thread)
+        await ctx.respond("Adding Members...", ephemeral=True)
+        await add_members(thread)
 
 
 def setup(bot):
