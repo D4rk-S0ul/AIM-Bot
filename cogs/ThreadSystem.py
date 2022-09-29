@@ -103,7 +103,7 @@ class ThreadSystem(commands.Cog):
 
     @slash_command(name="add_members", description="Adds the members to the thread specified!")
     async def addMembers(self, ctx,
-                               thread: Option(discord.Thread, "Discord Thread", required=True)):
+                         thread: Option(discord.Thread, "Discord Thread", required=True)):
         if thread is None:
             thread = ctx.channel
         if not is_allowed_thread(thread):
