@@ -152,10 +152,10 @@ class MessageSystem(commands.Cog):
         resource = answers[3]
 
         await msg.edit(f"**{title}:**\r\n"
-                           f"`Contributor(s):` {contributors}\r\n"
-                           f"`Brief Description:` {description}\r\n"
-                           "\r\n"
-                           f"{resource}")
+                       f"`Contributor(s):` {contributors}\r\n"
+                       f"`Brief Description:` {description}\r\n"
+                       "\r\n"
+                       f"{resource}")
         await ctx.send(f"Successfully edited the archive message in {channel}.")
 
     @commands.command()
