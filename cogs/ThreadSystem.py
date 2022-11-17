@@ -39,18 +39,22 @@ def ping_role_getter(server, thread):
 
 
 async def add_members(thread):
+    failed = False
+    msg = None
     await thread.join()
     await thread.edit(auto_archive_duration=10080)
     server = server_getter(thread)
     if server == "Unknown":
-        print("Unknown server!")
-        return
+        failed = True
+        msg = "Unknown server!"
+        return failed, msg
     ping_role = ping_role_getter(server, thread)
 
     members = [member for member in thread.guild.members if ping_role in member.roles]
     if len(members) == 0:
-        print("Coundn't find any members with the ping role!")
-        return
+        failed = True
+        msg = "Couldn't find any members with the ping role!"
+        return failed, msg
     member_mentions = [member.mention for member in members]
 
     returned_string = ""
@@ -73,6 +77,8 @@ async def add_members(thread):
         await rip_tasks(thread)
     elif server == "SEA":
         await sea_tasks(thread)
+
+    return failed, msg
 
 
 async def rip_tasks(thread):
@@ -107,9 +113,15 @@ class ThreadSystem(commands.Cog):
         if thread is None:
             thread = ctx.channel
         if not is_allowed_thread(thread):
+            await ctx.respond("Not allowed to execute this command in the specified thread.", ephemeral=True)
             return
-        await ctx.respond("Adding Members...", ephemeral=True)
-        await add_members(thread)
+        await ctx.defer(ephemeral=True)
+        failed, fail_msg = await add_members(thread)
+        if failed:
+            await ctx.followup.send(fail_msg)
+            return
+        await ctx.followup.send("Added members successfully!")
+
 
 
 def setup(bot):
