@@ -24,8 +24,8 @@ class MessageSystem(commands.Cog):
     @message.command(description="Sends a message in the channel specified!")
     @default_permissions(administrator=True)
     async def send(self, ctx,
-                      content: Option(str, "Please enter the content of your message!", required=True),
-                      channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+                   content: Option(str, "Please enter the content of your message!", required=True),
+                   channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
             channel = ctx.channel
         await channel.send(content)
