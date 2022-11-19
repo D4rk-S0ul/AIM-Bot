@@ -1,6 +1,7 @@
 import asyncio
 
 import discord
+from discord import slash_command, default_permissions, Option, SlashCommandGroup
 from discord.ext import commands
 from Config import rip_mod_role_id, sea_mod_role_id, time, sea_projects_channel_id, sea_projects_message_id
 
@@ -18,61 +19,28 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    @commands.command()
-    async def sendMsg(self, ctx, channel: discord.TextChannel):
-        if not is_mod(ctx):
+    message = SlashCommandGroup(name="message")
+
+    @message.command(description="Sends a message in the channel specified!")
+    @default_permissions(administrator=True)
+    async def send(self, ctx,
+                      content: Option(str, "Please enter the content of your message!", required=True),
+                      channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+        if channel is None:
+            channel = ctx.channel
+        await channel.send(content)
+        await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
+
+    @message.command(description="Edits the message specified!")
+    @default_permissions(administrator=True)
+    async def edit(self, ctx,
+                   msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
+                   content: Option(str, "Please enter the new content of your message!", required=True)):
+        if msg.author != self.client.user:
+            await ctx.respond("Can't edit this message!")
             return
-
-        def check(msg):
-            return msg.author == ctx.author and msg.channel == ctx.channel
-
-        answer = ""
-
-        try:
-            await ctx.send("What should be the content of the message?")
-            msg = await self.client.wait_for('message', timeout=time, check=check)
-        except asyncio.TimeoutError:
-            await ctx.send(f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
-                           "faster next time!")
-            return
-        else:
-            answer = msg.content
-
-        if answer.lower() == "cancel":
-            await ctx.send("The process was canceled successfully!")
-            return
-
-        await channel.send(answer)
-        await ctx.send(f"Successfully send the message in {channel}.")
-
-    @commands.command()
-    async def editMsg(self, ctx, channel: discord.TextChannel, msg_id: int):
-        if not is_mod(ctx):
-            return
-        
-        msg = await channel.fetch_message(msg_id)
-
-        def check(msg):
-            return msg.author == ctx.author and msg.channel == ctx.channel
-
-        answer = ""
-
-        try:
-            await ctx.send("What should be the new content of the message?")
-            content_msg = await self.client.wait_for('message', timeout=time, check=check)
-        except asyncio.TimeoutError:
-            await ctx.send(f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
-                           "faster next time!")
-            return
-        else:
-            answer = content_msg.content
-
-        if answer.lower() == "cancel":
-            await ctx.send("The process was canceled successfully!")
-            return
-
-        await msg.edit(answer)
-        await ctx.send(f"Successfully edited the message in {channel}.")
+        await msg.edit(content)
+        await ctx.respond("Successfully edited the message!", ephemeral=True)
 
     @commands.command()
     async def archive(self, ctx, channel: discord.TextChannel):
@@ -162,7 +130,7 @@ class MessageSystem(commands.Cog):
     async def addProject(self, ctx, *project_args: str):
         if not is_mod(ctx):
             return
-        
+
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
         msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
         project = ' '.join(project_args)
@@ -174,7 +142,7 @@ class MessageSystem(commands.Cog):
     async def removeProject(self, ctx, project_number: int):
         if not is_mod(ctx):
             return
-        
+
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
         msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
         project_list = msg.content.splitlines()
