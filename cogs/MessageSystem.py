@@ -19,7 +19,7 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    message = SlashCommandGroup(name="message")
+    message = SlashCommandGroup(name="message", description="Send/edit message commands")
 
     @message.command(description="Sends a message in the channel specified!")
     @default_permissions(administrator=True)
