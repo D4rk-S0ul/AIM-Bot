@@ -1,8 +1,9 @@
 import asyncio
 
 import discord
-from discord import slash_command, default_permissions, Option, SlashCommandGroup
+from discord import default_permissions, Option, slash_command
 from discord.ext import commands
+
 from Config import rip_mod_role_id, sea_mod_role_id, time, sea_projects_channel_id, sea_projects_message_id
 
 
@@ -19,9 +20,7 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    message = SlashCommandGroup(name="message", description="Send/edit message commands")
-
-    @message.command(description="Sends a message in the channel specified!")
+    @slash_command(description="Sends a message in the channel specified!")
     @default_permissions(administrator=True)
     async def send(self, ctx,
                    content: Option(str, "Please enter the content of your message!", required=True),
@@ -31,7 +30,7 @@ class MessageSystem(commands.Cog):
         await channel.send(content)
         await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
 
-    @message.command(description="Edits the message specified!")
+    @slash_command(description="Edits the message specified!")
     @default_permissions(administrator=True)
     async def edit(self, ctx,
                    msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
