@@ -1,8 +1,9 @@
 import asyncio
 
 import discord
-from discord import default_permissions, Option, slash_command
+from discord import Option, slash_command
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 
 from Config import rip_mod_role_id, sea_mod_role_id, time, sea_projects_channel_id, sea_projects_message_id
 
@@ -21,7 +22,7 @@ class MessageSystem(commands.Cog):
         self.client = bot
 
     @slash_command(description="Sends a message in the channel specified!")
-    @default_permissions(administrator=True)
+    @has_permissions(administrator=True)
     async def sendmessage(self, ctx,
                    content: Option(str, "Please enter the content of your message!", required=True),
                    channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
@@ -31,7 +32,7 @@ class MessageSystem(commands.Cog):
         await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
 
     @slash_command(description="Edits the message specified!")
-    @default_permissions(administrator=True)
+    @has_permissions(administrator=True)
     async def editmessage(self, ctx,
                    msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
                    content: Option(str, "Please enter the new content of your message!", required=True)):
@@ -42,7 +43,7 @@ class MessageSystem(commands.Cog):
         await ctx.respond("Successfully edited the message!", ephemeral=True)
 
     @slash_command(description="Creates an embed!")
-    @default_permissions(administrator=True)
+    @has_permissions(administrator=True)
     async def sendembed(self, ctx,
                     channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
