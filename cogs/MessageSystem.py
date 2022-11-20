@@ -22,7 +22,7 @@ class MessageSystem(commands.Cog):
 
     @slash_command(description="Sends a message in the channel specified!")
     @default_permissions(administrator=True)
-    async def send(self, ctx,
+    async def sendmessage(self, ctx,
                    content: Option(str, "Please enter the content of your message!", required=True),
                    channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
@@ -32,7 +32,7 @@ class MessageSystem(commands.Cog):
 
     @slash_command(description="Edits the message specified!")
     @default_permissions(administrator=True)
-    async def edit(self, ctx,
+    async def editmessage(self, ctx,
                    msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
                    content: Option(str, "Please enter the new content of your message!", required=True)):
         if msg.author != self.client.user:
@@ -40,6 +40,15 @@ class MessageSystem(commands.Cog):
             return
         await msg.edit(content)
         await ctx.respond("Successfully edited the message!", ephemeral=True)
+
+    @slash_command(description="Creates an embed!")
+    @default_permissions(administrator=True)
+    async def sendembed(self, ctx,
+                    channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+        if channel is None:
+            channel = ctx.channel
+        modal = EmbedModal(channel, title="Create an Embed:")
+        await ctx.send_modal(modal)
 
     @commands.command()
     async def archive(self, ctx, channel: discord.TextChannel):
@@ -156,3 +165,70 @@ class MessageSystem(commands.Cog):
 
 def setup(bot):
     bot.add_cog(MessageSystem(bot))
+
+
+class EmbedModal(discord.ui.Modal):
+    def __init__(self, channel, *args, **kwargs):
+        self.channel = channel
+        super().__init__(
+            discord.ui.InputText(
+                label="Embed Title:",
+                placeholder="Please enter the title here...",
+                max_length=256
+            ),
+            discord.ui.InputText(
+                label="Embed Description:",
+                placeholder="Please enter the description here...",
+                style=discord.InputTextStyle.long,
+                max_length=4000
+            ),
+            discord.ui.InputText(
+                label="Field Name:",
+                placeholder="Please enter the name of the field here... (Not mandatory)",
+                max_length=256,
+                required=False
+            ),
+            discord.ui.InputText(
+                label="Field Content:",
+                placeholder="Please enter the content of the field here...\n"
+                            "(Not mandatory)",
+                required=False,
+                style=discord.InputTextStyle.long,
+                max_length=1024
+            ),
+            discord.ui.InputText(
+                label="Image URL",
+                placeholder="Please enter the URL of the image... (Not mandatory)",
+                required=False
+            ),
+            * args,
+            **kwargs
+        )
+
+    async def callback(self, interaction):
+        title = self.children[0].value
+        description = self.children[1].value
+        field_name = self.children[2].value
+        field_content = self.children[3].value
+        image_url = self.children[4].value
+        embed = discord.Embed(
+            title=title,
+            description=description,
+            color=interaction.guild.me.color,
+        )
+        embed.set_image(
+            url=image_url
+        )
+        if len(field_name) != 0:
+            if len(field_content) != 0:
+                embed.add_field(
+                    name=field_name,
+                    value=field_content
+                )
+        if len(embed) > 6000:
+            await interaction.response.send_message("Embed could not be sent because the number of characters "
+                                                    f"exceeded the character limit of 6000 by {len(embed) - 6000} "
+                                                    "characters!", ephemeral=True)
+            return
+        await self.channel.send(embed=embed)
+        await interaction.response.send_message("Successfully send the embed!", ephemeral=True)
