@@ -123,6 +123,5 @@ class ThreadSystem(commands.Cog):
         await ctx.followup.send("Added members successfully!")
 
 
-
 def setup(bot):
     bot.add_cog(ThreadSystem(bot))
