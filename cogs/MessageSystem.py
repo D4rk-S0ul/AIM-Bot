@@ -1,7 +1,7 @@
 import asyncio
 
 import discord
-from discord import Option, slash_command
+from discord import Option, slash_command, SlashCommandGroup
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 
@@ -21,9 +21,11 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    @slash_command(description="Sends a message in the channel specified!")
+    message_group = SlashCommandGroup(name="message", description="Send/edit message commands!")
+
+    @message_group.command(description="Sends a message in the channel specified!")
     @has_permissions(administrator=True)
-    async def sendmessage(self, ctx,
+    async def send(self, ctx,
                    content: Option(str, "Please enter the content of your message!", required=True),
                    channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
@@ -31,9 +33,9 @@ class MessageSystem(commands.Cog):
         await channel.send(content)
         await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
 
-    @slash_command(description="Edits the message specified!")
+    @message_group.command(description="Edits the message specified!")
     @has_permissions(administrator=True)
-    async def editmessage(self, ctx,
+    async def edit(self, ctx,
                    msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
                    content: Option(str, "Please enter the new content of your message!", required=True)):
         if msg.author != self.client.user:
@@ -42,9 +44,11 @@ class MessageSystem(commands.Cog):
         await msg.edit(content)
         await ctx.respond("Successfully edited the message!", ephemeral=True)
 
-    @slash_command(description="Creates an embed!")
+    embed_group = SlashCommandGroup(name="embed", description="Send/edit embed commands!")
+
+    @embed_group.command(description="Creates an embed!")
     @has_permissions(administrator=True)
-    async def sendembed(self, ctx,
+    async def send(self, ctx,
                     channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
             channel = ctx.channel
