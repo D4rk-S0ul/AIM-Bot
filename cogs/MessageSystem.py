@@ -21,7 +21,7 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    message_group = SlashCommandGroup(name="message", description="Send/edit message commands!")
+    message_group = SlashCommandGroup(name="message", description="Group of send/edit message commands!")
 
     @message_group.command(description="Sends a message in the channel specified!")
     @has_permissions(administrator=True)
@@ -44,7 +44,7 @@ class MessageSystem(commands.Cog):
         await msg.edit(content)
         await ctx.respond("Successfully edited the message!", ephemeral=True)
 
-    embed_group = SlashCommandGroup(name="embed", description="Send/edit embed commands!")
+    embed_group = SlashCommandGroup(name="embed", description="Group of send/edit embed commands!")
 
     @embed_group.command(description="Creates an embed!")
     @has_permissions(administrator=True)
