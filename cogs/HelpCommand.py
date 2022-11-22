@@ -9,6 +9,7 @@ def server_getter(ctx):
     if ctx.guild.id == sea_id:
         return "SEA"
 
+
 def is_mod(ctx):
     rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
     sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
