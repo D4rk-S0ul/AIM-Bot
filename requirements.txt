@@ -1,2 +1,1 @@
-py-cord==2.0.0rc1
-async-timeout==3.0.1
+py-cord==2.2.2
