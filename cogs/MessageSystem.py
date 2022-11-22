@@ -1,11 +1,9 @@
-import asyncio
-
 import discord
-from discord import Option, slash_command, SlashCommandGroup
+from discord import Option, SlashCommandGroup
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 
-from Config import rip_mod_role_id, sea_mod_role_id, time, sea_projects_channel_id, sea_projects_message_id
+from Config import rip_mod_role_id, sea_mod_role_id, sea_projects_channel_id, sea_projects_message_id
 
 
 def is_mod(ctx):
@@ -21,151 +19,90 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    message_group = SlashCommandGroup(name="message", description="Group of send/edit message commands!")
+    message_group = SlashCommandGroup(
+        name="message",
+        description="Group of send/edit message commands!"
+    )
 
-    @message_group.command(description="Sends a message in the channel specified!")
+    @message_group.command(name="send", description="Sends a message in the channel specified!")
     @has_permissions(administrator=True)
-    async def send(self, ctx,
-                   content: Option(str, "Please enter the content of your message!", required=True),
-                   channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+    async def message_send(self, ctx,
+                           content: Option(str, "Please enter the content of your message!", required=True),
+                           channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
             channel = ctx.channel
         await channel.send(content)
         await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
 
-    @message_group.command(description="Edits the message specified!")
+    @message_group.command(name="edit", description="Edits the message specified!")
     @has_permissions(administrator=True)
-    async def edit(self, ctx,
-                   msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
-                   content: Option(str, "Please enter the new content of your message!", required=True)):
+    async def message_edit(self, ctx,
+                           msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
+                           content: Option(str, "Please enter the new content of your message!", required=True)):
         if msg.author != self.client.user:
             await ctx.respond("Can't edit this message!")
             return
         await msg.edit(content)
         await ctx.respond("Successfully edited the message!", ephemeral=True)
 
-    embed_group = SlashCommandGroup(name="embed", description="Group of send/edit embed commands!")
+    embed_group = SlashCommandGroup(
+        name="embed",
+        description="Group of send/edit embed commands!"
+    )
 
-    @embed_group.command(description="Creates an embed!")
+    @embed_group.command(name="send", description="Creates an embed!")
     @has_permissions(administrator=True)
-    async def send(self, ctx,
-                    channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+    async def embed_send(self, ctx,
+                         channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
             channel = ctx.channel
         modal = EmbedModal(channel, title="Create an Embed:")
         await ctx.send_modal(modal)
 
-    @commands.command()
-    async def archive(self, ctx, channel: discord.TextChannel):
-        if not is_mod(ctx):
-            return
+    archive_group = SlashCommandGroup(
+        name="archive",
+        description="Group of send/edit message commands following the archive format"
+    )
 
-        questions = ["Please enter the title:", "Please enter the contributor(s):", "Please enter a brief description:",
-                     "Please enter the resource you want to be archived:"]
+    @archive_group.command(name="send", description="Sends a message using the archive format!")
+    @has_permissions(administrator=True)
+    async def archive_send(self, ctx,
+                           channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+        if channel is None:
+            channel = ctx.channel
+        modal = ArchiveModal(channel, title="Archive a resource:")
+        await ctx.send_modal(modal)
 
-        answers = []
+    project_group = SlashCommandGroup(
+        name="project",
+        description="Group of commands allowing to add/remove projects (SEA only)!"
+    )
 
-        def check(msg):
-            return msg.author == ctx.author and msg.channel == ctx.channel
-
-        for i in questions:
-
-            try:
-                await ctx.send(i)
-                msg = await self.client.wait_for('message', timeout=time, check=check)
-            except asyncio.TimeoutError:
-                await ctx.send(
-                    f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
-                    "faster next time!")
-                return
-            else:
-                if msg.content.lower() == "cancel":
-                    await ctx.send("The process was canceled successfully!")
-                    return
-                answers.append(msg.content)
-
-        title = answers[0]
-        contributors = answers[1]
-        description = answers[2]
-        resource = answers[3]
-
-        await channel.send(f"**{title}:**\r\n"
-                           f"`Contributor(s):` {contributors}\r\n"
-                           f"`Brief Description:` {description}\r\n"
-                           "\r\n"
-                           f"{resource}")
-        await ctx.send(f"Successfully send the archive message in {channel}.")
-
-    @commands.command()
-    async def editArchive(self, ctx, channel: discord.TextChannel, msg_id: int):
-        if not is_mod(ctx):
-            return
-
-        msg = await channel.fetch_message(msg_id)
-
-        questions = ["Please enter the title:", "Please enter the contributor(s):", "Please enter a brief description:",
-                     "Please enter the resource you want to be archived:"]
-
-        answers = []
-
-        def check(msg):
-            return msg.author == ctx.author and msg.channel == ctx.channel
-
-        for i in questions:
-
-            try:
-                await ctx.send(i)
-                content_msg = await self.client.wait_for('message', timeout=time, check=check)
-            except asyncio.TimeoutError:
-                await ctx.send(
-                    f"The process was canceled, since you didn't answer within {time} seconds. Please answer "
-                    "faster next time!")
-                return
-            else:
-                if content_msg.content.lower() == "cancel":
-                    await ctx.send("The process was canceled successfully!")
-                    return
-                answers.append(content_msg.content)
-
-        title = answers[0]
-        contributors = answers[1]
-        description = answers[2]
-        resource = answers[3]
-
-        await msg.edit(f"**{title}:**\r\n"
-                       f"`Contributor(s):` {contributors}\r\n"
-                       f"`Brief Description:` {description}\r\n"
-                       "\r\n"
-                       f"{resource}")
-        await ctx.send(f"Successfully edited the archive message in {channel}.")
-
-    @commands.command()
-    async def addProject(self, ctx, *project_args: str):
-        if not is_mod(ctx):
-            return
-
+    @project_group.command(name="add", description="Adds a project to the project list! (SEA only)")
+    @has_permissions(administrator=True)
+    async def project_add(self, ctx,
+                          project: Option(str, "Please enter the name of the project!", required=True)):
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
         msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
-        project = ' '.join(project_args)
         await msg.edit(f"{msg.content}\r\n"
                        f" - {project}")
-        await ctx.send(f'Successfully added the project "{project}" to the project list.')
+        await ctx.respond(f'Successfully added the project "{project}" to the project list.', ephemeral=True)
 
-    @commands.command()
-    async def removeProject(self, ctx, project_number: int):
-        if not is_mod(ctx):
-            return
-
+    @project_group.command(name="remove", description="Removes a project to the project list! (SEA only)")
+    @has_permissions(administrator=True)
+    async def project_remove(self, ctx,
+                             project: Option(int, "Please enter the number associated to the project!", required=True)):
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
         msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
         project_list = msg.content.splitlines()
-        if project_number <= 0 or project_number >= len(project_list):
-            await ctx.send("Please use a number that can be linked to an existing project.")
+        if project <= 0 or project >= len(project_list):
+            await ctx.respond("Please use a number that can be linked to an existing project.", ephemeral=True)
             return
-        removed_project = project_list.pop(project_number)[3:]
+        removed_project = project_list.pop(project)[3:]
         updated_msg = '\r\n'.join(project_list)
         await msg.edit(updated_msg)
-        await ctx.send(f'Successfully removed the project "{removed_project}" from the project list.')
+        await ctx.respond(f'Successfully removed the project "{removed_project}" from the project list.',
+                          ephemeral=True)
 
 
 def setup(bot):
@@ -206,7 +143,7 @@ class EmbedModal(discord.ui.Modal):
                 placeholder="Please enter the URL of the image... (Not mandatory)",
                 required=False
             ),
-            * args,
+            *args,
             **kwargs
         )
 
@@ -236,4 +173,55 @@ class EmbedModal(discord.ui.Modal):
                                                     "characters!", ephemeral=True)
             return
         await self.channel.send(embed=embed)
-        await interaction.response.send_message("Successfully send the embed!", ephemeral=True)
+        await interaction.response.send_message(f"Successfully send the embed in <#{self.channel.id}>!", ephemeral=True)
+
+
+class ArchiveModal(discord.ui.Modal):
+    def __init__(self, channel, *args, **kwargs):
+        self.channel = channel
+        super().__init__(
+            discord.ui.InputText(
+                label="Title:",
+                placeholder="Please enter the title here...",
+                max_length=4000
+            ),
+            discord.ui.InputText(
+                label="Contributors:",
+                placeholder="Please enter the contributors here...",
+                style=discord.InputTextStyle.long,
+                max_length=4000
+            ),
+            discord.ui.InputText(
+                label="Description:",
+                placeholder="Please enter the description here...",
+                style=discord.InputTextStyle.long,
+                max_length=4000
+            ),
+            discord.ui.InputText(
+                label="Resource:",
+                placeholder="Please enter the resource here...",
+                style=discord.InputTextStyle.long,
+                max_length=4000
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction):
+        title = self.children[0].value
+        contributors = self.children[1].value
+        description = self.children[2].value
+        resource = self.children[3].value
+        archive = (f"**{title}:**\r\n"
+                   f"`Contributor(s):` {contributors}\r\n"
+                   f"`Brief Description:` {description}\r\n"
+                   "\r\n"
+                   f"{resource}")
+        if len(archive) > 2000:
+            await interaction.response.send_message("Archive message could not be sent because the number of characters"
+                                                    f" exceeded the character limit of 6000 by {len(archive) - 2000}"
+                                                    "characters!", ephemeral=True)
+            return
+        await self.channel.send(archive)
+        await interaction.response.send_message(f"Successfully send the archive in <#{self.channel.id}>!",
+                                                ephemeral=True)
