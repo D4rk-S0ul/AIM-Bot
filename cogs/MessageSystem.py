@@ -6,14 +6,6 @@ from discord.ext.commands import has_permissions
 from Config import rip_mod_role_id, sea_mod_role_id, sea_projects_channel_id, sea_projects_message_id
 
 
-def is_mod(ctx):
-    rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-    sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-    if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles:
-        return False
-    return True
-
-
 class MessageSystem(commands.Cog):
 
     def __init__(self, bot):
