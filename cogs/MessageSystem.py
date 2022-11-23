@@ -3,7 +3,7 @@ from discord import Option, SlashCommandGroup
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 
-from Config import sea_projects_channel_id, sea_projects_message_id, sea_id
+from Config import sea_projects_channel_id, sea_projects_message_id
 
 
 class MessageSystem(commands.Cog):
@@ -67,8 +67,7 @@ class MessageSystem(commands.Cog):
 
     project_group = SlashCommandGroup(
         name="project",
-        description="Group of commands allowing to add/remove projects (SEA only)!",
-        guild_ids=str(sea_id)
+        description="Group of commands allowing to add/remove projects (SEA only)!"
     )
 
     @project_group.command(name="add", description="Adds a project to the project list! (SEA only)")
