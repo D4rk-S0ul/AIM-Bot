@@ -3,7 +3,7 @@ from discord import Option, SlashCommandGroup
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 
-from Config import rip_mod_role_id, sea_mod_role_id, sea_projects_channel_id, sea_projects_message_id
+from Config import sea_projects_channel_id, sea_projects_message_id
 
 
 class MessageSystem(commands.Cog):
