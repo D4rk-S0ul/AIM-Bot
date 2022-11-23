@@ -13,11 +13,11 @@ class MessageSystem(commands.Cog):
 
     message_group = SlashCommandGroup(
         name="message",
-        description="Group of send/edit message commands!"
+        description="Group of send/edit message commands!",
+        default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @message_group.command(name="send", description="Sends a message in the channel specified!")
-    @has_permissions(administrator=True)
     async def message_send(self, ctx,
                            content: Option(str, "Please enter the content of your message!", required=True),
                            channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
@@ -27,7 +27,6 @@ class MessageSystem(commands.Cog):
         await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
 
     @message_group.command(name="edit", description="Edits the message specified!")
-    @has_permissions(administrator=True)
     async def message_edit(self, ctx,
                            msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
                            content: Option(str, "Please enter the new content of your message!", required=True)):
@@ -39,11 +38,11 @@ class MessageSystem(commands.Cog):
 
     embed_group = SlashCommandGroup(
         name="embed",
-        description="Group of send/edit embed commands!"
+        description="Group of send/edit embed commands!",
+        default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @embed_group.command(name="send", description="Creates an embed!")
-    @has_permissions(administrator=True)
     async def embed_send(self, ctx,
                          channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
@@ -53,11 +52,11 @@ class MessageSystem(commands.Cog):
 
     archive_group = SlashCommandGroup(
         name="archive",
-        description="Group of send/edit message commands following the archive format"
+        description="Group of send/edit message commands following the archive format",
+        default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @archive_group.command(name="send", description="Sends a message using the archive format!")
-    @has_permissions(administrator=True)
     async def archive_send(self, ctx,
                            channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
         if channel is None:
@@ -67,11 +66,11 @@ class MessageSystem(commands.Cog):
 
     project_group = SlashCommandGroup(
         name="project",
-        description="Group of commands allowing to add/remove projects (SEA only)!"
+        description="Group of commands allowing to add/remove projects (SEA only)!",
+        default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @project_group.command(name="add", description="Adds a project to the project list! (SEA only)")
-    @has_permissions(administrator=True)
     async def project_add(self, ctx,
                           project: Option(str, "Please enter the name of the project!", required=True)):
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
@@ -81,7 +80,6 @@ class MessageSystem(commands.Cog):
         await ctx.respond(f'Successfully added the project "{project}" to the project list.', ephemeral=True)
 
     @project_group.command(name="remove", description="Removes a project to the project list! (SEA only)")
-    @has_permissions(administrator=True)
     async def project_remove(self, ctx,
                              project: Option(int, "Please enter the number associated to the project!", required=True)):
         sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)

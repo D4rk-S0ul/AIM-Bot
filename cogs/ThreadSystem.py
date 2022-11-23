@@ -3,16 +3,7 @@ from discord import Option
 from discord.ext import commands
 from discord.commands import slash_command
 
-from Config import rip_role_id, rip_mod_role_id, blocked_parent_category_ids, \
-    sea_mod_role_id, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
-
-
-def is_mod(ctx):
-    rip_mod_role = ctx.guild.get_role(rip_mod_role_id)
-    sea_mod_role = ctx.guild.get_role(sea_mod_role_id)
-    if rip_mod_role not in ctx.author.roles and sea_mod_role not in ctx.author.roles:
-        return False
-    return True
+from Config import rip_role_id, blocked_parent_category_ids, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
 
 
 def is_allowed_thread(thread):
