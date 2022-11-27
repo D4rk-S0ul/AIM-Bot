@@ -1,38 +1,35 @@
 # Bot Prefix:
 prefix = "!"
 
-# RIP Server ID
-rip_id = 933075515881951292
-
-# SEA Server ID
-sea_id = 959162264081014814
-
-# EAR Server ID
-ear_id = 849650258786779196
-
 # RIP Role ID
 rip_role_id = 939633923305132182
 
 # SEA Role ID
 sea_role_id = 968954879492104322
 
-# EAR Role ID
-ear_role_id = None
+# RIP Mod Role ID
+rip_mod_role_id = 933098293146292325
+
+# SEA Mod Role ID
+sea_mod_role_id = 959183045326405704
 
 # Blocked Parent Category IDs
-blocked_parent_category_ids = [959525754297778216, 1023877748818706452, 850422836585299989]
+blocked_parent_category_ids = [959525754297778216, 1023877748818706452]
 
-# SEA Thread Dir Channel ID
-sea_thread_dir_channel_id = 959198464900747304
+# RIP Server ID
+rip_id = 933075515881951292
 
-# SEA Thread Dir List Message ID
-sea_thread_dir_message_id = 993116077225680937
+# SEA Server ID
+sea_id = 959162264081014814
 
-# EAR Thread Dir Channel ID
-ear_thread_dir_channel_id = None
+# SEA Projects List Channel ID
+sea_projects_channel_id = 959198464900747304
 
-# EAR Thread Dir List Message ID
-ear_thread_dir_message_id = None
+# SEA Projects List Message ID
+sea_projects_message_id = 993116077225680937
+
+# Time before timeout
+time = 300
 
 # Tags
 tags = {
