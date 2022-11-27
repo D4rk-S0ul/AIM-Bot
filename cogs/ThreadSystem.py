@@ -3,7 +3,8 @@ from discord import Option
 from discord.ext import commands
 from discord.commands import slash_command
 
-from Config import rip_role_id, blocked_parent_category_ids, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
+from Config import rip_role_id, sea_role_id, ear_role_id, rip_id, sea_id, ear_id, blocked_parent_category_ids
+from cogs import ThreadDirectory
 
 
 def is_allowed_thread(thread):
@@ -19,6 +20,9 @@ def server_getter(thread):
         return "RIP"
     if thread.guild.id == sea_id:
         return "SEA"
+    if thread.guild.id == ear_id:
+        return "EAR"
+    return None
 
 
 def ping_role_getter(server, thread):
@@ -26,20 +30,29 @@ def ping_role_getter(server, thread):
         return thread.guild.get_role(rip_role_id)
     if server == "SEA":
         return thread.guild.get_role(sea_role_id)
-    return "Unknown"
+    if server == "EAR":
+        return None  # thread.guild.get_role(ear_role_id)
+    return None
 
 
 async def add_members(thread):
     failed = False
-    msg = None
+    failed_msg = None
+
     await thread.join()
     await thread.edit(auto_archive_duration=10080)
+
     server = server_getter(thread)
-    if server == "Unknown":
+    if server is None:
         failed = True
-        msg = "Unknown server!"
-        return failed, msg
+        failed_msg = "Unknown server!"
+        return failed, failed_msg
+
     ping_role = ping_role_getter(server, thread)
+    if ping_role is None:
+        failed = True
+        failed_msg = "No ping role found!"
+        return failed, failed_msg
 
     members = [member for member in thread.guild.members if ping_role in member.roles]
     if len(members) == 0:
@@ -68,6 +81,8 @@ async def add_members(thread):
         await rip_tasks(thread)
     elif server == "SEA":
         await sea_tasks(thread)
+    elif server == "EAR":
+        await ear_task(thread)
 
     return failed, msg
 
@@ -77,12 +92,11 @@ async def rip_tasks(thread):
 
 
 async def sea_tasks(thread):
-    sea_projects_channel = thread.guild.get_channel(sea_projects_channel_id)
-    msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
-    if thread.name in msg.content:
-        return
-    await msg.edit(f"{msg.content}\r\n"
-                   f" - {thread.name}")
+    ThreadDirectory.add_threat("SEA", thread)
+
+
+async def ear_task(thread):
+    ThreadDirectory.add_thread("EAR", thread)
 
 
 class ThreadSystem(commands.Cog):
