@@ -3,7 +3,8 @@ from discord import Option
 from discord.ext import commands
 from discord.commands import slash_command
 
-from Config import rip_role_id, blocked_parent_category_ids, rip_id, sea_id, sea_role_id, sea_projects_channel_id, sea_projects_message_id
+from Config import rip_id, sea_id, rip_role_id, sea_role_id, blocked_parent_category_ids, sea_projects_channel_id, \
+    sea_projects_message_id
 
 
 def is_allowed_thread(thread):

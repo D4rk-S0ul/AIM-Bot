@@ -1,7 +1,6 @@
 import discord
 from discord import Option, SlashCommandGroup
 from discord.ext import commands
-from discord.ext.commands import has_permissions
 
 from Config import sea_projects_channel_id, sea_projects_message_id
 
