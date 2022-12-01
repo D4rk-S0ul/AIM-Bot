@@ -28,6 +28,12 @@ sea_thread_dir_channel_id = 959198464900747304
 # SEA Thread Directory Message ID
 sea_thread_dir_message_id = 1047979139069657250
 
+# EAR Thread Directory Channel ID
+ear_thread_dir_channel_id = 1041033326846296164
+
+# EAR Thread Directory Message ID
+ear_thread_dir_message_id = 1047981765626712135
+
 # Tags
 tags = {
     "bastionRouteSpreadsheet": "<https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0-6YhztMqa_wZ8W0/edit?usp=sharing>",
