@@ -3,8 +3,8 @@ from discord import Option
 from discord.ext import commands
 from discord.commands import slash_command
 
-from Config import rip_id, sea_id, rip_role_id, sea_role_id, blocked_parent_category_ids, sea_projects_channel_id, \
-    sea_projects_message_id
+from Config import rip_id, sea_id, rip_role_id, sea_role_id, blocked_parent_category_ids, sea_thread_dir_channel_id, \
+    sea_thread_dir_message_id
 
 
 def is_allowed_thread(thread):
@@ -78,8 +78,8 @@ async def rip_tasks(thread):
 
 
 async def sea_tasks(thread):
-    sea_projects_channel = thread.guild.get_channel(sea_projects_channel_id)
-    msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
+    sea_projects_channel = thread.guild.get_channel(sea_thread_dir_channel_id)
+    msg = await sea_projects_channel.fetch_message(sea_thread_dir_message_id)
     if thread.name in msg.content:
         return
     await msg.edit(f"{msg.content}\r\n"

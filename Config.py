@@ -22,11 +22,11 @@ ear_role_id = None
 # Blocked Parent Category IDs
 blocked_parent_category_ids = [959525754297778216, 1023877748818706452]
 
-# SEA Projects List Channel ID
-sea_projects_channel_id = 959198464900747304
+# SEA Thread Directory Channel ID
+sea_thread_dir_channel_id = 959198464900747304
 
-# SEA Projects List Message ID
-sea_projects_message_id = 993116077225680937
+# SEA Thread Directory Message ID
+sea_thread_dir_message_id = 1047979139069657250
 
 # Tags
 tags = {
