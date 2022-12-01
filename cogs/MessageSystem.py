@@ -2,8 +2,6 @@ import discord
 from discord import Option, SlashCommandGroup
 from discord.ext import commands
 
-from Config import sea_projects_channel_id, sea_projects_message_id
-
 
 class MessageSystem(commands.Cog):
 
