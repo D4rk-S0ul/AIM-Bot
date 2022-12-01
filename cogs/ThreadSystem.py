@@ -83,7 +83,7 @@ async def sea_tasks(thread):
     if thread.name in msg.content:
         return
     await msg.edit(f"{msg.content}\r\n"
-                   f" - {thread.name}")
+                   f" - <#{thread.id}>")
 
 
 class ThreadSystem(commands.Cog):

@@ -63,36 +63,6 @@ class MessageSystem(commands.Cog):
         modal = ArchiveModal(channel, title="Archive a resource:")
         await ctx.send_modal(modal)
 
-    project_group = SlashCommandGroup(
-        name="project",
-        description="Group of commands allowing to add/remove projects (SEA only)!",
-        default_member_permissions=discord.Permissions(administrator=True)
-    )
-
-    @project_group.command(name="add", description="Adds a project to the project list! (SEA only)")
-    async def project_add(self, ctx,
-                          project: Option(str, "Please enter the name of the project!", required=True)):
-        sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
-        msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
-        await msg.edit(f"{msg.content}\r\n"
-                       f" - {project}")
-        await ctx.respond(f'Successfully added the project "{project}" to the project list.', ephemeral=True)
-
-    @project_group.command(name="remove", description="Removes a project to the project list! (SEA only)")
-    async def project_remove(self, ctx,
-                             project: Option(int, "Please enter the number associated to the project!", required=True)):
-        sea_projects_channel = ctx.guild.get_channel(sea_projects_channel_id)
-        msg = await sea_projects_channel.fetch_message(sea_projects_message_id)
-        project_list = msg.content.splitlines()
-        if project <= 0 or project >= len(project_list):
-            await ctx.respond("Please use a number that can be linked to an existing project.", ephemeral=True)
-            return
-        removed_project = project_list.pop(project)[3:]
-        updated_msg = '\r\n'.join(project_list)
-        await msg.edit(updated_msg)
-        await ctx.respond(f'Successfully removed the project "{removed_project}" from the project list.',
-                          ephemeral=True)
-
 
 def setup(bot):
     bot.add_cog(MessageSystem(bot))
