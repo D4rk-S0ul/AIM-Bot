@@ -20,7 +20,7 @@ sea_role_id = 968954879492104322
 ear_role_id = None
 
 # Blocked Parent Category IDs
-blocked_parent_category_ids = [959525754297778216, 1023877748818706452]
+blocked_parent_category_ids = [959525754297778216, 1023877748818706452, 850422836585299989]
 
 # SEA Thread Directory Channel ID
 sea_thread_dir_channel_id = 959198464900747304
