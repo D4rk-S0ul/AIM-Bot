@@ -14,11 +14,15 @@ def get_server(ctx):
     return None
 
 
-def get_message(server):
+def get_message(server, ctx):
     if server == "SEA":
-        return sea_thread_dir_message_id
+        sea_projects_channel = ctx.guild.get_channel(sea_thread_dir_channel_id)
+        msg = await sea_projects_channel.fetch_message(sea_thread_dir_message_id)
+        return msg
     if server == "EAR":
-        return ear_thread_dir_message_id
+        ear_projects_channel = ctx.guild.get_channel(ear_thread_dir_channel_id)
+        msg = await ear_projects_channel.fetch_message(ear_thread_dir_message_id)
+        return msg
     return None
 
 
@@ -41,7 +45,7 @@ class ThreadDirectory(commands.Cog):
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
             return
-        msg = get_message(server)
+        msg = get_message(server, ctx)
         await msg.edit(f"{msg.content}\r\n"
                        f" - <#{thread.id}>")
         await ctx.respond(f'Successfully added the thread "{thread}" to the thread directory!', ephemeral=True)
@@ -53,7 +57,7 @@ class ThreadDirectory(commands.Cog):
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
             return
-        msg = get_message(server)
+        msg = get_message(server, ctx)
         project_list = msg.content.splitlines()
         updated_project_list = [project for project in project_list if f"<#{thread.id}>" not in project]
         updated_msg = '\r\n'.join(updated_project_list)
