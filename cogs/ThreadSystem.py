@@ -1,7 +1,7 @@
 import discord
 from discord import Option
-from discord.ext import commands
 from discord.commands import slash_command
+from discord.ext import commands
 
 from Config import rip_id, sea_id, ear_id, rip_role_id, sea_role_id, ear_role_id, blocked_parent_category_ids, \
     sea_thread_dir_channel_id, sea_thread_dir_message_id, ear_thread_dir_channel_id, ear_thread_dir_message_id

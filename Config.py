@@ -50,7 +50,7 @@ tags = {
     "ninjaBot": "Bot: <https://github.com/Ninjabrain1/Ninjabrain-Bot/releases/>\r\n"
                 "Tutorial: <https://youtu.be/Rx8i7e5lu7g>",
     "ninjabrainBot": "Bot: <https://github.com/Ninjabrain1/Ninjabrain-Bot/releases/>\r\n"
-                "Tutorial: <https://youtu.be/Rx8i7e5lu7g>",
+                     "Tutorial: <https://youtu.be/Rx8i7e5lu7g>",
     "pigPunch": "When you break a chest/gold block, piglins who are on tier 1 **don't** upgrade to tier 2. However, "
                 "when you punch a piglin, piglins **do** upgrade to tier 2, even if they're on tier 1. The "
                 "significance of this is, that piglins on tier 1 lose interest in you as soon as they lose LOS, "
@@ -61,8 +61,8 @@ tags = {
                   "Document: <https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit"
                   "?usp=sharing>",
     "preemptiveNav": "Video: <https://youtu.be/2dWq2wXy43M>\r\n"
-                  "Document: <https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit"
-                  "?usp=sharing>",
+                     "Document: <https://docs.google.com/document/d/1NEJ_BaQOqyDlt-h2GiUg4zXlqBHv8YfMVdGpQhDLD8U/edit"
+                     "?usp=sharing>",
     "rawalle": "<https://github.com/joe-ldp/Rawalle/releases/>",
     "resetTracker": "<https://github.com/Specnr/ResetTracker>",
     "rightShoulderAutoFunnel": "https://cdn.discordapp.com/attachments/751512715872436416/1006313251874820257"
@@ -83,5 +83,5 @@ tags = {
     "zero": "Video: <https://youtu.be/YTVctKuUWbI> \r\n"
             "Document: <https://docs.google.com/document/d/1Umtj4jo69FnHz68cgp9TCrfDS-14Ummhi6ZDEXg4XGY/view>",
     "zeroCycle": "Video: <https://youtu.be/YTVctKuUWbI> \r\n"
-            "Document: <https://docs.google.com/document/d/1Umtj4jo69FnHz68cgp9TCrfDS-14Ummhi6ZDEXg4XGY/view>"
+                 "Document: <https://docs.google.com/document/d/1Umtj4jo69FnHz68cgp9TCrfDS-14Ummhi6ZDEXg4XGY/view>"
 }

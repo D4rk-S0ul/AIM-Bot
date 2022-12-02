@@ -1,7 +1,7 @@
 import discord
 from discord import Option
-from discord.ext import commands
 from discord.commands import slash_command
+from discord.ext import commands
 
 
 class MiscTasks(commands.Cog):
