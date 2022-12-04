@@ -10,6 +10,9 @@ sea_id = 959162264081014814
 # EAR Server ID
 ear_id = 849650258786779196
 
+# Test Server ID
+test_id = 915333299981934692
+
 # RIP Role ID
 rip_role_id = 939633923305132182
 
@@ -19,20 +22,29 @@ sea_role_id = 968954879492104322
 # EAR Role ID
 ear_role_id = None
 
+# Test Role ID
+test_role_id = 941942976429559808
+
 # Blocked Parent Category IDs
 blocked_parent_category_ids = [959525754297778216, 1023877748818706452, 850422836585299989]
 
 # SEA Thread Directory Channel ID
 sea_thread_dir_channel_id = 959198464900747304
 
-# SEA Thread Directory Message ID
-sea_thread_dir_message_id = 1047979139069657250
-
 # EAR Thread Directory Channel ID
 ear_thread_dir_channel_id = 1041033326846296164
 
+# Test Thread Directory Channel ID
+test_thread_dir_channel_id = 922938837049683968
+
+# SEA Thread Directory Message ID
+sea_thread_dir_message_id = 1047979139069657250
+
 # EAR Thread Directory Message ID
 ear_thread_dir_message_id = 1047981765626712135
+
+# Test Thread Directory Message ID
+test_thread_dir_message_id = 1049014517792772206
 
 # Tags
 tags = {
