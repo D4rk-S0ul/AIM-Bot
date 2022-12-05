@@ -97,7 +97,6 @@ class ThreadDirectory(commands.Cog):
         for thread_id in thread_ids:
             if int(thread_id) == thread.id:
                 thread_ids.remove(thread_id)
-                print(f"removed thread with thread_id: {thread_id}")
                 break
         parent_ids = await get_parent_ids(thread_ids, ctx)
         msg_parts = await get_message_parts(parent_ids, thread_ids, ctx)
