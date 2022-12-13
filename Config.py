@@ -1,6 +1,22 @@
 # Bot Prefix:
 prefix = "!"
 
+# Server ID: Server Name
+servers = {
+    933075515881951292: "RIP",
+    959162264081014814: "SEA",
+    849650258786779196: "EAR",
+    915333299981934692: "TEST"
+}
+
+# Server Name: Ping Role ID
+ping_role_ids = {
+    "RIP": 939633923305132182,
+    "SEA": 939633923305132182,
+    "EAR": None,
+    "TEST": 941942976429559808
+}
+
 # RIP Server ID
 rip_id = 933075515881951292
 
@@ -12,18 +28,6 @@ ear_id = 849650258786779196
 
 # Test Server ID
 test_id = 915333299981934692
-
-# RIP Role ID
-rip_role_id = 939633923305132182
-
-# SEA Role ID
-sea_role_id = 968954879492104322
-
-# EAR Role ID
-ear_role_id = None
-
-# Test Role ID
-test_role_id = 941942976429559808
 
 # Blocked Parent Category IDs
 blocked_parent_category_ids = [959525754297778216, 1023877748818706452, 850422836585299989]
@@ -55,6 +59,7 @@ tags = {
     "dynamicRD": "<https://youtu.be/qfwyFWTY3ds>",
     "housing": "<https://youtu.be/B2SLviws-3c>",
     "kueeHousing": "<https://www.twitch.tv/pncakespoon/clip/CovertShyTruffleHumbleLife-GbXo9QqoNykzFNLI>",
+    "languageGuide": "<https://docs.google.com/document/d/1jSeciLoEgSwWWCdNk0dKignzxJskxJ5_zeCQmcdGmTg/edit?usp=sharing>",
     "laufCrafting": "<https://youtu.be/OHleXZuhYng>",
     "lavaPlacement": "https://cdn.discordapp.com/attachments/751512715872436416/1005946160386687108/LavaPlacememt.png",
     "manhuntHousing": "<https://youtu.be/A2tiwLB3DlY>",

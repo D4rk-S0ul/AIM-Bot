@@ -2,18 +2,9 @@ import discord
 from discord import Option, SlashCommandGroup
 from discord.ext import commands
 
+import Functions
 from Config import sea_id, ear_id, test_id, sea_thread_dir_channel_id, sea_thread_dir_message_id, \
     ear_thread_dir_channel_id, ear_thread_dir_message_id, test_thread_dir_channel_id, test_thread_dir_message_id
-
-
-def get_server(ctx):
-    if ctx.guild.id == sea_id:
-        return "SEA"
-    if ctx.guild.id == ear_id:
-        return "EAR"
-    if ctx.guild.id == test_id:
-        return "TEST"
-    return None
 
 
 async def get_message(server, ctx):
@@ -67,7 +58,7 @@ class ThreadDirectory(commands.Cog):
     @thread_dir_group.command(name="add", description="Adds a thread to the thread directory!")
     async def thread_add(self, ctx,
                           thread: Option(discord.Thread, "Please enter a thread!", required=True)):
-        server = get_server(ctx)
+        server = Functions.get_server(ctx)
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
             return
@@ -86,7 +77,7 @@ class ThreadDirectory(commands.Cog):
     @thread_dir_group.command(name="remove", description="Removes a thread from the thread directory!")
     async def thread_remove(self, ctx,
                              thread: Option(discord.Thread, "Please enter thread to be removed!", required=True)):
-        server = get_server(ctx)
+        server = Functions.get_server(ctx)
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
             return

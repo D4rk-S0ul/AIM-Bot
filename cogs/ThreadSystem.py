@@ -3,9 +3,9 @@ from discord import Option
 from discord.commands import slash_command
 from discord.ext import commands
 
-from Config import rip_id, sea_id, ear_id, rip_role_id, sea_role_id, ear_role_id, blocked_parent_category_ids, \
-    sea_thread_dir_channel_id, sea_thread_dir_message_id, ear_thread_dir_channel_id, ear_thread_dir_message_id, \
-    test_role_id, test_id, test_thread_dir_channel_id, test_thread_dir_message_id
+import Functions
+from Config import blocked_parent_category_ids, sea_thread_dir_channel_id, sea_thread_dir_message_id, \
+    ear_thread_dir_channel_id, ear_thread_dir_message_id, test_thread_dir_channel_id, test_thread_dir_message_id
 
 
 def is_allowed_thread(thread):
@@ -16,43 +16,19 @@ def is_allowed_thread(thread):
     return True
 
 
-def get_server(thread):
-    if thread.guild.id == rip_id:
-        return "RIP"
-    if thread.guild.id == sea_id:
-        return "SEA"
-    if thread.guild.id == ear_id:
-        return "EAR"
-    if thread.guild.id == test_id:
-        return "TEST"
-    return None
-
-
-def get_ping_role(server, thread):
-    if server == "RIP":
-        return thread.guild.get_role(rip_role_id)
-    if server == "SEA":
-        return thread.guild.get_role(sea_role_id)
-    if server == "EAR":
-        return thread.guild.get_role(ear_role_id)
-    if server == "TEST":
-        return thread.guild.get_role(test_role_id)
-    return None
-
-
 async def add_members(thread):
     failed = False
     msg = None
     await thread.join()
     await thread.edit(auto_archive_duration=10080)
 
-    server = get_server(thread)
+    server = Functions.get_server(thread)
     if server is None:
         failed = True
         msg = "Unknown server!"
         return failed, msg
 
-    ping_role = get_ping_role(server, thread)
+    ping_role = Functions.get_ping_role(server, thread)
     if ping_role is None:
         failed = True
         msg = "No ping role found!"
@@ -100,7 +76,7 @@ async def rip_tasks(thread):
 async def sea_tasks(thread):
     thread_dir_channel = thread.guild.get_channel(sea_thread_dir_channel_id)
     msg = await thread_dir_channel.fetch_message(sea_thread_dir_message_id)
-    if thread.id in msg.content:
+    if str(thread.id) in msg.content:
         return
     await add_thread(msg, thread)
 
@@ -108,7 +84,7 @@ async def sea_tasks(thread):
 async def ear_tasks(thread):
     ear_projects_channel = thread.guild.get_channel(ear_thread_dir_channel_id)
     msg = await ear_projects_channel.fetch_message(ear_thread_dir_message_id)
-    if thread.id in msg.content:
+    if str(thread.id) in msg.content:
         return
     await add_thread(msg, thread)
 
@@ -164,7 +140,7 @@ class ThreadSystem(commands.Cog):
 
     @slash_command(name="add_members", description="Adds the members to the thread specified!")
     async def addMembers(self, ctx,
-                         thread: Option(discord.Thread, "Discord Thread", required=True)):
+                         thread: Option(discord.Thread, "Discord Thread", required=False)):
         if thread is None:
             thread = ctx.channel
         if not is_allowed_thread(thread):
