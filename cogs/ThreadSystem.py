@@ -4,16 +4,6 @@ from discord.commands import slash_command
 from discord.ext import commands
 
 import Functions
-from Config import blocked_parent_category_ids, sea_thread_dir_channel_id, sea_thread_dir_message_id, \
-    ear_thread_dir_channel_id, ear_thread_dir_message_id, test_thread_dir_channel_id, test_thread_dir_message_id
-
-
-def is_allowed_thread(thread):
-    if not isinstance(thread, discord.Thread):
-        return False
-    if thread.parent.category_id in blocked_parent_category_ids:
-        return False
-    return True
 
 
 async def add_members(thread):
@@ -28,7 +18,7 @@ async def add_members(thread):
         msg = "Unknown server!"
         return failed, msg
 
-    ping_role = Functions.get_ping_role(server, thread)
+    ping_role = await Functions.get_ping_role(server, thread)
     if ping_role is None:
         failed = True
         msg = "No ping role found!"
@@ -57,72 +47,9 @@ async def add_members(thread):
     await ping_msg.delete()
     await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n")
 
-    if server == "RIP":
-        await rip_tasks(thread)
-    elif server == "SEA":
-        await sea_tasks(thread)
-    elif server == "EAR":
-        await ear_tasks(thread)
-    elif server == "TEST":
-        await test_tasks(thread)
+    await Functions.add_thread(server, thread)
 
     return failed, msg
-
-
-async def rip_tasks(thread):
-    pass
-
-
-async def sea_tasks(thread):
-    thread_dir_channel = thread.guild.get_channel(sea_thread_dir_channel_id)
-    msg = await thread_dir_channel.fetch_message(sea_thread_dir_message_id)
-    if str(thread.id) in msg.content:
-        return
-    await add_thread(msg, thread)
-
-
-async def ear_tasks(thread):
-    ear_projects_channel = thread.guild.get_channel(ear_thread_dir_channel_id)
-    msg = await ear_projects_channel.fetch_message(ear_thread_dir_message_id)
-    if str(thread.id) in msg.content:
-        return
-    await add_thread(msg, thread)
-
-async def test_tasks(thread):
-    thread_dir_channel = thread.guild.get_channel(test_thread_dir_channel_id)
-    msg = await thread_dir_channel.fetch_message(test_thread_dir_message_id)
-    if str(thread.id) in msg.content:
-        return
-    await add_thread(msg, thread)
-
-async def add_thread(msg, thread):
-    msg_content = msg.content.splitlines()
-    thread_ids = [line[5:-1] for line in msg_content if line.startswith(" - <#")]
-    thread_ids.append(thread.id)
-    parent_ids = await get_parent_ids(thread_ids, thread)
-    msg_parts = await get_message_parts(parent_ids, thread_ids, thread)
-    updated_msg = '\r\n'.join(msg_parts)
-    await msg.edit(updated_msg)
-
-
-async def get_parent_ids(thread_ids, thread_ctx):
-    parent_ids = []
-    for thread_id in thread_ids:
-        thread = await thread_ctx.guild.fetch_channel(thread_id)
-        if thread.parent_id not in parent_ids:
-            parent_ids.append(thread.parent.id)
-    return parent_ids
-
-
-async def get_message_parts(parent_ids, thread_ids, thread_ctx):
-    msg_parts = ["**Thread Directory:**"]
-    for parent_id in parent_ids:
-        msg_parts.append(f"\r\n<#{parent_id}>:")
-        for thread_id in thread_ids:
-            thread = await thread_ctx.guild.fetch_channel(thread_id)
-            if thread.parent.id == parent_id:
-                msg_parts.append(f" - <#{thread_id}>")
-    return msg_parts
 
 
 class ThreadSystem(commands.Cog):
@@ -133,7 +60,7 @@ class ThreadSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread):
-        if not is_allowed_thread(thread):
+        if not Functions.is_allowed_thread(thread):
             return
 
         await add_members(thread)
@@ -143,7 +70,7 @@ class ThreadSystem(commands.Cog):
                          thread: Option(discord.Thread, "Discord Thread", required=False)):
         if thread is None:
             thread = ctx.channel
-        if not is_allowed_thread(thread):
+        if not Functions.is_allowed_thread(thread):
             await ctx.respond("Not allowed to execute this command in the specified thread.", ephemeral=True)
             return
         await ctx.defer(ephemeral=True)

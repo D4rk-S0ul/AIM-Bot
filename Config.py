@@ -17,38 +17,16 @@ ping_role_ids = {
     "TEST": 941942976429559808
 }
 
-# RIP Server ID
-rip_id = 933075515881951292
-
-# SEA Server ID
-sea_id = 959162264081014814
-
-# EAR Server ID
-ear_id = 849650258786779196
-
-# Test Server ID
-test_id = 915333299981934692
+# "Server Name": [Thread Dir Channel ID, Thread Dir Message ID]
+thread_dirs = {
+    "RIP": None,
+    "SEA": [959198464900747304, 1047979139069657250],
+    "EAR": [1041033326846296164, 1047981765626712135],
+    "TEST": [922938837049683968, 1049014517792772206]
+}
 
 # Blocked Parent Category IDs
 blocked_parent_category_ids = [959525754297778216, 1023877748818706452, 850422836585299989]
-
-# SEA Thread Directory Channel ID
-sea_thread_dir_channel_id = 959198464900747304
-
-# EAR Thread Directory Channel ID
-ear_thread_dir_channel_id = 1041033326846296164
-
-# Test Thread Directory Channel ID
-test_thread_dir_channel_id = 922938837049683968
-
-# SEA Thread Directory Message ID
-sea_thread_dir_message_id = 1047979139069657250
-
-# EAR Thread Directory Message ID
-ear_thread_dir_message_id = 1047981765626712135
-
-# Test Thread Directory Message ID
-test_thread_dir_message_id = 1049014517792772206
 
 # Tags
 tags = {
