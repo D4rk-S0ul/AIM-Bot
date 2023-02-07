@@ -1,3 +1,5 @@
+import logging
+
 from discord.ext import commands
 
 
@@ -8,7 +10,7 @@ class BotStart(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"\r\n\r\n{self.client.user.name} is online now! BotID: {self.client.user.id}\r\n\r\n")
+        logging.info(f"{self.client.user.name} is online now! BotID: {self.client.user.id}")
 
 
 def setup(bot):
