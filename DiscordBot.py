@@ -28,5 +28,5 @@ for filename in os.listdir('cogs'):
         bot.load_extension(f'cogs.{filename[:-3]}')
         logging.debug(f"Loaded {filename} successfully!")
 
-token = os.environ.get("TEST_TOKEN")
+token = os.environ.get("AIM_TOKEN")
 bot.run(token)
