@@ -15,7 +15,8 @@ class CommandErrorHandler(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_application_command_error(self, ctx: discord.commands.context.ApplicationContext, error: commands.CommandError):
+    async def on_application_command_error(self, ctx: discord.commands.context.ApplicationContext,
+                                           error: commands.CommandError):
         """The event triggered when an error is raised while invoking a command.
 
         Parameters
