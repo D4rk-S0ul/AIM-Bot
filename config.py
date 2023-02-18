@@ -1,5 +1,8 @@
-# Bot Prefix:
-prefix = "!"
+import discord
+
+intents = discord.Intents.default()
+intents.members = True
+intents.message_content = True
 
 # Server ID: Server Name
 servers = {
@@ -30,14 +33,16 @@ blocked_parent_category_ids = [959525754297778216, 1023877748818706452, 85042283
 
 # Tags
 tags = {
-    "bastionRouteSpreadsheet": "<https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0-6YhztMqa_wZ8W0/edit?usp=sharing>",
+    "bastionRouteSpreadsheet": "<https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0-6YhztMqa_wZ8W0"
+                               "/edit?usp=sharing>",
     "blazeFight": "<https://youtu.be/dUMclLehKXE>",
     "bridge": "<https://youtu.be/uvvhKX_KnT8>",
     "cobbleSkip": "<https://youtu.be/HLrsRaij1x8>",
     "dynamicRD": "<https://youtu.be/qfwyFWTY3ds>",
     "housing": "<https://youtu.be/B2SLviws-3c>",
     "kueeHousing": "<https://www.twitch.tv/pncakespoon/clip/CovertShyTruffleHumbleLife-GbXo9QqoNykzFNLI>",
-    "languageGuide": "<https://docs.google.com/document/d/1jSeciLoEgSwWWCdNk0dKignzxJskxJ5_zeCQmcdGmTg/edit?usp=sharing>",
+    "languageGuide": "<https://docs.google.com/document/d/1jSeciLoEgSwWWCdNk0dKignzxJskxJ5_zeCQmcdGmTg/edit?usp"
+                     "=sharing>",
     "laufCrafting": "<https://youtu.be/OHleXZuhYng>",
     "lavaPlacement": "https://cdn.discordapp.com/attachments/751512715872436416/1005946160386687108/LavaPlacememt.png",
     "manhuntHousing": "<https://youtu.be/A2tiwLB3DlY>",

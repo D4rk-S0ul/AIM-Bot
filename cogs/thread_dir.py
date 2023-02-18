@@ -2,8 +2,8 @@ import discord
 from discord import Option, SlashCommandGroup
 from discord.ext import commands
 
-import Functions
-from Config import servers, thread_dirs
+import functions
+from config import servers, thread_dirs
 
 
 class ThreadDirectory(commands.Cog):

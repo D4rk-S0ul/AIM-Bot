@@ -1,6 +1,6 @@
 import discord
 
-from Config import servers, ping_role_ids, thread_dirs, blocked_parent_category_ids
+from config import servers, ping_role_ids, thread_dirs, blocked_parent_category_ids
 
 
 def get_server(ctx_or_thread):

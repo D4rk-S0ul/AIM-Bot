@@ -3,7 +3,7 @@ from discord import Option
 from discord.commands import slash_command
 from discord.ext import commands
 
-import Functions
+import functions
 
 
 async def add_members(thread):
@@ -12,13 +12,13 @@ async def add_members(thread):
     await thread.join()
     await thread.edit(auto_archive_duration=10080)
 
-    server = Functions.get_server(thread)
+    server = functions.get_server(thread)
     if server is None:
         failed = True
         msg = "Unknown server!"
         return failed, msg
 
-    ping_role = await Functions.get_ping_role(server, thread)
+    ping_role = await functions.get_ping_role(server, thread)
     if ping_role is None:
         failed = True
         msg = "No ping role found!"
@@ -47,7 +47,7 @@ async def add_members(thread):
     await ping_msg.delete()
     await thread.send("Successfully added people to the thread and set auto-archive duration to the max!\r\n")
 
-    await Functions.add_thread(server, thread)
+    await functions.add_thread(server, thread)
 
     return failed, msg
 
@@ -60,7 +60,7 @@ class ThreadSystem(commands.Cog):
 
     @commands.Cog.listener()
     async def on_thread_create(self, thread):
-        if not Functions.is_allowed_thread(thread):
+        if not functions.is_allowed_thread(thread):
             return
 
         await add_members(thread)
@@ -70,7 +70,7 @@ class ThreadSystem(commands.Cog):
                          thread: Option(discord.Thread, "Discord Thread", required=False)):
         if thread is None:
             thread = ctx.channel
-        if not Functions.is_allowed_thread(thread):
+        if not functions.is_allowed_thread(thread):
             await ctx.respond("Not allowed to execute this command in the specified thread.", ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
