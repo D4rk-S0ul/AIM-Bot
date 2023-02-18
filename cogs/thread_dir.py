@@ -21,17 +21,17 @@ class ThreadDirectory(commands.Cog):
     @thread_dir_group.command(name="add", description="Adds a thread to the thread directory!")
     async def thread_add(self, ctx,
                          thread: Option(discord.Thread, "Please enter a thread!", required=True)):
-        server = Functions.get_server(ctx)
+        server = functions.get_server(ctx)
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
-        msg = await Functions.get_thread_dir_msg(server, ctx)
+        msg = await functions.get_thread_dir_msg(server, ctx)
         msg_content = msg.content.splitlines()
         thread_ids = [line[5:-1] for line in msg_content if line.startswith(" - <#")]
         thread_ids.append(thread.id)
-        parent_ids = await Functions.get_parent_ids(thread_ids, ctx)
-        msg_parts = await Functions.get_message_parts(parent_ids, thread_ids, ctx)
+        parent_ids = await functions.get_parent_ids(thread_ids, ctx)
+        msg_parts = await functions.get_message_parts(parent_ids, thread_ids, ctx)
         updated_msg = '\r\n'.join(msg_parts)
         await msg.edit(updated_msg)
         await ctx.followup.send(f'Successfully added the thread <#{thread.id}> to the thread directory!',
@@ -40,20 +40,20 @@ class ThreadDirectory(commands.Cog):
     @thread_dir_group.command(name="remove", description="Removes a thread from the thread directory!")
     async def thread_remove(self, ctx,
                             thread: Option(discord.Thread, "Please enter thread to be removed!", required=True)):
-        server = Functions.get_server(ctx)
+        server = functions.get_server(ctx)
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
-        msg = await Functions.get_thread_dir_msg(server, ctx)
+        msg = await functions.get_thread_dir_msg(server, ctx)
         msg_content = msg.content.splitlines()
         thread_ids = [line[5:-1] for line in msg_content if line.startswith(" - <#")]
         for thread_id in thread_ids:
             if int(thread_id) == thread.id:
                 thread_ids.remove(thread_id)
                 break
-        parent_ids = await Functions.get_parent_ids(thread_ids, ctx)
-        msg_parts = await Functions.get_message_parts(parent_ids, thread_ids, ctx)
+        parent_ids = await functions.get_parent_ids(thread_ids, ctx)
+        msg_parts = await functions.get_message_parts(parent_ids, thread_ids, ctx)
         updated_msg = '\r\n'.join(msg_parts)
         await msg.edit(updated_msg)
         await ctx.followup.send(f'Successfully removed the thread <#{thread.id}> from the thread directory!',

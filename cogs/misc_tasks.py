@@ -1,6 +1,4 @@
 import discord
-from discord import Option
-from discord.commands import slash_command
 from discord.ext import commands
 
 
@@ -9,10 +7,15 @@ class MiscTasks(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    @slash_command(description="Pins the message specified!")
+    @commands.slash_command(description="Pins the message specified!")
     async def pin(self, ctx,
-                  message: Option(discord.Message, "Please enter the message link or ID!", required=True)):
-        await message.pin()
+                  msg_id: discord.Option(str, "Please enter the message ID!", required=True),
+                  channel: discord.Option(discord.TextChannel, "Please enter the channel!", required=False)
+                  ):
+        if channel is None:
+            channel = ctx.channel
+        msg = await channel.fetch_message(int(msg_id))
+        await msg.pin()
         await ctx.respond("Pinned message successfully!", ephemeral=True)
 
 

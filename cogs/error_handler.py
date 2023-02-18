@@ -49,9 +49,9 @@ class CommandErrorHandler(commands.Cog):
 
         # Anything in ignored will return and prevent anything happening
         if isinstance(error, ignored):
-            msg = f"""Ignoring error
-            Error Type: {type(error)}"""
-            logger.debug("Error ignored!")
+            msg = f"Ignored error: {error}"
+            print(msg)
+            logger.debug(msg)
             return
 
         # Disabled command error

@@ -9,7 +9,7 @@ import config
 
 # Logging setup
 logger = logging.getLogger("discord_bot")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 file_handler = logging.FileHandler("log.log", mode="w")
 formatter = logging.Formatter("%(asctime)s - %(levelname)s: %(message)s", datefmt="%d.%m.%Y: %I:%M:%S %p")
@@ -33,7 +33,7 @@ for filename in os.listdir("cogs"):
 async def on_ready():
     msg = f"""{bot.user.name} is online now!
     BotID: {bot.user.id}
-    Ping: {round(bot.latency*1000)} ms
+    Ping: {round(bot.latency * 1000)} ms
     Python Version: {platform.python_version()}
     PyCord API version: {discord.__version__}"""
     print(f"\n\n{msg}\n\n")

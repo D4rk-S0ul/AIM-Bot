@@ -1,6 +1,10 @@
+import logging
+
 import discord
-from discord import Option, SlashCommandGroup
 from discord.ext import commands
+
+# Getting logger
+logger = logging.getLogger("discord_bot")
 
 
 class MessageSystem(commands.Cog):
@@ -8,67 +12,124 @@ class MessageSystem(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    message_group = SlashCommandGroup(
+    message_group = discord.SlashCommandGroup(
         name="message",
         description="Group of send/edit message commands!",
         default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @message_group.command(name="send", description="Sends a message in the channel specified!")
-    async def message_send(self, ctx,
-                           content: Option(str, "Please enter the content of your message!", required=True),
-                           channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+    async def message_send(self, ctx: discord.commands.context.ApplicationContext,
+                           channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
+                                                   required=False)
+                           ):
         if channel is None:
             channel = ctx.channel
-        await channel.send(content)
-        await ctx.respond(f"Successfully send the message in <#{channel.id}>!", ephemeral=True)
+        logger.debug(f"Sending message in #{channel}...")
+        modal = MessageModal(channel, is_new_message=True, title="Send a Message:")
+        await ctx.send_modal(modal)
+        logger.debug(f"Sent message modal to {ctx.user}!")
 
     @message_group.command(name="edit", description="Edits the message specified!")
-    async def message_edit(self, ctx,
-                           msg: Option(discord.Message, "Please enter the message link or ID!", required=True),
-                           content: Option(str, "Please enter the new content of your message!", required=True)):
+    async def message_edit(self, ctx: discord.commands.context.ApplicationContext,
+                           msg_id: discord.Option(str, "Please enter the message ID!", required=True),
+                           channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
+                                                   required=False)
+                           ):
+        if channel is None:
+            channel = ctx.channel
+        msg = await channel.fetch_message(int(msg_id))
         if msg.author != self.client.user:
-            await ctx.respond("Can't edit this message!")
+            await ctx.respond("Can't edit this message!", ephemeral=True)
+            logger.error(f"Message not sent by bot! (Message ID: {msg.id})")
             return
-        await msg.edit(content)
-        await ctx.respond("Successfully edited the message!", ephemeral=True)
+        logger.debug(f"Editing message in #{msg.channel}...")
+        modal = MessageModal(msg, is_new_message=False, title="Edit a Message:")
+        await ctx.send_modal(modal)
+        logger.debug(f"Sent message modal to {ctx.user}!")
 
-    embed_group = SlashCommandGroup(
+    embed_group = discord.SlashCommandGroup(
         name="embed",
         description="Group of send/edit embed commands!",
         default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @embed_group.command(name="send", description="Creates an embed!")
-    async def embed_send(self, ctx,
-                         channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+    async def embed_send(self, ctx: discord.commands.context.ApplicationContext,
+                         channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
+                                                 required=False)):
         if channel is None:
             channel = ctx.channel
-        modal = EmbedModal(channel, title="Create an Embed:")
+        logger.debug(f"Sending embed in #{channel}...")
+        modal = EmbedModal(channel, is_new_embed=True, title="Create an Embed:")
         await ctx.send_modal(modal)
+        logger.debug(f"Sent embed modal to {ctx.user}!")
 
-    archive_group = SlashCommandGroup(
-        name="archive",
-        description="Group of send/edit message commands following the archive format",
-        default_member_permissions=discord.Permissions(administrator=True)
-    )
-
-    @archive_group.command(name="send", description="Sends a message using the archive format!")
-    async def archive_send(self, ctx,
-                           channel: Option(discord.TextChannel, "Please enter the channel!", required=False)):
+    @embed_group.command(name="edit", description="Edits the embed specified!")
+    async def embed_edit(self, ctx: discord.commands.context.ApplicationContext,
+                         msg_id: discord.Option(str, "Please enter the message ID!", required=True),
+                         channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)
+                         ):
         if channel is None:
             channel = ctx.channel
-        modal = ArchiveModal(channel, title="Archive a resource:")
+        msg = await channel.fetch_message(int(msg_id))
+        if msg.author != self.client.user:
+            await ctx.respond("Can't edit this embed!", ephemeral=True)
+            logger.error(f"Embed not sent by bot! (Message ID: {msg.id})")
+            return
+        logger.debug(f"Editing embed in #{msg.channel}...")
+        modal = EmbedModal(msg, is_new_embed=False, title="Edit a Message:")
         await ctx.send_modal(modal)
+        logger.debug(f"Sent embed modal to {ctx.user}!")
 
 
 def setup(bot):
     bot.add_cog(MessageSystem(bot))
 
 
+class MessageModal(discord.ui.Modal):
+    def __init__(self, channel_or_message, *args, is_new_message, **kwargs):
+        self.is_new_message = is_new_message
+        if self.is_new_message:
+            self.channel = channel_or_message
+        else:
+            self.message = channel_or_message
+            self.channel = self.message.channel
+
+        super().__init__(
+            discord.ui.InputText(
+                label="Message Content:",
+                placeholder="Please enter the content of your message here...",
+                style=discord.InputTextStyle.long,
+                max_length=2000
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        content = self.children[0].value
+        # Send message
+        if self.is_new_message:
+            await self.channel.send(content)
+            await interaction.response.send_message("Sent message successfully!", ephemeral=True)
+            logger.debug(f"Sent message in #{self.channel}!")
+            return
+        # Edit message
+        await self.message.edit(content=content)
+        await interaction.response.send_message("Edited message successfully!", ephemeral=True)
+        logger.debug(f"Edited message in #{self.channel}!")
+
+
 class EmbedModal(discord.ui.Modal):
-    def __init__(self, channel, *args, **kwargs):
-        self.channel = channel
+    def __init__(self, channel_or_message, *args, is_new_embed, **kwargs):
+        self.is_new_embed = is_new_embed
+        if self.is_new_embed:
+            self.channel = channel_or_message
+        else:
+            self.message = channel_or_message
+            self.channel = self.message.channel
+
         super().__init__(
             discord.ui.InputText(
                 label="Embed Title:",
@@ -76,24 +137,10 @@ class EmbedModal(discord.ui.Modal):
                 max_length=256
             ),
             discord.ui.InputText(
-                label="Embed Description:",
-                placeholder="Please enter the description here...",
+                label="Embed Content:",
+                placeholder="Please enter the content here...",
                 style=discord.InputTextStyle.long,
                 max_length=4000
-            ),
-            discord.ui.InputText(
-                label="Field Name:",
-                placeholder="Please enter the name of the field here... (Not mandatory)",
-                max_length=256,
-                required=False
-            ),
-            discord.ui.InputText(
-                label="Field Content:",
-                placeholder="Please enter the content of the field here...\n"
-                            "(Not mandatory)",
-                required=False,
-                style=discord.InputTextStyle.long,
-                max_length=1024
             ),
             discord.ui.InputText(
                 label="Image URL",
@@ -104,81 +151,26 @@ class EmbedModal(discord.ui.Modal):
             **kwargs
         )
 
-    async def callback(self, interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         title = self.children[0].value
-        description = self.children[1].value
-        field_name = self.children[2].value
-        field_content = self.children[3].value
-        image_url = self.children[4].value
+        content = self.children[1].value
+        image_url = self.children[2].value
         embed = discord.Embed(
             title=title,
-            description=description,
+            description=content,
             color=interaction.guild.me.color,
         )
         embed.set_image(
             url=image_url
         )
-        if len(field_name) != 0:
-            if len(field_content) != 0:
-                embed.add_field(
-                    name=field_name,
-                    value=field_content
-                )
-        if len(embed) > 6000:
-            await interaction.response.send_message("Embed could not be sent because the number of characters "
-                                                    f"exceeded the character limit of 6000 by {len(embed) - 6000} "
-                                                    "characters!", ephemeral=True)
+        # Send embed
+        if self.is_new_embed:
+            await self.channel.send(embed=embed)
+            await interaction.response.send_message(f"Successfully send the embed in <#{self.channel.id}>!",
+                                                    ephemeral=True)
+            logger.debug(f"Sent embed in #{self.channel}!")
             return
-        await self.channel.send(embed=embed)
-        await interaction.response.send_message(f"Successfully send the embed in <#{self.channel.id}>!", ephemeral=True)
-
-
-class ArchiveModal(discord.ui.Modal):
-    def __init__(self, channel, *args, **kwargs):
-        self.channel = channel
-        super().__init__(
-            discord.ui.InputText(
-                label="Title:",
-                placeholder="Please enter the title here...",
-                max_length=4000
-            ),
-            discord.ui.InputText(
-                label="Contributors:",
-                placeholder="Please enter the contributors here...",
-                style=discord.InputTextStyle.long,
-                max_length=4000
-            ),
-            discord.ui.InputText(
-                label="Description:",
-                placeholder="Please enter the description here...",
-                style=discord.InputTextStyle.long,
-                max_length=4000
-            ),
-            discord.ui.InputText(
-                label="Resource:",
-                placeholder="Please enter the resource here...",
-                style=discord.InputTextStyle.long,
-                max_length=4000
-            ),
-            *args,
-            **kwargs
-        )
-
-    async def callback(self, interaction):
-        title = self.children[0].value
-        contributors = self.children[1].value
-        description = self.children[2].value
-        resource = self.children[3].value
-        archive = (f"**{title}:**\r\n"
-                   f"`Contributor(s):` {contributors}\r\n"
-                   f"`Brief Description:` {description}\r\n"
-                   "\r\n"
-                   f"{resource}")
-        if len(archive) > 2000:
-            await interaction.response.send_message("Archive message could not be sent because the number of characters"
-                                                    f" exceeded the character limit of 6000 by {len(archive) - 2000}"
-                                                    "characters!", ephemeral=True)
-            return
-        await self.channel.send(archive)
-        await interaction.response.send_message(f"Successfully send the archive in <#{self.channel.id}>!",
-                                                ephemeral=True)
+        # Edit embed
+        await self.message.edit(embed=embed)
+        await interaction.response.send_message("Edited embed successfully!", ephemeral=True)
+        logger.debug(f"Edited embed in #{self.channel}!")
