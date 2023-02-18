@@ -44,7 +44,7 @@ class MessageSystem(commands.Cog):
             logger.error(f"Message not sent by bot! (Message ID: {msg.id})")
             return
         logger.debug(f"Editing message in #{msg.channel}...")
-        modal = MessageModal(msg, is_new_message=False, title="Edit a Message:")
+        modal = MessageModal(msg, is_new_message=False, initial_content=msg.content, title="Edit a Message:")
         await ctx.send_modal(modal)
         logger.debug(f"Sent message modal to {ctx.user}!")
 
@@ -78,7 +78,9 @@ class MessageSystem(commands.Cog):
             logger.error(f"Embed not sent by bot! (Message ID: {msg.id})")
             return
         logger.debug(f"Editing embed in #{msg.channel}...")
-        modal = EmbedModal(msg, is_new_embed=False, title="Edit a Message:")
+        modal = EmbedModal(msg, is_new_embed=False, initial_title=msg.embeds[0].title,
+                           initial_content=msg.embeds[0].description, initial_image_url=msg.embeds[0].image.url,
+                           title="Edit a Message:")
         await ctx.send_modal(modal)
         logger.debug(f"Sent embed modal to {ctx.user}!")
 
@@ -88,20 +90,22 @@ def setup(bot):
 
 
 class MessageModal(discord.ui.Modal):
-    def __init__(self, channel_or_message, *args, is_new_message, **kwargs):
+    def __init__(self, channel_or_message, *args, is_new_message: bool, initial_content=None, **kwargs):
         self.is_new_message = is_new_message
         if self.is_new_message:
             self.channel = channel_or_message
         else:
             self.message = channel_or_message
             self.channel = self.message.channel
+        self.initial_content = initial_content
 
         super().__init__(
             discord.ui.InputText(
                 label="Message Content:",
                 placeholder="Please enter the content of your message here...",
                 style=discord.InputTextStyle.long,
-                max_length=2000
+                max_length=2000,
+                value=self.initial_content
             ),
             *args,
             **kwargs
@@ -122,30 +126,39 @@ class MessageModal(discord.ui.Modal):
 
 
 class EmbedModal(discord.ui.Modal):
-    def __init__(self, channel_or_message, *args, is_new_embed, **kwargs):
+    def __init__(self, channel_or_message, *args, is_new_embed: bool,
+                 initial_title=None, initial_content=None, initial_image_url=None, **kwargs):
         self.is_new_embed = is_new_embed
         if self.is_new_embed:
             self.channel = channel_or_message
         else:
             self.message = channel_or_message
             self.channel = self.message.channel
+        self.initial_title = initial_title
+        self.initial_content = initial_content
+        self.initial_image_url = initial_image_url
 
         super().__init__(
             discord.ui.InputText(
                 label="Embed Title:",
                 placeholder="Please enter the title here...",
-                max_length=256
+                max_length=256,
+                value=self.initial_title
             ),
             discord.ui.InputText(
                 label="Embed Content:",
                 placeholder="Please enter the content here...",
                 style=discord.InputTextStyle.long,
-                max_length=4000
+                max_length=4000,
+                value=self.initial_content
             ),
             discord.ui.InputText(
                 label="Image URL",
                 placeholder="Please enter the URL of the image... (Not mandatory)",
-                required=False
+                style=discord.InputTextStyle.long,
+                required=False,
+                max_length=2048,
+                value=self.initial_image_url
             ),
             *args,
             **kwargs
