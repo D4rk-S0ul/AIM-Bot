@@ -1,13 +1,15 @@
 import logging
 import os
+import platform
 
+import discord
 from discord.ext import commands
 
 import config
 
 # Logging setup
 logger = logging.getLogger("discord_bot")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 file_handler = logging.FileHandler("log.log", mode="w")
 formatter = logging.Formatter("%(asctime)s - %(levelname)s: %(message)s", datefmt="%d.%m.%Y: %I:%M:%S %p")
@@ -29,7 +31,11 @@ for filename in os.listdir("cogs"):
 # On ready
 @bot.event
 async def on_ready():
-    msg = f"{bot.user.name} is online now! BotID: {bot.user.id}"
+    msg = f"""{bot.user.name} is online now!
+    BotID: {bot.user.id}
+    Ping: {round(bot.latency*1000)} ms
+    Python Version: {platform.python_version()}
+    PyCord API version: {discord.__version__}"""
     print(f"\n\n{msg}\n\n")
     logger.info(msg)
 
