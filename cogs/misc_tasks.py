@@ -37,8 +37,8 @@ class MiscTasks(commands.Cog):
     @commands.slash_command(description="Sends a tag!")
     async def tag(self, ctx: discord.commands.context.ApplicationContext,
                   tag: discord.Option(str, "Please enter the tag name!",
-                                           autocomplete=discord.utils.basic_autocomplete(config.tags.keys()),
-                                           required=True)):
+                                      autocomplete=discord.utils.basic_autocomplete(config.tags.keys()),
+                                      required=True)):
         logger.debug(f"Sending tag {tag}...")
         if tag not in config.tags.keys():
             await ctx.respond("Tag not found!", ephemeral=True)
