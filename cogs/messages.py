@@ -41,7 +41,7 @@ class MessageSystem(commands.Cog):
         msg = await channel.fetch_message(int(msg_id))
         if msg.author != self.client.user:
             await ctx.respond("Can't edit this message!", ephemeral=True)
-            logger.error(f"Message not sent by bot! (Message ID: {msg.id})")
+            logger.warning(f"Message not sent by bot! (Message ID: {msg.id})")
             return
         logger.debug(f"Editing message in #{msg.channel}...")
         modal = MessageModal(msg, is_new_message=False, initial_content=msg.content, title="Edit a Message:")
@@ -75,7 +75,7 @@ class MessageSystem(commands.Cog):
         msg = await channel.fetch_message(int(msg_id))
         if msg.author != self.client.user:
             await ctx.respond("Can't edit this embed!", ephemeral=True)
-            logger.error(f"Embed not sent by bot! (Message ID: {msg.id})")
+            logger.warning(f"Embed not sent by bot! (Message ID: {msg.id})")
             return
         logger.debug(f"Editing embed in #{msg.channel}...")
         modal = EmbedModal(msg, is_new_embed=False, initial_title=msg.embeds[0].title,

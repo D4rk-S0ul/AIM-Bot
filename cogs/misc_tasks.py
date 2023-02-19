@@ -42,7 +42,7 @@ class MiscTasks(commands.Cog):
         logger.debug(f"Sending tag {tag}...")
         if tag not in config.tags.keys():
             await ctx.respond("Tag not found!", ephemeral=True)
-            logger.error(f"Tag not found! (Tag name: {tag})")
+            logger.warning(f"Tag not found! (Tag name: {tag})")
             return
         await ctx.respond(config.tags[tag])
         logger.debug(f"Sent tag {tag}!")

@@ -57,7 +57,7 @@ class CommandErrorHandler(commands.Cog):
         # Disabled command error
         if isinstance(error, commands.DisabledCommand):
             await ctx.send(f'{ctx.command} has been disabled.')
-            logger.error(f'{ctx.command} has been disabled.')
+            logger.warning(f'{ctx.command} has been disabled.')
 
         # No private message error
         elif isinstance(error, commands.NoPrivateMessage):
@@ -65,20 +65,14 @@ class CommandErrorHandler(commands.Cog):
                 await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
             except discord.HTTPException:
                 pass
-            logger.error(f"{ctx.command} can not be used in Private Messages.")
+            logger.warning(f"{ctx.command} can not be used in Private Messages.")
 
-        # Value error (edit msg/embed)
-        elif isinstance(error, ValueError):
+        # Message not found error
+        elif isinstance(error, (ValueError, discord.errors.ApplicationCommandInvokeError)):
             if str(ctx.command).endswith("edit") or str(ctx.command) == "pin":
                 msg = "Message not found! (Invalid Message ID)"
                 await ctx.respond(msg, ephemeral=True)
-                logger.error(msg)
-
-        # Application Command Invoke Error (Message not found)
-        elif isinstance(error, discord.errors.ApplicationCommandInvokeError):
-            msg = "Message not found! (Invalid Message ID)"
-            await ctx.respond(msg, ephemeral=True)
-            logger.error(msg)
+                logger.warning(msg)
 
         # Other Errors
         else:
