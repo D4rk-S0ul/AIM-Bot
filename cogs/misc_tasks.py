@@ -3,8 +3,11 @@ import logging
 import discord
 from discord.ext import commands
 
+import config
+
 # Getting logger
 logger = logging.getLogger("discord_bot")
+
 
 class MiscTasks(commands.Cog):
 
@@ -29,6 +32,20 @@ class MiscTasks(commands.Cog):
         logger.debug(f"Sending pong...")
         await ctx.respond(f"Ping: {round(self.client.latency * 1000)}ms", ephemeral=True)
         logger.debug(f"Sent pong! (Ping: {round(self.client.latency * 1000)}ms)")
+
+    # Tag system slash command
+    @commands.slash_command(description="Sends a tag!")
+    async def tag(self, ctx: discord.commands.context.ApplicationContext,
+                  tag: discord.Option(str, "Please enter the tag name!",
+                                           autocomplete=discord.utils.basic_autocomplete(config.tags.keys()),
+                                           required=True)):
+        logger.debug(f"Sending tag {tag}...")
+        if tag not in config.tags.keys():
+            await ctx.respond("Tag not found!", ephemeral=True)
+            logger.error(f"Tag not found! (Tag name: {tag})")
+            return
+        await ctx.respond(config.tags[tag])
+        logger.debug(f"Sent tag {tag}!")
 
 
 def setup(bot):
