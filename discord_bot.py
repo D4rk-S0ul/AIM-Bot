@@ -31,6 +31,7 @@ for filename in os.listdir("cogs"):
 # On ready
 @bot.event
 async def on_ready():
+    """Event triggered when the bot is ready. It prints basic information about the bot."""
     msg = f"""{bot.user.name} is online now!
     BotID: {bot.user.id}
     Ping: {round(bot.latency * 1000)} ms

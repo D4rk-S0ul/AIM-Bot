@@ -10,22 +10,28 @@ logger = logging.getLogger("discord_bot")
 
 
 class CommandErrorHandler(commands.Cog):
+    """Cog for handling errors in commands."""
 
-    def __init__(self, bot):
-        self.bot = bot
-
-    @commands.Cog.listener()
-    async def on_application_command_error(self, ctx: discord.commands.context.ApplicationContext,
-                                           error: commands.CommandError):
-        """The event triggered when an error is raised while invoking a command.
+    def __init__(self, bot: commands.Bot):
+        """Initializes the cog.
 
         Parameters
         ------------
-        ctx: commands.Context
+        bot: commands.Bot
+            The bot instance."""
+        self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_application_command_error(self, ctx: discord.ApplicationContext,
+                                           error: commands.CommandError):
+        """Event triggered when an error is raised while invoking a command.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         error: commands.CommandError
-            The Exception raised.
-        """
+            The Exception raised."""
 
         logger.debug(f"Error event triggered ({ctx.command})!")
 
@@ -86,4 +92,5 @@ class CommandErrorHandler(commands.Cog):
 
 
 def setup(bot):
+    """Function that is called when the cog is loaded. Adds the cog to the bot."""
     bot.add_cog(CommandErrorHandler(bot))
