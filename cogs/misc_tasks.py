@@ -93,6 +93,8 @@ class MiscTasks(commands.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to add a 🔔 to."""
+        if thread is None:
+            thread = ctx.channel
         logger.debug(f"Adding 🔔 to #{thread}...")
         await thread.edit(name=f"🔔{thread.name}")
         await ctx.respond(f"Added 🔔 to thread <#{thread.id}> successfully!", ephemeral=True)
