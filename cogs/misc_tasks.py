@@ -56,7 +56,6 @@ class MiscTasks(commands.Cog):
         await ctx.respond(f"Ping: {round(self.client.latency * 1000)}ms", ephemeral=True)
         logger.debug(f"Sent pong! (Ping: {round(self.client.latency * 1000)}ms)")
 
-    # Tag system slash command
     @commands.slash_command(description="Sends a tag!")
     async def tag(self, ctx: discord.ApplicationContext,
                   tag: discord.Option(str, "Please enter the tag name!",
@@ -77,6 +76,43 @@ class MiscTasks(commands.Cog):
             return
         await ctx.respond(config.tags[tag])
         logger.debug(f"Sent tag {tag}!")
+
+    bell_group = discord.SlashCommandGroup(
+        name="bell",
+        description="Group of add/remove 🔔 commands!",
+    )
+
+    @bell_group.command(description="Adds a 🔔 to the thread specified!")
+    async def bell_add(self, ctx: discord.ApplicationContext,
+                       thread=discord.Option(discord.Thread, "Please enter the thread!", required=True)):
+        """Command for adding a 🔔 to the thread specified.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        thread: discord.Thread
+            The thread to add a 🔔 to."""
+        logger.debug(f"Adding 🔔 to #{thread}...")
+        await thread.edit(name=f"🔔{thread.name}")
+        await ctx.respond(f"Added 🔔 to thread <#{thread.id}> successfully!", ephemeral=True)
+        logger.debug(f"Added 🔔 to #{thread}!")
+
+    @bell_group.command(description="Removes the 🔔 from the thread specified!")
+    async def bell_remove(self, ctx: discord.ApplicationContext,
+                          thread=discord.Option(discord.Thread, "Please enter the thread!", required=True)):
+        """Command for removing the 🔔 from the thread specified.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        thread: discord.Thread
+            The thread to remove the 🔔 from."""
+        logger.debug(f"Removing 🔔 from #{thread}...")
+        await thread.edit(name=thread.name.replace("🔔", ""))
+        await ctx.respond(f"Removed 🔔 from thread <#{thread.id}> successfully!", ephemeral=True)
+        logger.debug(f"Removed 🔔 from #{thread}!")
 
 
 def setup(bot):
