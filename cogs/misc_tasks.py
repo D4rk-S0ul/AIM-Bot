@@ -74,8 +74,7 @@ class MiscTasks(commands.Cog):
             await ctx.respond("Tag not found!", ephemeral=True)
             logger.warning(f"Tag not found! (Tag name: {tag})")
             return
-        msg = f"""{tag}:
-        {config.tags[tag]}"""
+        msg = f"**{tag}:**\r\n {config.tags[tag]}"
         await ctx.respond(msg)
         logger.debug(f"Sent tag {tag}!")
 
