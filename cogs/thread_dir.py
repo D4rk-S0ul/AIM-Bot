@@ -41,7 +41,7 @@ class ThreadDirectory(commands.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to be added to the thread directory."""
-        logger.debug(f"Adding thread {thread.id} to the thread directory...")
+        logger.debug(f"Adding thread #{thread} to the thread directory...")
         server = config.servers.get(ctx.guild.id)
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
@@ -58,7 +58,7 @@ class ThreadDirectory(commands.Cog):
         await msg.edit(updated_msg)
         await ctx.followup.send(f'Successfully added the thread <#{thread.id}> to the thread directory!',
                                 ephemeral=True)
-        logger.debug(f"Successfully added thread {thread.id} to the thread directory!")
+        logger.debug(f"Successfully added thread #{thread} to the thread directory!")
 
     @thread_dir_group.command(name="remove", description="Removes a thread from the thread directory!")
     async def thread_remove(self, ctx: discord.ApplicationContext,
@@ -71,7 +71,7 @@ class ThreadDirectory(commands.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to be removed from the thread directory."""
-        logger.debug(f"Removing thread {thread.id} from the thread directory...")
+        logger.debug(f"Removing thread #{thread} from the thread directory...")
         server = config.servers.get(ctx.guild.id)
         if server is None:
             await ctx.respond("Unknown server!", ephemeral=True)
