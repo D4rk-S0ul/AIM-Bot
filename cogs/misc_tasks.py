@@ -111,6 +111,8 @@ class MiscTasks(commands.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to remove the 🔔 from."""
+        if thread is None:
+            thread = ctx.channel
         logger.debug(f"Removing 🔔 from #{thread}...")
         await thread.edit(name=thread.name.replace("🔔", ""))
         await ctx.respond(f"Removed 🔔 from thread <#{thread.id}> successfully!", ephemeral=True)
