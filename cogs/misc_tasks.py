@@ -24,7 +24,7 @@ class MiscTasks(commands.Cog):
     @commands.slash_command(description="Pins the message specified!")
     async def pin(self, ctx: discord.ApplicationContext,
                   msg_id: discord.Option(str, "Please enter the message ID!", required=True),
-                  channel: discord.Option(discord.TextChannel, "Please enter the channel!", required=False)
+                  channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)
                   ):
         """Command for pinning a message in the channel specified.
 
