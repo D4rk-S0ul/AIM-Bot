@@ -51,7 +51,7 @@ class ThreadSystem(commands.Cog):
             The thread to add members to."""
         if thread is None:
             thread = ctx.channel
-        logger.debug(f"Adding members to thread {thread.id}...")
+        logger.debug(f"Adding members to thread #{thread}...")
         if not functions.is_allowed_thread(thread):
             await ctx.respond("Not allowed to execute this command in the specified thread.", ephemeral=True)
             logger.debug("Not allowed to execute this command in the specified thread.")
@@ -62,7 +62,7 @@ class ThreadSystem(commands.Cog):
             await ctx.followup.send(fail_msg)
             return
         await ctx.followup.send("Added members successfully!")
-        logger.debug("Added members successfully!")
+        logger.debug(f"Added members to #{thread} successfully!")
 
 
 def setup(bot):
