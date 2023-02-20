@@ -82,7 +82,7 @@ class MiscTasks(commands.Cog):
         description="Group of add/remove 🔔 commands!",
     )
 
-    @bell_group.command(description="Adds a 🔔 to the thread specified!")
+    @bell_group.command(name="add", description="Adds a 🔔 to the thread specified!")
     async def bell_add(self, ctx: discord.ApplicationContext,
                        thread=discord.Option(discord.Thread, "Please enter the thread!", required=True)):
         """Command for adding a 🔔 to the thread specified.
@@ -98,7 +98,7 @@ class MiscTasks(commands.Cog):
         await ctx.respond(f"Added 🔔 to thread <#{thread.id}> successfully!", ephemeral=True)
         logger.debug(f"Added 🔔 to #{thread}!")
 
-    @bell_group.command(description="Removes the 🔔 from the thread specified!")
+    @bell_group.command(name="remove", description="Removes the 🔔 from the thread specified!")
     async def bell_remove(self, ctx: discord.ApplicationContext,
                           thread=discord.Option(discord.Thread, "Please enter the thread!", required=True)):
         """Command for removing the 🔔 from the thread specified.
