@@ -71,7 +71,7 @@ tags = {
     "subPixel": "Left wide: -0.01\r\n"
                 "Middle wide: +0.01\r\n"
                 "Right wide: Do nothing\r\n"
-                "<https://cdn.discordapp.com/attachments/751512715872436416/1077348478654611486/image.png>",
+                "https://cdn.discordapp.com/attachments/751512715872436416/1077348478654611486/image.png",
     "tracker": "<https://github.com/Specnr/ResetTracker>",
     "treasure": "<https://youtu.be/HGcDSFKHOtw>",
     "vietnamese": "Guide: <https://docs.google.com/document/d/1el7XoX9-wv1boIQ8haIO6XYSoAkEQoh0X1Rd8_PcN70/edit>\r\n"
