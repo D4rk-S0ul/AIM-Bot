@@ -34,7 +34,7 @@ class MessageSystem(commands.Cog):
 
         Parameters
         ------------
-        ctx: discord.commands.context.ApplicationContext
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         channel: discord.abc.GuildChannel
             The channel to send the message in. Defaults to the channel the command was invoked in."""
@@ -46,7 +46,7 @@ class MessageSystem(commands.Cog):
         logger.debug(f"Sent message modal to {ctx.user}!")
 
     @message_group.command(name="edit", description="Edits the message specified!")
-    async def message_edit(self, ctx: discord.commands.context.ApplicationContext,
+    async def message_edit(self, ctx: discord.ApplicationContext,
                            msg_id: discord.Option(str, "Please enter the message ID!", required=True),
                            channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
                                                    required=False)
@@ -55,7 +55,7 @@ class MessageSystem(commands.Cog):
 
         Parameters
         ------------
-        ctx: discord.commands.context.ApplicationContext
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         msg_id: str
             The ID of the message to edit.
@@ -80,14 +80,14 @@ class MessageSystem(commands.Cog):
     )
 
     @embed_group.command(name="send", description="Creates an embed!")
-    async def embed_send(self, ctx: discord.commands.context.ApplicationContext,
+    async def embed_send(self, ctx: discord.ApplicationContext,
                          channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
                                                  required=False)):
         """Command for creating an embed in the channel specified.
 
         Parameters
         ------------
-        ctx: discord.commands.context.ApplicationContext
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         channel: discord.abc.GuildChannel
             The channel to send the embed in. Defaults to the channel the command was invoked in."""
@@ -99,7 +99,7 @@ class MessageSystem(commands.Cog):
         logger.debug(f"Sent embed modal to {ctx.user}!")
 
     @embed_group.command(name="edit", description="Edits the embed specified!")
-    async def embed_edit(self, ctx: discord.commands.context.ApplicationContext,
+    async def embed_edit(self, ctx: discord.ApplicationContext,
                          msg_id: discord.Option(str, "Please enter the message ID!", required=True),
                          channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)
                          ):
@@ -107,7 +107,7 @@ class MessageSystem(commands.Cog):
 
         Parameters
         ------------
-        ctx: discord.commands.context.ApplicationContext
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         msg_id: str
             The ID of the message to edit.
