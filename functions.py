@@ -1,6 +1,18 @@
 import discord
+import mysql.connector
 
 import config
+
+
+def connect_to_db() -> mysql.connector.connection.MySQLConnection:
+    """Sets up the database."""
+    db = mysql.connector.connect(
+        host=config.db_host,
+        user=config.db_user,
+        passwd=config.db_passwd,
+        database=config.db
+    )
+    return db
 
 
 async def get_ping_role(server, ctx_or_thread) -> discord.Role:

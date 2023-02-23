@@ -42,5 +42,5 @@ async def on_ready():
 
 
 # Run bot
-token = os.environ.get("AIM_TOKEN")
+token = config.token
 bot.run(token)

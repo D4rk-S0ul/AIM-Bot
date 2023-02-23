@@ -1,8 +1,16 @@
+import os
+
 import discord
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
+
+token: str = os.environ.get("AIM_TOKEN")
+db: str = os.environ.get("DB")
+db_host: str = os.environ.get("DB_HOST")
+db_user: str = os.environ.get("DB_USER")
+db_passwd: str = os.environ.get("DB_PASSWD")
 
 # Server ID: Server Name
 servers = {
