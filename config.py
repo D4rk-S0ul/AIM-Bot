@@ -1,10 +1,13 @@
 import os
 
+import dotenv
 import discord
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
+
+dotenv.load_dotenv(dotenv_path="vars.env")
 
 token: str = os.environ.get("AIM_TOKEN")
 db: str = os.environ.get("DB")
