@@ -52,7 +52,7 @@ class MiscTasks(commands.Cog):
         ------------
         ctx: discord.ApplicationContext
             The context used for command invocation."""
-        logger.debug(f"Sending pong...")
+        logger.debug("Sending pong...")
         await ctx.respond(f"Ping: {round(self.client.latency * 1000)}ms", ephemeral=True)
         logger.debug(f"Sent pong! (Ping: {round(self.client.latency * 1000)}ms)")
 
