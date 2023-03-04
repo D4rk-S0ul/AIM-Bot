@@ -1,7 +1,0 @@
-[2023-02-17 22:55:39.316] [DEBUG] | Loading cogs...
-[2023-02-17 22:55:39.324] [DEBUG] | Loaded BotStart.py successfully!
-[2023-02-17 22:55:39.338] [DEBUG] | Loaded MessageSystem.py successfully!
-[2023-02-17 22:55:39.349] [DEBUG] | Loaded MiscTasks.py successfully!
-[2023-02-17 22:55:39.363] [DEBUG] | Loaded TagSystem.py successfully!
-[2023-02-17 22:55:39.391] [DEBUG] | Loaded ThreadDirectory.py successfully!
-[2023-02-17 22:55:39.405] [DEBUG] | Loaded ThreadSystem.py successfully!
