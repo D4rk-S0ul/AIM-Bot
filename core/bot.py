@@ -1,6 +1,5 @@
 import os
 import platform
-import traceback
 from traceback import format_exception
 
 import discord
