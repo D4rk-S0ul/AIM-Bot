@@ -4,14 +4,14 @@ from typing import Literal
 from discord import DiscordException
 
 __all__ = (
-    "s",
+    "plural_s",
     "humanize_time",
     "BotMissingPermissions",
 )
 
 
 # functions
-def s(data) -> Literal["", "s"]:
+def plural_s(data) -> Literal["", "s"]:
     if isinstance(data, str):
         data = int(not data.endswith("s"))
     elif hasattr(data, "__len__"):
@@ -24,16 +24,16 @@ def s(data) -> Literal["", "s"]:
 def humanize_time(time: timedelta) -> str:
     if time.days > 365:
         years, days = divmod(time.days, 365)
-        return f"{years} year{s(years)} and {days} day{s(days)}"
+        return f"{years} year{plural_s(years)} and {days} day{plural_s(days)}"
     if time.days > 1:
-        return f"{time.days} day{s(time.days)}, {humanize_time(timedelta(seconds=time.seconds))}"
+        return f"{time.days} day{plural_s(time.days)}, {humanize_time(timedelta(seconds=time.seconds))}"
     hours, seconds = divmod(time.seconds, 3600)
     minutes, seconds = divmod(seconds, 60)
     if hours > 0:
-        return f"{hours} hour{s(hours)} and {minutes} minute{s(minutes)}"
+        return f"{hours} hour{plural_s(hours)} and {minutes} minute{plural_s(minutes)}"
     if minutes > 0:
-        return f"{minutes} minute{s(minutes)} and {seconds} second{s(seconds)}"
-    return f"{seconds} second{s(seconds)}"
+        return f"{minutes} minute{plural_s(minutes)} and {seconds} second{plural_s(seconds)}"
+    return f"{seconds} second{plural_s(seconds)}"
 
 
 # exceptions

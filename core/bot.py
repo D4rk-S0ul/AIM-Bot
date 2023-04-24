@@ -78,13 +78,15 @@ class AimBot(commands.Bot):
                         title="HTTP Exception",
                         description=description,
                         color=discord.Color.red(),
+                        timestamp=discord.utils.utcnow()
                     )
                 )
 
             await ctx.respond(embed=discord.Embed(
                 title="Error",
                 description="An unexpected error has occurred and I've notified my developer.",
-                color=discord.Color.red()
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
             ), ephemeral=True)
             if ctx.guild is not None:
                 guild = f"`{ctx.guild.name} ({ctx.guild_id})`"
@@ -95,6 +97,7 @@ class AimBot(commands.Bot):
                 title=f"{error.__class__.__name__}",
                 description=str(error),
                 color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
             )
             error_embed.add_field(name="Command:", value=f"`/{ctx.command.qualified_name}`", inline=True)
             error_embed.add_field(name="Guild:", value=f"`{guild}`", inline=True)

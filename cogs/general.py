@@ -18,7 +18,8 @@ class General(Cog):
         await ctx.respond(embed=discord.Embed(
             title="Ping",
             description=f"{round(self.bot.latency * 1000)}ms",
-            color=discord.Color.green()
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
         ), ephemeral=True)
 
 
