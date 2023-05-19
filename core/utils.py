@@ -1,39 +1,8 @@
-from datetime import timedelta
-from typing import Literal
-
 from discord import DiscordException
 
 __all__ = (
-    "plural_s",
-    "humanize_time",
     "BotMissingPermissions",
 )
-
-
-# functions
-def plural_s(data) -> Literal["", "s"]:
-    if isinstance(data, str):
-        data = int(not data.endswith("s"))
-    elif hasattr(data, "__len__"):
-        data = len(data)
-    check = data != 1
-    # noinspection PyTypeChecker
-    return "s" if check else ""
-
-
-def humanize_time(time: timedelta) -> str:
-    if time.days > 365:
-        years, days = divmod(time.days, 365)
-        return f"{years} year{plural_s(years)} and {days} day{plural_s(days)}"
-    if time.days > 1:
-        return f"{time.days} day{plural_s(time.days)}, {humanize_time(timedelta(seconds=time.seconds))}"
-    hours, seconds = divmod(time.seconds, 3600)
-    minutes, seconds = divmod(seconds, 60)
-    if hours > 0:
-        return f"{hours} hour{plural_s(hours)} and {minutes} minute{plural_s(minutes)}"
-    if minutes > 0:
-        return f"{minutes} minute{plural_s(minutes)} and {seconds} second{plural_s(seconds)}"
-    return f"{seconds} second{plural_s(seconds)}"
 
 
 # exceptions
