@@ -67,62 +67,57 @@ class AimBot(commands.Bot):
         print(f"\n\n{msg}\n\n")
 
     async def on_application_command_error(self, ctx: Context, error: Exception):
-        if isinstance(error, discord.ApplicationCommandInvokeError):
-            if isinstance((error := error.original), discord.HTTPException):
-                description = f"""An HTTP exception has occurred:
-                {error.status} {error.__class__.__name__}"""
-                if error.text:
-                    description += f": {error.text}"
-                return await ctx.respond(
-                    embed=discord.Embed(
-                        title="HTTP Exception",
-                        description=description,
-                        color=discord.Color.red(),
-                        timestamp=discord.utils.utcnow()
-                    )
+        if isinstance((error := error.original), discord.HTTPException):
+            description = f"""An HTTP exception has occurred:
+            {error.status} {error.__class__.__name__}"""
+            if error.text:
+                description += f": {error.text}"
+            return await ctx.respond(
+                embed=discord.Embed(
+                    title="HTTP Exception",
+                    description=description,
+                    color=discord.Color.red(),
+                    timestamp=discord.utils.utcnow()
                 )
-
-            await ctx.respond(embed=discord.Embed(
-                title="Error",
-                description="An unexpected error has occurred and I've notified my developer.",
-                color=discord.Color.yellow(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
-            if ctx.guild is not None:
-                guild = f"`{ctx.guild.name} ({ctx.guild_id})`"
-            else:
-                guild = "None (DMs)"
-            formatted_error = ''.join(format_exception(type(error), error, error.__traceback__))
-            error_embed = discord.Embed(
-                title=f"{error.__class__.__name__}",
-                description=str(error),
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
             )
-            error_embed.add_field(name="Command:", value=f"`/{ctx.command.qualified_name}`", inline=True)
-            error_embed.add_field(name="Guild:", value=f"`{guild}`", inline=True)
-            error_embed.add_field(name="Error:", value=f"```py\n{formatted_error}```", inline=False)
-            if len(error_embed.fields[2].value) > 1024:
-                error_embed.remove_field(2)
+
+        await ctx.respond(embed=discord.Embed(
+            title="Error",
+            description="An unexpected error has occurred and I've notified my developer.",
+            color=discord.Color.yellow(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
+        if ctx.guild is not None:
+            guild = f"`{ctx.guild.name} ({ctx.guild_id})`"
+        else:
+            guild = "None (DMs)"
+        formatted_error = ''.join(format_exception(type(error), error, error.__traceback__))
+        error_embed = discord.Embed(
+            title=f"{error.__class__.__name__}",
+            description=str(error),
+            color=discord.Color.red(),
+            timestamp=discord.utils.utcnow()
+        )
+        error_embed.add_field(name="Command:", value=f"`/{ctx.command.qualified_name}`", inline=True)
+        error_embed.add_field(name="Guild:", value=f"`{guild}`", inline=True)
+        error_embed.add_field(name="Error:", value=f"```py\n{formatted_error}```", inline=False)
+        if len(error_embed.fields[2].value) > 1024:
+            error_embed.remove_field(2)
+            error_embed.add_field(
+                name="Error:",
+                value=f"```py\n{formatted_error[:1011]}```",
+                inline=False
+            )
+            for i in range(1011, len(formatted_error), 1011):
                 error_embed.add_field(
-                    name="Error:",
-                    value=f"```py\n{formatted_error[:1011]}```",
+                    name="",
+                    value=f"```py\n{formatted_error[i:i + 1011]}```",
                     inline=False
                 )
-                for i in range(1011, len(formatted_error), 1011):
-                    error_embed.add_field(
-                        name="",
-                        value=f"```py\n{formatted_error[i:i + 1011]}```",
-                        inline=False
-                    )
-            return await self.errors_webhook.send(
-                embed=error_embed,
-                avatar_url=self.user.display_avatar.url
-            )
-
-    # async def on_guild_remove(self, guild: discord.Guild) -> None:
-    # if saved := await GuildModel.get_or_none(id=guild.id):
-    # await saved.delete()
+        return await self.errors_webhook.send(
+            embed=error_embed,
+            avatar_url=self.user.display_avatar.url
+        )
 
     def run(self, token: str):
         super().run(os.environ.get(token))
