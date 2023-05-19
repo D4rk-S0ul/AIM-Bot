@@ -39,7 +39,12 @@ class HelpSelect(discord.ui.Select):
 class Help(Cog):
     @discord.slash_command(name="help")
     async def help_command(self, ctx: Context):
-        """Get help about the bot, a command or a command category."""
+        """Get help about the bot, a command or a command category.
+
+        Parameters
+        ------------
+        ctx: Context
+            The context used for command invocation."""
         assert self.bot.user
         embed = discord.Embed(
             title=self.bot.user.name,
