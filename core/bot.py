@@ -106,13 +106,13 @@ class AimBot(commands.Bot):
                 error_embed.remove_field(2)
                 error_embed.add_field(
                     name="Error:",
-                    value=f"```py\n{formatted_error[:1015]}```",
+                    value=f"```py\n{formatted_error[:1011]}```",
                     inline=False
                 )
-                for i in range(1015, len(formatted_error), 1015):
+                for i in range(1011, len(formatted_error), 1011):
                     error_embed.add_field(
                         name="",
-                        value=f"```py\n{formatted_error[i:i + 1015]}```",
+                        value=f"```py\n{formatted_error[i:i + 1011]}```",
                         inline=False
                     )
             return await self.errors_webhook.send(
