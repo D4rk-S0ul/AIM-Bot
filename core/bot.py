@@ -85,7 +85,7 @@ class AimBot(commands.Bot):
             await ctx.respond(embed=discord.Embed(
                 title="Error",
                 description="An unexpected error has occurred and I've notified my developer.",
-                color=discord.Color.red(),
+                color=discord.Color.yellow(),
                 timestamp=discord.utils.utcnow()
             ), ephemeral=True)
             if ctx.guild is not None:
@@ -101,18 +101,18 @@ class AimBot(commands.Bot):
             )
             error_embed.add_field(name="Command:", value=f"`/{ctx.command.qualified_name}`", inline=True)
             error_embed.add_field(name="Guild:", value=f"`{guild}`", inline=True)
-            error_embed.add_field(name="Error:", value=f"```{formatted_error}```", inline=False)
+            error_embed.add_field(name="Error:", value=f"```py{formatted_error}```", inline=False)
             if len(error_embed.fields[2].value) > 1024:
                 error_embed.remove_field(2)
                 error_embed.add_field(
                     name="Error:",
-                    value=f"```{formatted_error[:1015]}```",
+                    value=f"```py{formatted_error[:1015]}```",
                     inline=False
                 )
                 for i in range(1015, len(formatted_error), 1015):
                     error_embed.add_field(
                         name="",
-                        value=f"```{formatted_error[i:i + 1015]}```",
+                        value=f"```py{formatted_error[i:i + 1015]}```",
                         inline=False
                     )
             return await self.errors_webhook.send(
