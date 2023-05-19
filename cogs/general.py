@@ -26,7 +26,7 @@ class General(Cog):
     async def user_info(self, ctx: Context,
                         user: discord.Option(discord.Member, description="The user to view information about!",
                                              required=False)):
-        """User command for viewing the age of an account.
+        """Command for showing information about a user.
 
         Parameters
         ------------
@@ -65,6 +65,31 @@ class General(Cog):
             user_info_embed.add_field(name="Member Permissions", value=member_permissions)
 
         await ctx.respond(embed=user_info_embed, ephemeral=True)
+
+    @commands.slash_command(description="Pins the message specified!")
+    async def pin(self, ctx: Context,
+                  message_id: discord.Option(str, "Please enter the message ID or link!", required=True),
+                  channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)):
+        """Command for pinning a message.
+
+        Parameters
+        ------------
+        ctx: Context
+            The context used for command invocation.
+        message_id: str
+            The message ID or link.
+        channel: discord.abc.GuildChannel
+            The channel to pin the message in."""
+        if not channel:
+            channel = ctx.channel
+        message = await channel.fetch_message(message_id)
+        await message.pin()
+        await ctx.respond(embed=discord.Embed(
+            title="Message Pinned",
+            description=f"[Jump to message]({message.jump_url})",
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
 
 
 def setup(bot):
