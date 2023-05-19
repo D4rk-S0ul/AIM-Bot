@@ -33,7 +33,7 @@ class General(Cog):
         ctx: Context
             The context used for command invocation.
         user: discord.Member
-            The user to view the age of."""
+            The user to view information about."""
         if not user:
             user = ctx.author
 
