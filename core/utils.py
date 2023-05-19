@@ -1,8 +1,25 @@
+import discord
 from discord import DiscordException
 
 __all__ = (
     "BotMissingPermissions",
+    "get_permissions",
 )
+
+
+# functions
+def get_permissions(user: discord.Member, include: int = 0) -> str:
+    permissions = user.guild_permissions
+    if permissions.administrator:
+        return "- Administrator"
+    return (
+            "\n".join(
+                f"- {k.replace('_', ' ').title()}"
+                for k, v in user.guild_permissions
+                if v and (not include or getattr(discord.Permissions(include), k))
+            )
+            or "_No permissions_"
+    )
 
 
 # exceptions
