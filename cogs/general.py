@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from core import Cog, Context, get_permissions
+from core import Cog, Context, get_permissions, get_tags
 
 
 class General(Cog):
@@ -22,7 +22,12 @@ class General(Cog):
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
 
-    @commands.slash_command(description="Shows information about a user!")
+    user_group = discord.SlashCommandGroup(
+        name="user",
+        description="Group of user commands!",
+    )
+
+    @user_group.command(name="info", description="Shows information about a user!")
     async def user_info(self, ctx: Context,
                         user: discord.Option(discord.Member, description="The user to view information about!",
                                              required=False)):
@@ -68,7 +73,7 @@ class General(Cog):
 
     @commands.slash_command(description="Pins the message specified!")
     async def pin(self, ctx: Context,
-                  message_id: discord.Option(str, "Please enter the message ID or link!", required=True),
+                  message_id: discord.Option(str, "Please enter the message ID!", required=True),
                   channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)):
         """Command for pinning a message.
 
@@ -77,7 +82,7 @@ class General(Cog):
         ctx: Context
             The context used for command invocation.
         message_id: str
-            The message ID or link.
+            The message ID.
         channel: discord.abc.GuildChannel
             The channel to pin the message in."""
         if not channel:
@@ -90,6 +95,75 @@ class General(Cog):
             color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
+
+    @commands.slash_command(description="Unpins the message specified!")
+    async def unpin(self, ctx: Context,
+                    message_id: discord.Option(str, "Please enter the message ID!", required=True),
+                    channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)):
+        """Command for unpinning a message.
+
+        Parameters
+        ------------
+        ctx: Context
+            The context used for command invocation.
+        message_id: str
+            The message ID.
+        channel: discord.abc.GuildChannel
+            The channel to unpin the message in."""
+        if not channel:
+            channel = ctx.channel
+        message = await channel.fetch_message(message_id)
+        await message.unpin()
+        await ctx.respond(embed=discord.Embed(
+            title="Message Unpinned",
+            description=f"[Jump to message]({message.jump_url})",
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
+
+    @commands.slash_command(description="Sends a tag!")
+    async def tag(self, ctx: discord.ApplicationContext,
+                  tag: discord.Option(str, "Please enter the tag name!",
+                                      autocomplete=discord.utils.basic_autocomplete(get_tags()),
+                                      required=True)):
+        """Command for sending a tag.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        tag: str
+            The name of the tag to send. Autocompletes from the tags in config.tags."""
+        tags = get_tags()
+        if tag not in tags:
+            await ctx.respond(embed=discord.Embed(
+                title="Tag not found",
+                description=f"Tag `{tag}` not found!",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        image_url = None
+        lines = tags[tag].split("\r\n")
+        for line in lines:
+            if line.endswith(".png"):
+                image_url = line
+                tags[tag] = tags[tag].replace(line, "")
+                break
+        if image_url:
+            await ctx.respond(embed=discord.Embed(
+                title=tag,
+                description=tags[tag],
+                color=discord.Color.green(),
+                timestamp=discord.utils.utcnow()
+            ).set_image(url=image_url))
+            return
+        await ctx.respond(embed=discord.Embed(
+            title=tag,
+            description=tags[tag],
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
+        ))
 
 
 def setup(bot):
