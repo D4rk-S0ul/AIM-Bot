@@ -1,19 +1,19 @@
 import discord
 from discord.ext import commands
 
-from core import Cog, Context, get_permissions, get_tags
+import core
 
 
-class General(Cog):
-    """General commands."""
+class General(core.Cog):
+    """Utility commands for general information and interactions."""
 
     @commands.slash_command(description="Shows the bot's latency!")
-    async def ping(self, ctx: Context):
+    async def ping(self, ctx: discord.ApplicationContext):
         """Command for showing the bot's latency.
 
         Parameters
         ------------
-        ctx: Context
+        ctx: core.discord.ApplicationContext
             The context used for command invocation."""
         await ctx.respond(embed=discord.Embed(
             title="Ping",
@@ -28,14 +28,14 @@ class General(Cog):
     )
 
     @user_group.command(name="info", description="Shows information about a user!")
-    async def user_info(self, ctx: Context,
+    async def user_info(self, ctx: discord.ApplicationContext,
                         user: discord.Option(discord.Member, description="The user to view information about!",
                                              required=False)):
         """Command for showing information about a user.
 
         Parameters
         ------------
-        ctx: Context
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         user: discord.Member
             The user to view information about."""
@@ -60,11 +60,11 @@ class General(Cog):
         if isinstance(user, discord.Member):
             joined_at = discord.utils.format_dt(user.joined_at, style="F")
             joined_age = discord.utils.format_dt(user.joined_at, style="R")
-            staff_permissions = get_permissions(user, 27813093566)
-            member_permissions = get_permissions(user, 655052817217)
+            staff_permissions = core.get_permissions(user, 27813093566)
+            member_permissions = core.get_permissions(user, 655052817217)
 
             user_info_embed.add_field(name="Joined Server", value=f"{joined_at} ({joined_age})")
-            user_info_embed.add_field(name=f"Roles ({len(user._roles)})", value=", ".join(
+            user_info_embed.add_field(name=f"Roles ({len(user.roles)})", value=", ".join(
                 r.mention for r in user.roles[::-1][:-1]) or "_Member has no roles_", inline=False)
             user_info_embed.add_field(name="Staff Permissions", value=staff_permissions)
             user_info_embed.add_field(name="Member Permissions", value=member_permissions)
@@ -72,14 +72,14 @@ class General(Cog):
         await ctx.respond(embed=user_info_embed, ephemeral=True)
 
     @commands.slash_command(description="Pins the message specified!")
-    async def pin(self, ctx: Context,
+    async def pin(self, ctx: discord.ApplicationContext,
                   message_id: discord.Option(str, "Please enter the message ID!", required=True),
                   channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)):
         """Command for pinning a message.
 
         Parameters
         ------------
-        ctx: Context
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         message_id: str
             The message ID.
@@ -97,14 +97,14 @@ class General(Cog):
         ), ephemeral=True)
 
     @commands.slash_command(description="Unpins the message specified!")
-    async def unpin(self, ctx: Context,
+    async def unpin(self, ctx: discord.ApplicationContext,
                     message_id: discord.Option(str, "Please enter the message ID!", required=True),
                     channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!", required=False)):
         """Command for unpinning a message.
 
         Parameters
         ------------
-        ctx: Context
+        ctx: discord.ApplicationContext
             The context used for command invocation.
         message_id: str
             The message ID.
@@ -124,7 +124,7 @@ class General(Cog):
     @commands.slash_command(description="Sends a tag!")
     async def tag(self, ctx: discord.ApplicationContext,
                   tag: discord.Option(str, "Please enter the tag name!",
-                                      autocomplete=discord.utils.basic_autocomplete(get_tags()),
+                                      autocomplete=discord.utils.basic_autocomplete(core.get_tags()),
                                       required=True)):
         """Command for sending a tag.
 
@@ -134,7 +134,7 @@ class General(Cog):
             The context used for command invocation.
         tag: str
             The name of the tag to send. Autocompletes from the tags in config.tags."""
-        tags = get_tags()
+        tags = core.get_tags()
         if tag not in tags:
             await ctx.respond(embed=discord.Embed(
                 title="Tag not found",

@@ -4,12 +4,9 @@ from traceback import format_exception
 
 import discord
 from aiohttp import ClientSession
-from discord.ext import commands
-
-from .context import Context
 
 
-class AimBot(commands.Bot):
+class AimBot(discord.Bot):
     on_ready_fired: bool = False
 
     def __init__(self):
@@ -66,7 +63,7 @@ class AimBot(commands.Bot):
             PyCord API version: {discord.__version__}"""
         print(f"\n\n{msg}\n\n")
 
-    async def on_application_command_error(self, ctx: Context, error: Exception):
+    async def on_application_command_error(self, ctx: discord.ApplicationContext, error: Exception):
         if isinstance((error := error.original), discord.HTTPException):
             description = f"""An HTTP exception has occurred:
             {error.status} {error.__class__.__name__}"""

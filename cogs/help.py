@@ -1,10 +1,10 @@
 import discord
 
-from core import Cog, Context
+import core
 
 
 class HelpSelect(discord.ui.Select):
-    def __init__(self, cog: Cog) -> None:
+    def __init__(self, cog: core.Cog) -> None:
         super().__init__(
             placeholder="Choose a category",
             options=[
@@ -36,14 +36,16 @@ class HelpSelect(discord.ui.Select):
         )
 
 
-class Help(Cog):
+class Help(core.Cog):
+    """Commands for getting help about the bot, a command or a command category."""
+
     @discord.slash_command(name="help")
-    async def help_command(self, ctx: Context):
+    async def help_command(self, ctx: discord.ApplicationContext):
         """Get help about the bot, a command or a command category.
 
         Parameters
         ------------
-        ctx: Context
+        ctx: discord.ApplicationContext
             The context used for command invocation."""
         assert self.bot.user
         embed = discord.Embed(

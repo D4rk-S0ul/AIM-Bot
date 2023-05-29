@@ -1,10 +1,10 @@
 import discord
 
-from core import Cog
+import core
 
 
-class Threads(Cog):
-    """Thread commands."""
+class Threads(core.Cog):
+    """Commands for managing threads and adding members to threads."""
 
     bell_group = discord.SlashCommandGroup(
         name="bell",

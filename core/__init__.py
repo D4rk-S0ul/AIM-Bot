@@ -1,13 +1,11 @@
 from discord.ext import commands
 
 from .bot import AimBot
-from .context import Context
 from .utils import get_permissions, get_tags
 
 __all__ = (
     "AimBot",
     "Cog",
-    "Context",
     "get_permissions",
     "get_tags",
 )
