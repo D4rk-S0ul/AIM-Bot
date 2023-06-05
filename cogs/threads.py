@@ -4,7 +4,7 @@ import core
 
 
 class Threads(core.Cog):
-    """Commands for managing threads and adding members to threads."""
+    """Commands for managing threads."""
 
     bell_group = discord.SlashCommandGroup(
         name="bell",
