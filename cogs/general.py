@@ -24,7 +24,7 @@ class General(core.Cog):
 
     user_group = discord.SlashCommandGroup(
         name="user",
-        description="Group of user commands!",
+        description="Group of user commands!"
     )
 
     @user_group.command(name="info", description="Shows information about a user!")
