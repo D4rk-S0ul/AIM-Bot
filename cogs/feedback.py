@@ -144,8 +144,8 @@ class FeatureRequestModal(discord.ui.Modal):
         )
 
         await interaction.response.send_message(embed=discord.Embed(
-            title="Bug Reported",
-            description=f"My developer has been notified of the bug!",
+            title="Feature Requested",
+            description=f"My developer has been notified of the feature request!",
             color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
