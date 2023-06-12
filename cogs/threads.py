@@ -8,7 +8,7 @@ class Threads(core.Cog):
 
     bell_group = discord.SlashCommandGroup(
         name="bell",
-        description="Group of add/remove bell (🔔) commands!",
+        description="Group of add/remove bell (🔔) commands!"
     )
 
     @bell_group.command(name="add", description="Adds a bell (🔔) to the thread specified!")
