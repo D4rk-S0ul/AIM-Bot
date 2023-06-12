@@ -18,11 +18,8 @@ class AimBot(discord.Bot):
             chunk_guilds_at_startup=False,
             help_command=None,
             intents=discord.Intents(
-                members=True,
-                messages=True,
-                message_content=True,
                 guilds=True,
-                bans=True,
+                members=True
             ),
             owner_ids=[672768917885681678],
         )
