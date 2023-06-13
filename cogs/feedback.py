@@ -4,7 +4,7 @@ import core
 
 
 class Feedback(core.Cog):
-    """Commands fo sending feedback to the bot developer."""
+    """Report bugs and request features!"""
 
     report_group = discord.SlashCommandGroup(
         name="report",

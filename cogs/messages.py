@@ -4,7 +4,7 @@ import core
 
 
 class Messages(core.Cog):
-    """Commands for sending/editing messages and embeds."""
+    """Send or edit messages and embeds!"""
 
     msg_group = discord.SlashCommandGroup(
         name="message",

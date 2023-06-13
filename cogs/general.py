@@ -5,7 +5,7 @@ import core
 
 
 class General(core.Cog):
-    """Utility commands for general information and interactions."""
+    """Utility commands for general information and interactions!"""
 
     @commands.slash_command(description="Shows the bot's latency!")
     async def ping(self, ctx: discord.ApplicationContext):

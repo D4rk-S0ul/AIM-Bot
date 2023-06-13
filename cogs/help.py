@@ -37,7 +37,7 @@ class HelpSelect(discord.ui.Select):
 
 
 class Help(core.Cog):
-    """Commands for getting help about the bot, a command or a command category."""
+    """Get help about the bot, a command or a command category!"""
 
     @discord.slash_command(name="help")
     async def help_command(self, ctx: discord.ApplicationContext):
