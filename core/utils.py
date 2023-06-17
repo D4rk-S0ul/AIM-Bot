@@ -5,6 +5,7 @@ __all__ = (
     "BotMissingPermissions",
     "get_permissions",
     "get_tags",
+    "is_valid_thread"
 )
 
 
@@ -72,6 +73,15 @@ def get_tags() -> dict[str, str]:
                       "Document: https://docs.google.com/document/d/1Umtj4jo69FnHz68cgp9TCrfDS-14Ummhi6ZDEXg4XGY/view"
     }
     return tags
+
+
+def is_valid_thread(ctx: discord.ApplicationContext):
+    if not isinstance(ctx.channel, discord.Thread):
+        return False
+    blocked_parent_ids = [959525754297778216, 1023877748818706452, 850422836585299989, 1057420004380921856]
+    if ctx.channel.parent_id in blocked_parent_ids:
+        return False
+    return True
 
 
 # exceptions
