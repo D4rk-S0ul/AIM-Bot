@@ -1,13 +1,14 @@
 from discord.ext import commands
 
 from .bot import AimBot
-from .utils import get_permissions, get_tags, is_valid_thread
+from .utils import add_members, get_permissions, get_tag, is_valid_thread
 
 __all__ = (
+    "add_members",
     "AimBot",
     "Cog",
     "get_permissions",
-    "get_tags",
+    "get_tag",
     "is_valid_thread"
 )
 

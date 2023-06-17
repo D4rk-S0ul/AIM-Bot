@@ -124,7 +124,7 @@ class General(core.Cog):
     @commands.slash_command(description="Sends a tag!")
     async def tag(self, ctx: discord.ApplicationContext,
                   tag: discord.Option(str, "Please enter the tag name!",
-                                      autocomplete=discord.utils.basic_autocomplete(core.get_tags()),
+                                      autocomplete=discord.utils.basic_autocomplete(core.get_tag()),
                                       required=True)):
         """Command for sending a tag.
 
@@ -134,7 +134,7 @@ class General(core.Cog):
             The context used for command invocation.
         tag: str
             The name of the tag to send. Autocompletes from the tags in config.tags."""
-        tags = core.get_tags()
+        tags = core.get_tag()
         if tag not in tags:
             await ctx.respond(embed=discord.Embed(
                 title="Tag not found",

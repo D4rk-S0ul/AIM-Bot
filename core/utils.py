@@ -2,14 +2,49 @@ import discord
 from discord import DiscordException
 
 __all__ = (
+    "add_members",
     "BotMissingPermissions",
     "get_permissions",
-    "get_tags",
+    "get_tag",
     "is_valid_thread"
 )
 
 
 # functions
+async def add_members(thread: discord.Thread) -> None:
+    """Adds members to the thread specified.
+
+    Parameters
+    ------------
+    thread: discord.Thread
+        The thread to add members to."""
+    await thread.join()
+    await thread.edit(auto_archive_duration=10080)
+
+    ping_role = get_ping_role(thread.guild)
+
+    member_mentions = [member.mention for member in thread.guild.members if ping_role in member.roles]
+
+    if not member_mentions:
+        await add_to_thread_dir(thread)
+        return
+    ping_msg: discord.Message = await thread.send("Adding users...")
+    msg_content = ""
+    counter = 0
+    for member_mention in member_mentions:
+        if len(msg_content + member_mention) > 2000 or counter == 10:
+            await ping_msg.edit(content=msg_content)
+            msg_content = f"{member_mention} "
+            counter = 1
+        else:
+            msg_content += f"{member_mention} "
+            counter += 1
+    if len(msg_content) != 0:
+        await ping_msg.edit(content=msg_content)
+    await ping_msg.delete()
+    await thread.send("Successfully added people to the thread and set auto-archive duration to the max!")
+
+
 def get_permissions(user: discord.Member, include: int = 0) -> str:
     permissions = user.guild_permissions
     if permissions.administrator:
@@ -24,7 +59,31 @@ def get_permissions(user: discord.Member, include: int = 0) -> str:
     )
 
 
-def get_tags() -> dict[str, str]:
+def get_ping_role(guild: discord.Guild) -> discord.Role | None:
+    """Gets the ping role for the guild specified.
+
+    Parameters
+    ------------
+    guild: discord.Guild
+        The guild to get the ping role for.
+
+    Returns
+    ------------
+    discord.Role
+        The ping role for the guild specified."""
+    ping_role_ids = {
+        933075515881951292: 939633923305132182,  # RIP
+        959162264081014814: 939633923305132182,  # SEA
+        849650258786779196: None,  # EAR
+        915333299981934692: 941942976429559808  # TEST
+    }
+    ping_role_id = ping_role_ids.get(guild.id)
+    if ping_role_id is None:
+        return None
+    return guild.get_role(ping_role_id)
+
+
+def get_tag() -> dict[str, str]:
     tags = {
         "Bastion Route Spreadsheet": "https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0"
                                      "-6YhztMqa_wZ8W0/edit?usp=sharing",
@@ -75,11 +134,11 @@ def get_tags() -> dict[str, str]:
     return tags
 
 
-def is_valid_thread(ctx: discord.ApplicationContext):
-    if not isinstance(ctx.channel, discord.Thread):
+def is_valid_thread(thread) -> bool:
+    if not isinstance(thread, discord.Thread):
         return False
     blocked_parent_ids = [959525754297778216, 1023877748818706452, 850422836585299989, 1057420004380921856]
-    if ctx.channel.parent_id in blocked_parent_ids:
+    if thread.parent_id in blocked_parent_ids:
         return False
     return True
 
