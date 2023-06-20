@@ -116,6 +116,5 @@ class Threads(core.Cog):
         ), ephemeral=True)
 
 
-
 def setup(bot):
     bot.add_cog(Threads(bot))

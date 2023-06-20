@@ -1,3 +1,5 @@
+import time
+
 import discord
 from discord import DiscordException
 
@@ -26,9 +28,13 @@ async def add_members(thread: discord.Thread) -> None:
     member_mentions = [member.mention for member in thread.guild.members if ping_role in member.roles]
 
     if not member_mentions:
-        await add_to_thread_dir(thread)
         return
-    ping_msg: discord.Message = await thread.send("Adding users...")
+    ping_msg: discord.Message = await thread.send(embed=discord.Embed(
+        title="Adding Members",
+        description="Adding members to the thread...",
+        color=discord.Color.blurple(),
+        timestamp=discord.utils.utcnow()
+    ))
     msg_content = ""
     counter = 0
     for member_mention in member_mentions:
@@ -41,8 +47,12 @@ async def add_members(thread: discord.Thread) -> None:
             counter += 1
     if len(msg_content) != 0:
         await ping_msg.edit(content=msg_content)
-    await ping_msg.delete()
-    await thread.send("Successfully added people to the thread and set auto-archive duration to the max!")
+    await ping_msg.edit(content=None, embed=discord.Embed(
+        title="Members Added",
+        description="Successfully added people to the thread and set auto-archive duration to the max!",
+        color=discord.Color.green(),
+        timestamp=discord.utils.utcnow()
+    ))
 
 
 def get_permissions(user: discord.Member, include: int = 0) -> str:

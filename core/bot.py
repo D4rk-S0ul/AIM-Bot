@@ -14,8 +14,6 @@ class AimBot(discord.Bot):
             activity=discord.Activity(
                 type=discord.ActivityType.listening, name=f"/help"
             ),
-            allowed_mentions=discord.AllowedMentions.none(),
-            chunk_guilds_at_startup=False,
             help_command=None,
             intents=discord.Intents(
                 guilds=True,
