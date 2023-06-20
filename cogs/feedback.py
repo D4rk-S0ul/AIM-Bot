@@ -22,9 +22,9 @@ class Feedback(core.Cog):
         await ctx.send_modal(BugReportModal(title="Bug Report"))
 
     request_group = discord.SlashCommandGroup(
-            name="request",
-            description="Group of request commands!",
-        )
+        name="request",
+        description="Group of request commands!",
+    )
 
     @request_group.command(name="feature", description="Request a feature to be added to the bot!")
     async def request_feature(self, ctx: discord.ApplicationContext):
