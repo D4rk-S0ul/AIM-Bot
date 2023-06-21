@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 from .bot import AimBot
-from .utils import add_members, get_permissions, get_tag, is_valid_thread
+from .utils import add_members, add_to_thread_directory, get_permissions, get_tag, is_valid_thread
 
 __all__ = (
     "add_members",

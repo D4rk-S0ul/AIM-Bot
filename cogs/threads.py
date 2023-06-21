@@ -79,6 +79,7 @@ class Threads(core.Cog):
             The thread that was created."""
         if core.is_valid_thread(thread):
             await core.add_members(thread)
+            await core.add_to_thread_directory(thread)
 
     add_group = discord.SlashCommandGroup(
         name="add",
@@ -114,6 +115,7 @@ class Threads(core.Cog):
             color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
+        await core.add_to_thread_directory(thread)
 
 
 def setup(bot):

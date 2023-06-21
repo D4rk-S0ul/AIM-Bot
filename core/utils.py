@@ -3,6 +3,7 @@ from discord import DiscordException
 
 __all__ = (
     "add_members",
+    "add_to_thread_directory",
     "BotMissingPermissions",
     "get_permissions",
     "get_tag",
@@ -53,7 +54,78 @@ async def add_members(thread: discord.Thread) -> None:
     ))
 
 
+async def add_to_thread_directory(thread: discord.Thread) -> None:
+    """Adds the thread to the thread directory.
+
+    Parameters
+    ------------
+    thread: discord.Thread
+        The thread to add to the thread directory."""
+    print("Adding to thread directory...")
+    thread_dir_msg = await get_thread_dir_msg(thread.guild)
+    print(f"Got thread directory message!\n\nContent:\n{thread_dir_msg.content}")
+    if str(thread.id) in thread_dir_msg.content:
+        return
+    msg_content = thread_dir_msg.content.splitlines()
+    thread_ids = [int(line[4:-1]) for line in msg_content if line.startswith("- <#")]
+    thread_ids.append(thread.id)
+    print(thread_ids)
+    parent_ids = await get_parent_ids(thread_ids, thread)
+    print(parent_ids)
+    msg_parts = await get_message_parts(parent_ids, thread_ids, thread)
+    print(msg_parts)
+    updated_msg = '\r\n'.join(msg_parts)
+    print(updated_msg)
+    await thread_dir_msg.edit(content=updated_msg)
+
+
+async def get_message_parts(parent_ids: list[int], thread_ids: list[int], thread: discord.Thread) -> list[str]:
+    """Gets the message parts for the thread directory message.
+
+    Parameters
+    ------------
+    parent_ids: list[int]
+        The parent ids for the thread ids specified.
+    thread_ids: list[int]
+        The thread ids to get the message parts for.
+    thread: discord.Thread
+        The thread to get the message parts for."""
+    msg_parts = ["**Thread Directory:**"]
+    for parent_id in parent_ids:
+        msg_parts.append(f"\r\n<#{parent_id}>:")
+        for thread_id in thread_ids:
+            thread = await thread.guild.fetch_channel(thread_id)
+            if thread.parent.id == parent_id:
+                msg_parts.append(f"- <#{thread_id}>")
+    return msg_parts
+
+
+async def get_parent_ids(thread_ids: list[int], thread: discord.Thread) -> list[int]:
+    """Gets the parent ids of the thread ids specified.
+
+    Parameters
+    ------------
+    thread_ids: list[int]
+        The thread ids to get the parent ids of.
+    thread: discord.Thread
+        The thread to get the parent ids for."""
+    parent_ids = []
+    for thread_id in thread_ids:
+        thread = await thread.guild.fetch_channel(thread_id)
+        if thread.parent_id not in parent_ids:
+            parent_ids.append(thread.parent.id)
+    return parent_ids
+
+
 def get_permissions(user: discord.Member, include: int = 0) -> str:
+    """Gets the permissions for the user specified.
+
+    Parameters
+    ------------
+    user: discord.Member
+        The user to get the permissions for.
+    include: int
+        The permissions to include."""
     permissions = user.guild_permissions
     if permissions.administrator:
         return "- Administrator"
@@ -92,6 +164,7 @@ def get_ping_role(guild: discord.Guild) -> discord.Role | None:
 
 
 def get_tag() -> dict[str, str]:
+    """Gets a tag for the bot."""
     tags = {
         "Bastion Route Spreadsheet": "https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0"
                                      "-6YhztMqa_wZ8W0/edit?usp=sharing",
@@ -142,7 +215,33 @@ def get_tag() -> dict[str, str]:
     return tags
 
 
+async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
+    """Gets the thread directory message for a guild.
+
+    Parameters
+    ----------
+    guild
+        The guild to get the thread directory message for."""
+    thread_dirs = {
+        933075515881951292: [None, None],  # RIP
+        959162264081014814: [959198464900747304, 1047979139069657250],  # SEA
+        849650258786779196: [1041033326846296164, 1047981765626712135],  # EAR
+        915333299981934692: [922938837049683968, 1121089178122330276]  # TEST
+    }
+    channel_id, message_id = thread_dirs.get(guild.id)
+    if channel_id is None or message_id is None:
+        return None
+    channel = guild.get_channel(channel_id)
+    return await channel.fetch_message(message_id)
+
+
 def is_valid_thread(thread) -> bool:
+    """Checks members should be added to a thread.
+
+    Parameters
+    ----------
+    thread
+        The thread to check."""
     if not isinstance(thread, discord.Thread):
         return False
     blocked_parent_ids = [959525754297778216, 1023877748818706452, 850422836585299989, 1057420004380921856]
