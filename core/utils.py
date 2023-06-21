@@ -7,7 +7,8 @@ __all__ = (
     "BotMissingPermissions",
     "get_permissions",
     "get_tag",
-    "is_valid_thread"
+    "is_valid_thread",
+    "remove_from_thread_directory",
 )
 
 
@@ -61,21 +62,15 @@ async def add_to_thread_directory(thread: discord.Thread) -> None:
     ------------
     thread: discord.Thread
         The thread to add to the thread directory."""
-    print("Adding to thread directory...")
     thread_dir_msg = await get_thread_dir_msg(thread.guild)
-    print(f"Got thread directory message!\n\nContent:\n{thread_dir_msg.content}")
     if str(thread.id) in thread_dir_msg.content:
         return
     msg_content = thread_dir_msg.content.splitlines()
     thread_ids = [int(line[4:-1]) for line in msg_content if line.startswith("- <#")]
     thread_ids.append(thread.id)
-    print(thread_ids)
     parent_ids = await get_parent_ids(thread_ids, thread)
-    print(parent_ids)
     msg_parts = await get_message_parts(parent_ids, thread_ids, thread)
-    print(msg_parts)
     updated_msg = '\r\n'.join(msg_parts)
-    print(updated_msg)
     await thread_dir_msg.edit(content=updated_msg)
 
 
@@ -248,6 +243,30 @@ def is_valid_thread(thread) -> bool:
     if thread.parent_id in blocked_parent_ids:
         return False
     return True
+
+
+async def remove_from_thread_directory(thread: discord.Thread) -> None:
+    """Removes a thread from the thread directory.
+
+    Parameters
+    ----------
+    thread
+        The thread to remove."""
+    thread_dir_msg = await get_thread_dir_msg(thread.guild)
+    if thread_dir_msg is None:
+        return
+    if str(thread.id) not in thread_dir_msg.content:
+        return
+    msg_content = thread_dir_msg.content.splitlines()
+    thread_ids = [int(line[4:-1]) for line in msg_content if line.startswith("- <#")]
+    for thread_id in thread_ids:
+        if int(thread_id) == thread.id:
+            thread_ids.remove(thread_id)
+            break
+    parent_ids = await get_parent_ids(thread_ids, thread)
+    msg_parts = await get_message_parts(parent_ids, thread_ids, thread)
+    updated_msg = '\r\n'.join(msg_parts)
+    await thread_dir_msg.edit(content=updated_msg)
 
 
 # exceptions

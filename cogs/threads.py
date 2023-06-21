@@ -117,6 +117,78 @@ class Threads(core.Cog):
         ), ephemeral=True)
         await core.add_to_thread_directory(thread)
 
+    thread_group = discord.SlashCommandGroup(
+        name="thread",
+        description="Group of thread commands!",
+        default_member_permissions=discord.Permissions(administrator=True)
+    )
+
+    thread_directory_group = thread_group.create_subgroup(
+        name="directory",
+        description="Group of thread directory commands!",
+    )
+
+    @thread_directory_group.command(name="add", description="Adds the thread to the thread directory!")
+    async def thread_directory_add(self, ctx: discord.ApplicationContext,
+                                   thread: discord.Option(discord.Thread, "Please enter the thread!", required=False)):
+        """Command for adding the thread to the thread directory.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        thread: discord.Thread
+            The thread to add to the thread directory."""
+        if thread is None:
+            thread = ctx.channel
+        if not isinstance(thread, discord.Thread):
+            await ctx.respond(embed=discord.Embed(
+                title="Error",
+                description="This command can only be used in threads!",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        await ctx.defer(ephemeral=True)
+        await core.add_to_thread_directory(thread)
+        await ctx.followup.send(embed=discord.Embed(
+            title="Thread Added",
+            description=f"Added thread <#{thread.id}> to the thread directory successfully!",
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
+
+    @thread_directory_group.command(name="remove", description="Removes the thread from the thread directory!")
+    async def thread_directory_remove(self, ctx: discord.ApplicationContext,
+                                      thread: discord.Option(discord.Thread, "Please enter the thread!",
+                                                             required=False)):
+        """Command for removing the thread from the thread directory.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        thread: discord.Thread
+            The thread to remove from the thread directory."""
+        if thread is None:
+            thread = ctx.channel
+        if not isinstance(thread, discord.Thread):
+            await ctx.respond(embed=discord.Embed(
+                title="Error",
+                description="This command can only be used in threads!",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        await ctx.defer(ephemeral=True)
+        await core.remove_from_thread_directory(thread)
+        await ctx.followup.send(embed=discord.Embed(
+            title="Thread Removed",
+            description=f"Removed thread <#{thread.id}> from the thread directory successfully!",
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
+
 
 def setup(bot):
     bot.add_cog(Threads(bot))
