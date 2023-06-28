@@ -239,7 +239,7 @@ class EmbedModal(discord.ui.Modal):
             embed = discord.Embed(
                 title=title,
                 description=content,
-                color=discord.Color.green(),
+                color=interaction.guild.me.color,
                 timestamp=discord.utils.utcnow()
             )
             if image_url is not None:
