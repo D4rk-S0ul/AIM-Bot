@@ -63,19 +63,19 @@ async def add_to_thread_directory(thread: discord.Thread) -> None:
     thread: discord.Thread
         The thread to add to the thread directory."""
     thread_dir_msg = await get_thread_dir_msg(thread.guild)
-    if str(thread.id) in thread_dir_msg.content:
+    initial_embed = thread_dir_msg.embeds[0]
+    thread_ids = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
+    if thread.id in thread_ids:
         return
-    msg_content = thread_dir_msg.content.splitlines()
-    thread_ids = [int(line[4:-1]) for line in msg_content if line.startswith("- <#")]
     thread_ids.append(thread.id)
     parent_ids = await get_parent_ids(thread_ids, thread)
-    msg_parts = await get_message_parts(parent_ids, thread_ids, thread)
-    updated_msg = '\r\n'.join(msg_parts)
-    await thread_dir_msg.edit(content=updated_msg)
+    thread_directory_embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
+    await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
 
 
-async def get_message_parts(parent_ids: list[int], thread_ids: list[int], thread: discord.Thread) -> list[str]:
-    """Gets the message parts for the thread directory message.
+async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int],
+                                     guild: discord.Guild) -> discord.Embed:
+    """Gets the thread directory embed.
 
     Parameters
     ------------
@@ -83,16 +83,25 @@ async def get_message_parts(parent_ids: list[int], thread_ids: list[int], thread
         The parent ids for the thread ids specified.
     thread_ids: list[int]
         The thread ids to get the message parts for.
-    thread: discord.Thread
-        The thread to get the message parts for."""
-    msg_parts = ["**Thread Directory:**"]
+    guild: discord.Guild
+        The guild to get the thread directory embed for."""
+    thread_directory_embed = discord.Embed(
+        title="Thread Directory",
+        description="A list of all threads of this server, sorted by the parent channels of the threads.",
+        color=guild.me.color,
+        timestamp=discord.utils.utcnow()
+    )
     for parent_id in parent_ids:
-        msg_parts.append(f"\r\n<#{parent_id}>:")
-        for thread_id in thread_ids:
-            thread = await thread.guild.fetch_channel(thread_id)
-            if thread.parent.id == parent_id:
-                msg_parts.append(f"- <#{thread_id}>")
-    return msg_parts
+        filed_value = "\n".join(
+            [f"- <#{thread_id}>" for thread_id in thread_ids
+             if (await guild.fetch_channel(thread_id)).parent.id == parent_id]
+        )
+        thread_directory_embed.add_field(
+            name=f"<#{parent_id}>",
+            value=filed_value,
+            inline=False
+        )
+    return thread_directory_embed
 
 
 async def get_parent_ids(thread_ids: list[int], thread: discord.Thread) -> list[int]:
@@ -253,20 +262,14 @@ async def remove_from_thread_directory(thread: discord.Thread) -> None:
     thread
         The thread to remove."""
     thread_dir_msg = await get_thread_dir_msg(thread.guild)
-    if thread_dir_msg is None:
+    initial_embed = thread_dir_msg.embeds[0]
+    thread_ids = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
+    if thread.id not in thread_ids:
         return
-    if str(thread.id) not in thread_dir_msg.content:
-        return
-    msg_content = thread_dir_msg.content.splitlines()
-    thread_ids = [int(line[4:-1]) for line in msg_content if line.startswith("- <#")]
-    for thread_id in thread_ids:
-        if int(thread_id) == thread.id:
-            thread_ids.remove(thread_id)
-            break
+    thread_ids.remove(thread.id)
     parent_ids = await get_parent_ids(thread_ids, thread)
-    msg_parts = await get_message_parts(parent_ids, thread_ids, thread)
-    updated_msg = '\r\n'.join(msg_parts)
-    await thread_dir_msg.edit(content=updated_msg)
+    thread_directory_embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
+    await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
 
 
 # exceptions
