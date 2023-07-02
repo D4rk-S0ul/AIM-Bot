@@ -104,6 +104,27 @@ class Messages(core.Cog):
         await ctx.send_modal(EmbedModal(message, is_new_embed=False, initial_embed=message.embeds[0],
                                         title=f"Edit an Embed"))
 
+    @embed_group.command(name="test", description="Sends an embed to the channel specified!")
+    async def test_embed_send(self, ctx: discord.ApplicationContext,
+                              channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
+                                                      required=False)):
+        """Sends an embed to the channel specified!
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        channel: discord.abc.GuildChannel
+            The channel to send the embed to."""
+        if channel is None:
+            channel = ctx.channel
+        embed_tool = EmbedToolView(channel=channel)
+        await ctx.respond(embed=discord.Embed(
+            title="Embed Tool",
+            description="Use the buttons below to edit the embed.",
+            color=ctx.guild.me.color
+        ), view=embed_tool, ephemeral=True)
+
 
 def setup(bot):
     bot.add_cog(Messages(bot))
@@ -265,3 +286,209 @@ class EmbedModal(discord.ui.Modal):
             color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
+
+
+class EmbedToolView(discord.ui.View):
+    """View for the embed tool."""
+
+    def __init__(self, *args, channel: discord.abc.GuildChannel, **kwargs):
+        """Initializes the view.
+
+        Parameters
+        ------------
+        channel: discord.abc.GuildChannel
+            The channel to send the embed to."""
+        super().__init__(*args, **kwargs)
+        self.channel = channel
+
+    @discord.ui.button(label="GENERALﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=0)
+    async def general_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        pass
+
+    @discord.ui.button(label="⠀ﾠTitleﾠ⠀", style=discord.ButtonStyle.gray, row=0)
+    async def set_title(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the title button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="Description", style=discord.ButtonStyle.gray, row=0)
+    async def set_description(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the description button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="ﾠ⠀Colorﾠ⠀", style=discord.ButtonStyle.gray, row=0)
+    async def set_color(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the color button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="FIELDSﾠﾠﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=1)
+    async def fields_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        pass
+
+    @discord.ui.button(label="ﾠﾠﾠAddﾠ⠀", style=discord.ButtonStyle.gray, row=1)
+    async def add_field(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the add field button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="ﾠRemoveﾠﾠ", style=discord.ButtonStyle.gray, row=1)
+    async def remove_field(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the remove field button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="ﾠﾠﾠEditﾠﾠﾠ", style=discord.ButtonStyle.gray, row=1)
+    async def edit_field(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the edit field button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="IMAGESﾠﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=2)
+    async def images_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        pass
+
+    @discord.ui.button(label="Thumbnail", style=discord.ButtonStyle.gray, row=2)
+    async def set_thumbnail(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the thumbnail button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="⠀ﾠImage⠀ﾠ", style=discord.ButtonStyle.gray, row=2)
+    async def set_image(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the image button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="⠀⠀⠀⠀⠀ﾠﾠﾠ", style=discord.ButtonStyle.gray, disabled=True, row=2)
+    async def empty(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        pass
+
+    @discord.ui.button(label="OPTIONSﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=3)
+    async def options_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        pass
+
+    @discord.ui.button(label="ﾠAuthorﾠﾠ", style=discord.ButtonStyle.gray, row=3)
+    async def set_author(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the author button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="ﾠﾠFooterﾠﾠ", style=discord.ButtonStyle.gray, row=3)
+    async def set_footer(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the footer button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="Timestamp", style=discord.ButtonStyle.gray, row=3)
+    async def set_timestamp(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the timestamp button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="SETTINGS", style=discord.ButtonStyle.blurple, disabled=True, row=4)
+    async def settings_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        pass
+
+    @discord.ui.button(label="⠀ﾠSend⠀⠀", style=discord.ButtonStyle.green, row=4)
+    async def send_embed(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the send button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="ﾠTutorialﾠﾠ", style=discord.ButtonStyle.gray, row=4)
+    async def show_tutorial(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the tutorial button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
+
+    @discord.ui.button(label="ﾠﾠCancelﾠﾠ", style=discord.ButtonStyle.red, row=4)
+    async def cancel_editing(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the cancel button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
+        pass
