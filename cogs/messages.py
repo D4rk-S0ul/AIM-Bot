@@ -121,7 +121,8 @@ class Messages(core.Cog):
         embed_tool = EmbedToolView(channel=channel)
         await ctx.respond(embed=discord.Embed(
             title="Embed Tool",
-            description="Use the buttons below to edit the embed.",
+            description='''Use the buttons below to edit the embed.
+            Press "Tutorial" to hide/show the tutorial embed below.''',
             color=ctx.guild.me.color
         ), view=embed_tool, ephemeral=True)
 
