@@ -74,7 +74,15 @@ class Messages(core.Cog):
             The channel to send the embed to."""
         if channel is None:
             channel = ctx.channel
-        await ctx.send_modal(EmbedModal(channel, is_new_embed=True, title=f"Send an Embed"))
+        user_embed = discord.Embed(
+            title="Embed Tool",
+            description='''Use the buttons below to edit the embed.
+            Press "Tutorial" to hide/show the tutorial embed below.''',
+            color=ctx.guild.me.color
+        )
+        tutorial_embed = core.get_tutorial_embed(ctx=ctx)
+        embed_tool = EmbedToolView(channel_or_message=channel, is_new_embed=True, tutorial_embed=tutorial_embed)
+        await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)
 
     @embed_group.command(name="edit", description="Edits an embed in the channel specified!")
     async def embed_edit(self, ctx: discord.ApplicationContext,
@@ -101,46 +109,9 @@ class Messages(core.Cog):
                 color=discord.Color.red()
             ), ephemeral=True)
             return
-        await ctx.send_modal(EmbedModal(message, is_new_embed=False, initial_embed=message.embeds[0],
-                                        title=f"Edit an Embed"))
-
-    @embed_group.command(name="test", description="Sends an embed to the channel specified!")
-    async def test_embed_send(self, ctx: discord.ApplicationContext,
-                              channel: discord.Option(discord.abc.GuildChannel, "Please enter the channel!",
-                                                      required=False)):
-        """Sends an embed to the channel specified!
-
-        Parameters
-        ------------
-        ctx: discord.ApplicationContext
-            The context used for command invocation.
-        channel: discord.abc.GuildChannel
-            The channel to send the embed to."""
-        if channel is None:
-            channel = ctx.channel
-        user_embed = discord.Embed(
-            title="Embed Tool",
-            description='''Use the buttons below to edit the embed.
-            Press "Tutorial" to hide/show the tutorial embed below.''',
-            color=ctx.guild.me.color
-        )
-        tutorial_embed = discord.Embed(
-            title="Title",
-            description="This is the required description of the embed.",
-            color=ctx.guild.me.color,
-            timestamp=discord.utils.utcnow()
-        )
-        tutorial_embed.add_field(name="Inline Field 1", value="← Color sets color of the bar on the left!")
-        tutorial_embed.add_field(name="Inline Field 2", value="Value 2")
-        tutorial_embed.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
-        tutorial_embed.add_field(name="Non-inline Field", value="Value", inline=False)
-        tutorial_embed.set_author(name="Author", icon_url=ctx.guild.me.avatar.url)
-        tutorial_embed.set_footer(text="Footer")
-        tutorial_embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416"
-                                         "/1125132998967304412/t6HnzvR8.png")
-        tutorial_embed.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799"
-                                     "/kJ9NYtR1.png")
-        embed_tool = EmbedToolView(channel=channel, tutorial_embed=tutorial_embed)
+        user_embed = message.embeds[0]
+        tutorial_embed = core.get_tutorial_embed(ctx=ctx)
+        embed_tool = EmbedToolView(channel_or_message=message, is_new_embed=False, tutorial_embed=tutorial_embed)
         await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)
 
 
@@ -211,113 +182,26 @@ class MessageModal(discord.ui.Modal):
         ), ephemeral=True)
 
 
-class EmbedModal(discord.ui.Modal):
-    """Modal for receiving the content of an embed to send or edit."""
-
-    def __init__(self, channel_or_message: discord.abc.GuildChannel | discord.Message, *args, is_new_embed: bool,
-                 initial_embed=None, **kwargs):
-        """Initializes the modal.
-
-        Parameters
-        ------------
-        channel_or_message: discord.abc.GuildChannel or discord.Message
-            The channel to send the message in or the message to edit.
-        is_new_embed: bool
-            Whether the embed is new or not. Decides whether to send or edit the embed.
-        initial_embed: discord.Embed
-            The initial embed of the message. Defaults to None."""
-        self.is_new_embed = is_new_embed
-        if self.is_new_embed:
-            self.channel = channel_or_message
-        else:
-            self.message = channel_or_message
-            self.channel = self.message.channel
-        self.initial_title = initial_embed.title if initial_embed is not None else None
-        self.initial_content = initial_embed.description if initial_embed is not None else None
-        self.initial_image_url = initial_embed.image.url if initial_embed is not None else None
-
-        super().__init__(
-            discord.ui.InputText(
-                label="Embed Title:",
-                placeholder="Please enter the title of your embed here...",
-                style=discord.InputTextStyle.short,
-                max_length=256,
-                value=self.initial_title
-            ),
-            discord.ui.InputText(
-                label="Embed Content:",
-                placeholder="Please enter the content of your embed here...",
-                style=discord.InputTextStyle.long,
-                max_length=4000,
-                value=self.initial_content,
-            ),
-            discord.ui.InputText(
-                label="Embed Image URL:",
-                placeholder="Please enter the image URL of your embed here... (optional)",
-                style=discord.InputTextStyle.long,
-                max_length=4000,
-                value=self.initial_image_url,
-                required=False
-            ),
-            *args,
-            **kwargs
-        )
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        """Callback for when the modal is submitted.
-
-        Parameters
-        ------------
-        interaction: discord.Interaction
-            The interaction that submitted the modal."""
-        title = self.children[0].value
-        content = self.children[1].value
-        image_url = self.children[2].value
-        # Send embed
-        if self.is_new_embed:
-            embed = discord.Embed(
-                title=title,
-                description=content,
-                color=interaction.guild.me.color,
-                timestamp=discord.utils.utcnow()
-            )
-            if image_url is not None:
-                embed.set_image(url=image_url)
-            message = await self.channel.send(embed=embed)
-            await interaction.response.send_message(embed=discord.Embed(
-                title="Embed Send",
-                description=f"[Jump to message]({message.jump_url})",
-                color=discord.Color.green(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
-            return
-        # Edit embed
-        embed = self.message.embeds[0]
-        embed.title = title
-        embed.description = content
-        if image_url is not None:
-            embed.set_image(url=image_url)
-        message = await self.message.edit(embed=embed)
-        await interaction.response.send_message(embed=discord.Embed(
-            title="Embed Edited",
-            description=f"[Jump to message]({message.jump_url})",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
-        ), ephemeral=True)
-
-
 class EmbedToolView(discord.ui.View):
     """View for the embed tool."""
 
-    def __init__(self, *args, channel: discord.abc.GuildChannel, tutorial_embed: discord.Embed, **kwargs):
+    def __init__(self, *args, channel_or_message: discord.abc.GuildChannel | discord.Message, is_new_embed: bool,
+                 tutorial_embed: discord.Embed, **kwargs):
         """Initializes the view.
 
         Parameters
         ------------
-        channel: discord.abc.GuildChannel
-            The channel to send the embed to."""
+        channel_or_message: discord.abc.GuildChannel or discord.Message
+            The channel to send the embed in or the message to edit.
+        is_new_embed: bool
+            Whether the embed is new or not. Decides whether to send or edit the embed."""
         super().__init__(*args, disable_on_timeout=True, **kwargs)
-        self.channel: discord.abc.GuildChannel = channel
+        self.is_new_embed: bool = is_new_embed
+        if self.is_new_embed:
+            self.channel: discord.abc.GuildChannel = channel_or_message
+        else:
+            self.message = channel_or_message
+            self.channel = self.message.channel
         self.tutorial_embed: discord.Embed = tutorial_embed
         self.tutorial_hidden: bool = False
         self.canceled_before: bool = False
@@ -489,16 +373,24 @@ class EmbedToolView(discord.ui.View):
         interaction: discord.Interaction
             The interaction that clicked the button."""
         user_embed = interaction.message.embeds[0]
-        message = await self.channel.send(embed=user_embed)
         await interaction.response.defer()
-        await interaction.followup.send(embed=discord.Embed(
-            title="Embed Send",
-            description=f"[Jump to message]({message.jump_url})",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
-        ), ephemeral=True)
+        if self.is_new_embed:
+            message = await self.channel.send(embed=user_embed)
+            await interaction.followup.send(embed=discord.Embed(
+                title="Embed Send",
+                description=f"[Jump to message]({message.jump_url})",
+                color=discord.Color.green(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+        else:
+            await self.message.edit(embed=user_embed)
+            await interaction.followup.send(embed=discord.Embed(
+                title="Embed Edited",
+                description=f"[Jump to message]({self.message.jump_url})",
+                color=discord.Color.green(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
         await interaction.delete_original_response()
-        pass
 
     @discord.ui.button(label="ﾠTutorialﾠﾠ", style=discord.ButtonStyle.gray, row=4)
     async def show_tutorial(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
