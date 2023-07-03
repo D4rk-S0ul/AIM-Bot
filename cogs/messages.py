@@ -490,7 +490,6 @@ class EmbedToolView(discord.ui.View):
             The interaction that clicked the button."""
         user_embed = interaction.message.embeds[0]
         message = await self.channel.send(embed=user_embed)
-        print(message)
         await interaction.response.defer()
         await interaction.followup.send(embed=discord.Embed(
             title="Embed Send",
