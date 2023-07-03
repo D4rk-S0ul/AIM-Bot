@@ -7,6 +7,7 @@ __all__ = (
     "BotMissingPermissions",
     "get_permissions",
     "get_tag",
+    "get_tutorial_embed",
     "is_valid_thread",
     "remove_from_thread_directory",
 )
@@ -102,6 +103,32 @@ async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int
             inline=False
         )
     return thread_directory_embed
+
+
+def get_tutorial_embed(ctx: discord.ApplicationContext) -> discord.Embed:
+    """Returns the tutorial embed.
+
+    Parameters
+    ------------
+    ctx: discord.ApplicationContext
+        The context used for command invocation."""
+    tutorial_embed = discord.Embed(
+        title="Title",
+        description="This is the required description of the embed.",
+        color=ctx.guild.me.color,
+        timestamp=discord.utils.utcnow()
+    )
+    tutorial_embed.add_field(name="Inline Field 1", value="← Color sets color of the bar on the left!")
+    tutorial_embed.add_field(name="Inline Field 2", value="Value 2")
+    tutorial_embed.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
+    tutorial_embed.add_field(name="Non-inline Field", value="Value", inline=False)
+    tutorial_embed.set_author(name="Author", icon_url=ctx.guild.me.avatar.url)
+    tutorial_embed.set_footer(text="Footer")
+    tutorial_embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416"
+                                     "/1125132998967304412/t6HnzvR8.png")
+    tutorial_embed.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799"
+                                 "/kJ9NYtR1.png")
+    return tutorial_embed
 
 
 async def get_parent_ids(thread_ids: list[int], thread: discord.Thread) -> list[int]:

@@ -10,6 +10,7 @@ __all__ = (
     "Cog",
     "get_permissions",
     "get_tag",
+    "get_tutorial_embed",
     "is_valid_thread",
     "remove_from_thread_directory"
 )
