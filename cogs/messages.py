@@ -130,7 +130,7 @@ class Messages(core.Cog):
             color=ctx.guild.me.color,
             timestamp=discord.utils.utcnow()
         )
-        tutorial_embed.add_field(name="Inline Field 1", value="<-- Color sets color of the bar on the left!")
+        tutorial_embed.add_field(name="Inline Field 1", value="← Color sets color of the bar on the left!")
         tutorial_embed.add_field(name="Inline Field 2", value="Value 2")
         tutorial_embed.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
         tutorial_embed.add_field(name="Non-inline Field", value="Value", inline=False)
