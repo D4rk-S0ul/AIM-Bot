@@ -118,13 +118,30 @@ class Messages(core.Cog):
             The channel to send the embed to."""
         if channel is None:
             channel = ctx.channel
-        embed_tool = EmbedToolView(channel=channel)
-        await ctx.respond(embed=discord.Embed(
+        user_embed = discord.Embed(
             title="Embed Tool",
             description='''Use the buttons below to edit the embed.
             Press "Tutorial" to hide/show the tutorial embed below.''',
             color=ctx.guild.me.color
-        ), view=embed_tool, ephemeral=True)
+        )
+        tutorial_embed = discord.Embed(
+            title="Title",
+            description="This is the required description of the embed.",
+            color=ctx.guild.me.color,
+            timestamp=discord.utils.utcnow()
+        )
+        tutorial_embed.add_field(name="Inline Field 1", value="<-- Color sets color of the bar on the left!")
+        tutorial_embed.add_field(name="Inline Field 2", value="Value 2")
+        tutorial_embed.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
+        tutorial_embed.add_field(name="Non-inline Field", value="Value", inline=False)
+        tutorial_embed.set_author(name="Author", icon_url=ctx.guild.me.avatar.url)
+        tutorial_embed.set_footer(text="Footer")
+        tutorial_embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416"
+                                         "/1125132998967304412/t6HnzvR8.png")
+        tutorial_embed.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799"
+                                     "/kJ9NYtR1.png")
+        embed_tool = EmbedToolView(channel=channel, tutorial_embed=tutorial_embed)
+        await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)
 
 
 def setup(bot):
@@ -292,15 +309,18 @@ class EmbedModal(discord.ui.Modal):
 class EmbedToolView(discord.ui.View):
     """View for the embed tool."""
 
-    def __init__(self, *args, channel: discord.abc.GuildChannel, **kwargs):
+    def __init__(self, *args, channel: discord.abc.GuildChannel, tutorial_embed: discord.Embed, **kwargs):
         """Initializes the view.
 
         Parameters
         ------------
         channel: discord.abc.GuildChannel
             The channel to send the embed to."""
-        super().__init__(*args, **kwargs)
-        self.channel = channel
+        super().__init__(*args, disable_on_timeout=True, **kwargs)
+        self.channel: discord.abc.GuildChannel = channel
+        self.tutorial_embed: discord.Embed = tutorial_embed
+        self.tutorial_hidden: bool = False
+        self.canceled_before: bool = False
 
     @discord.ui.button(label="GENERALﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=0)
     async def general_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -468,6 +488,17 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
+        user_embed = interaction.message.embeds[0]
+        message = await self.channel.send(embed=user_embed)
+        print(message)
+        await interaction.response.defer()
+        await interaction.followup.send(embed=discord.Embed(
+            title="Embed Send",
+            description=f"[Jump to message]({message.jump_url})",
+            color=discord.Color.green(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
+        await interaction.delete_original_response()
         pass
 
     @discord.ui.button(label="ﾠTutorialﾠﾠ", style=discord.ButtonStyle.gray, row=4)
@@ -480,7 +511,13 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        user_embed = interaction.message.embeds[0]
+        if self.tutorial_hidden:
+            self.tutorial_hidden = False
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        self.tutorial_hidden = True
+        await interaction.response.edit_message(embed=user_embed)
 
     @discord.ui.button(label="ﾠﾠCancelﾠﾠ", style=discord.ButtonStyle.red, row=4)
     async def cancel_editing(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -492,4 +529,10 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        if self.canceled_before:
+            await interaction.response.defer()
+            await interaction.delete_original_response()
+            return
+        self.canceled_before = True
+        button.label = "ﾠConfirmﾠﾠ"
+        await interaction.response.edit_message(view=self)
