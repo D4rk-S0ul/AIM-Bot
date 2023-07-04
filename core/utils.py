@@ -123,7 +123,8 @@ def get_tutorial_embed(ctx: discord.ApplicationContext) -> discord.Embed:
     tutorial_embed.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
     tutorial_embed.add_field(name="Non-inline Field", value="Value", inline=False)
     tutorial_embed.set_author(name="Author", icon_url=ctx.guild.me.avatar.url)
-    tutorial_embed.set_footer(text="Footer")
+    tutorial_embed.set_footer(text="Footer", icon_url="https://cdn.discordapp.com/attachments/751512715872436416"
+                                                      "/1125701630273261629/13YRA70M.png")
     tutorial_embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416"
                                      "/1125132998967304412/t6HnzvR8.png")
     tutorial_embed.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799"
