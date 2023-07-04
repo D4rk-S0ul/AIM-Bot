@@ -458,8 +458,9 @@ class TitleModal(discord.ui.Modal):
                 label="Embed Title:",
                 placeholder="Please enter the title of the embed...",
                 style=discord.InputTextStyle.long,
-                max_length=2000,
-                value=initial_title
+                max_length=256,
+                value=initial_title,
+                required=False
             ),
             *args,
             **kwargs
