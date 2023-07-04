@@ -314,8 +314,16 @@ class EmbedToolView(discord.ui.View):
             The interaction that clicked the button."""
         pass
 
-    @discord.ui.button(label="⠀⠀⠀⠀⠀ﾠﾠﾠ", style=discord.ButtonStyle.gray, disabled=True, row=2)
-    async def empty(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+    @discord.ui.button(label="ﾠﾠFooterﾠﾠ", style=discord.ButtonStyle.gray, row=2)
+    async def set_footer_image(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the footer image button.
+
+        Parameters
+        ------------
+        button: discord.ui.Button
+            The button that was clicked.
+        interaction: discord.Interaction
+            The interaction that clicked the button."""
         pass
 
     @discord.ui.button(label="OPTIONSﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=3)
@@ -335,8 +343,8 @@ class EmbedToolView(discord.ui.View):
         pass
 
     @discord.ui.button(label="ﾠﾠFooterﾠﾠ", style=discord.ButtonStyle.gray, row=3)
-    async def set_footer(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
-        """Callback for the footer button.
+    async def set_footer_text(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
+        """Callback for the footer text button.
 
         Parameters
         ------------
