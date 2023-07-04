@@ -220,7 +220,12 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        initial_title = interaction.message.embeds[0].title
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        await interaction.response.send_modal(TitleModal(title="Set the Embed Title", initial_title=initial_title,
+                                                         tutorial_embed=tutorial_embed))
 
     @discord.ui.button(label="Description", style=discord.ButtonStyle.gray, row=0)
     async def set_description(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -435,3 +440,41 @@ class EmbedToolView(discord.ui.View):
         self.canceled_before = True
         button.label = "ﾠConfirmﾠﾠ"
         await interaction.response.edit_message(view=self)
+
+
+class TitleModal(discord.ui.Modal):
+    """Modal for receiving the title of an embed to send or edit."""
+
+    def __init__(self, *args, initial_title: str, tutorial_embed=None, **kwargs):
+        """Initialize the modal.
+
+        Parameters
+        ------------
+        initial_title: str
+            The initial title of the embed."""
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(
+            discord.ui.InputText(
+                label="Embed Title:",
+                placeholder="Please enter the title of the embed...",
+                style=discord.InputTextStyle.long,
+                max_length=2000,
+                value=initial_title
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        """Callback for when the modal is submitted.
+
+        Parameters
+        ------------
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        user_embed: discord.Embed = interaction.message.embeds[0]
+        user_embed.title = self.children[0].value
+        if self.tutorial_embed:
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
