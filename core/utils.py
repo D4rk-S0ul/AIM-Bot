@@ -114,7 +114,7 @@ def get_tutorial_embed(ctx: discord.ApplicationContext) -> discord.Embed:
         The context used for command invocation."""
     tutorial_embed = discord.Embed(
         title="Title",
-        description="This is the required description of the embed.",
+        description="Description",
         color=ctx.guild.me.color,
         timestamp=discord.utils.utcnow()
     )
