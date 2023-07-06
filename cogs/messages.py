@@ -224,8 +224,9 @@ class EmbedToolView(discord.ui.View):
         tutorial_embed = None
         if not self.tutorial_hidden:
             tutorial_embed = self.tutorial_embed
-        await interaction.response.send_modal(TitleModal(title="Set the Embed Title", initial_title=initial_title,
-                                                         tutorial_embed=tutorial_embed))
+        await interaction.response.send_modal(
+            TitleModal(title="Set the Embed Title", initial_title=initial_title, tutorial_embed=tutorial_embed)
+        )
 
     @discord.ui.button(label="Description", style=discord.ButtonStyle.gray, row=0)
     async def set_description(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -237,7 +238,14 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        initial_description = interaction.message.embeds[0].description
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        await interaction.response.send_modal(
+            DescriptionModal(title="Set the Embed Description", initial_description=initial_description,
+                             tutorial_embed=tutorial_embed)
+        )
 
     @discord.ui.button(label="ﾠ⠀Colorﾠ⠀", style=discord.ButtonStyle.gray, row=0)
     async def set_color(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -451,7 +459,9 @@ class TitleModal(discord.ui.Modal):
         Parameters
         ------------
         initial_title: str
-            The initial title of the embed."""
+            The initial title of the embed.
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial."""
         self.tutorial_embed: discord.Embed | None = tutorial_embed
         super().__init__(
             discord.ui.InputText(
@@ -475,6 +485,47 @@ class TitleModal(discord.ui.Modal):
             The interaction that submitted the modal."""
         user_embed: discord.Embed = interaction.message.embeds[0]
         user_embed.title = self.children[0].value
+        if self.tutorial_embed:
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
+
+
+class DescriptionModal(discord.ui.Modal):
+    """Modal for receiving the description of an embed to send or edit."""
+
+    def __init__(self, *args, initial_description: str, tutorial_embed=None, **kwargs):
+        """Initialize the modal.
+
+        Parameters
+        ------------
+        initial_description: str
+            The initial description of the embed.
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial."""
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(
+            discord.ui.InputText(
+                label="Embed Description:",
+                placeholder="Please enter the description of the embed...",
+                style=discord.InputTextStyle.long,
+                max_length=4000,
+                value=initial_description,
+                required=False
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        """Callback for when the modal is submitted.
+
+        Parameters
+        ------------
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        user_embed: discord.Embed = interaction.message.embeds[0]
+        user_embed.description = self.children[0].value
         if self.tutorial_embed:
             await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
             return
