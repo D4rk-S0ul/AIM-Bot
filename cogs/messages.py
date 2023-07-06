@@ -279,7 +279,12 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        await interaction.response.send_modal(
+            AddFieldModal(title="Add a Field", tutorial_embed=tutorial_embed)
+        )
 
     @discord.ui.button(label="ﾠRemoveﾠﾠ", style=discord.ButtonStyle.gray, row=1)
     async def remove_field(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -599,3 +604,70 @@ class ColorModal(discord.ui.Modal):
             ), ephemeral=True)
             return
         raise error
+
+
+class AddFieldModal(discord.ui.Modal):
+    """Modal for receiving a field to be added to an embed to send or edit."""
+
+    def __init__(self, *args, tutorial_embed=None, **kwargs):
+        """Initialize the modal.
+
+        Parameters
+        ------------
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial."""
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(
+            discord.ui.InputText(
+                label="Field Title:",
+                placeholder="Please enter the title of the field...",
+                style=discord.InputTextStyle.long,
+                max_length=256,
+                required=False
+            ),
+            discord.ui.InputText(
+                label="Field Value:",
+                placeholder="Please enter the value of the field...",
+                style=discord.InputTextStyle.long,
+                max_length=1024,
+                required=False
+            ),
+            discord.ui.InputText(
+                label="Inline:",
+                placeholder="Whether the field should be inline (True/False)...",
+                style=discord.InputTextStyle.short,
+                max_length=5,
+                required=True
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        """Callback for when the modal is submitted.
+
+        Parameters
+        ------------
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        user_embed: discord.Embed = interaction.message.embeds[0]
+        title = self.children[0].value
+        value = self.children[1].value
+        inline_str = self.children[2].value.lower()
+        if inline_str in ["true", "1"]:
+            inline = True
+        elif inline_str in ["false", "0"]:
+            inline = False
+        else:
+            await interaction.response.send_message(embed=discord.Embed(
+                title="Invalid Inline",
+                description="The inline value you entered is invalid. Please try again using True or False.",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        user_embed.add_field(name=title, value=value, inline=inline)
+        if self.tutorial_embed:
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
