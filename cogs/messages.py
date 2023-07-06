@@ -76,8 +76,7 @@ class Messages(core.Cog):
             channel = ctx.channel
         user_embed = discord.Embed(
             title="Embed Tool",
-            description='''Use the buttons below to edit the embed.
-            Press "Tutorial" to hide/show the tutorial embed below.''',
+            description='Use the buttons below to edit the embed.\nPress "Tutorial" to hide/show the embed below.',
             color=ctx.guild.me.color
         )
         tutorial_embed = core.get_tutorial_embed(ctx=ctx)
