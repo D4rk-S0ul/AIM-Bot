@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 
 import core
 
@@ -256,7 +257,13 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        initial_color = str(interaction.message.embeds[0].color)
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        await interaction.response.send_modal(
+            ColorModal(title="Set the Embed Color", initial_color=initial_color, tutorial_embed=tutorial_embed)
+        )
 
     @discord.ui.button(label="FIELDSﾠﾠﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=1)
     async def fields_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -529,3 +536,66 @@ class DescriptionModal(discord.ui.Modal):
             await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
             return
         await interaction.response.edit_message(embed=user_embed)
+
+
+class ColorModal(discord.ui.Modal):
+    """Modal for receiving the color of an embed to send or edit."""
+
+    def __init__(self, *args, initial_color: str, tutorial_embed=None, **kwargs):
+        """Initialize the modal.
+
+        Parameters
+        ------------
+        initial_color: str
+            The initial color of the embed.
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial."""
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(
+            discord.ui.InputText(
+                label="Embed Color:",
+                placeholder="Please enter the HEX code of the color of the embed...",
+                style=discord.InputTextStyle.short,
+                max_length=7,
+                value=initial_color,
+                required=False
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        """Callback for when the modal is submitted.
+
+        Parameters
+        ------------
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        user_embed: discord.Embed = interaction.message.embeds[0]
+        color_string = self.children[0].value
+        color = await commands.ColorConverter().convert(interaction, color_string)
+        user_embed.colour = color
+        if self.tutorial_embed:
+            self.tutorial_embed.colour = color
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
+
+    async def on_error(self, error: Exception, interaction: discord.Interaction) -> None:
+        """Callback for when the modal has an error.
+
+        Parameters
+        ------------
+        error: Exception
+            The error that occurred.
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        if isinstance(error, commands.BadArgument):
+            await interaction.response.send_message(embed=discord.Embed(
+                title="Invalid Color",
+                description="The color you entered is invalid. Please try again using a valid HEX code.",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        raise error
