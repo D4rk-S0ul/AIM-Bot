@@ -204,6 +204,8 @@ class EmbedToolView(discord.ui.View):
             self.channel = self.message.channel
         self.tutorial_embed: discord.Embed = tutorial_embed
         self.tutorial_hidden: bool = False
+        self.author_hidden: bool = True
+        self.timestamp_hidden: bool = True
         self.canceled_before: bool = False
 
     @discord.ui.button(label="GENERALﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=0)
@@ -364,7 +366,17 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        user_embed = interaction.message.embeds[0]
+        if self.author_hidden:
+            self.author_hidden = False
+            user_embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.avatar.url)
+        else:
+            self.author_hidden = True
+            user_embed.remove_author()
+        if not self.tutorial_hidden:
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
 
     @discord.ui.button(label="ﾠﾠFooterﾠﾠ", style=discord.ButtonStyle.gray, row=3)
     async def set_footer_text(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -376,7 +388,14 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        initial_footer = interaction.message.embeds[0].footer.text
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        await interaction.response.send_modal(
+            FooterTextModal(title="Set the Embed Description", initial_footer=initial_footer,
+                        tutorial_embed=tutorial_embed)
+        )
 
     @discord.ui.button(label="Timestamp", style=discord.ButtonStyle.gray, row=3)
     async def set_timestamp(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -388,7 +407,17 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        user_embed = interaction.message.embeds[0]
+        if self.timestamp_hidden:
+            self.timestamp_hidden = False
+            user_embed.timestamp = discord.utils.utcnow()
+        else:
+            self.timestamp_hidden = True
+            user_embed.timestamp = discord.Embed.Empty
+        if not self.tutorial_hidden:
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
 
     @discord.ui.button(label="SETTINGS", style=discord.ButtonStyle.blurple, disabled=True, row=4)
     async def settings_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -667,6 +696,47 @@ class AddFieldModal(discord.ui.Modal):
             ), ephemeral=True)
             return
         user_embed.add_field(name=title, value=value, inline=inline)
+        if self.tutorial_embed:
+            await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
+            return
+        await interaction.response.edit_message(embed=user_embed)
+
+
+class FooterTextModal(discord.ui.Modal):
+    """Modal for receiving the footer text of an embed to send or edit."""
+
+    def __init__(self, *args, initial_footer: str, tutorial_embed=None, **kwargs):
+        """Initialize the modal.
+
+        Parameters
+        ------------
+        initial_footer: str
+            The initial footer of the embed.
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial."""
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(
+            discord.ui.InputText(
+                label="Embed Footer:",
+                placeholder="Please enter the footer of the embed...",
+                style=discord.InputTextStyle.long,
+                max_length=2048,
+                value=initial_footer,
+                required=False
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        """Callback for when the modal is submitted.
+
+        Parameters
+        ------------
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        user_embed: discord.Embed = interaction.message.embeds[0]
+        user_embed.set_footer(text=self.children[0].value)
         if self.tutorial_embed:
             await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
             return
