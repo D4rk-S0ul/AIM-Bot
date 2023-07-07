@@ -298,7 +298,12 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        await interaction.response.send_message(embed=discord.Embed(
+            title="Coming Soon",
+            description="My developer is currently working on this feature. It will be added soon!",
+            color=discord.Color.yellow(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
 
     @discord.ui.button(label="ﾠﾠﾠEditﾠﾠﾠ", style=discord.ButtonStyle.gray, row=1)
     async def edit_field(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
@@ -310,7 +315,12 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
-        pass
+        await interaction.response.send_message(embed=discord.Embed(
+            title="Coming Soon",
+            description="My developer is currently working on this feature. It will be added soon!",
+            color=discord.Color.yellow(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
 
     @discord.ui.button(label="IMAGESﾠﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=2)
     async def images_row(self, button: discord.ui.Button, interaction: discord.Interaction) -> None:
