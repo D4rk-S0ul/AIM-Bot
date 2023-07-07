@@ -256,8 +256,8 @@ async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
         The guild to get the thread directory message for."""
     thread_dirs = {
         933075515881951292: [None, None],  # RIP
-        959162264081014814: [959198464900747304, 1047979139069657250],  # SEA
-        849650258786779196: [1041033326846296164, 1047981765626712135],  # EAR
+        959162264081014814: [959198464900747304, 1126961535605014609],  # SEA
+        849650258786779196: [1041033326846296164, 1126961177990287441],  # EAR
         915333299981934692: [922938837049683968, 1121089178122330276]  # TEST
     }
     channel_id, message_id = thread_dirs.get(guild.id)
