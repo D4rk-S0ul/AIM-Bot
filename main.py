@@ -5,4 +5,4 @@ from core import AimBot
 load_dotenv(".env")
 
 if __name__ == "__main__":
-    AimBot().run("TEST_TOKEN")
+    AimBot().run("AIM_TOKEN")
