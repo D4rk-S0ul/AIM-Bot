@@ -1,6 +1,6 @@
 import os
 import platform
-from traceback import format_exception
+import traceback
 
 import discord
 from aiohttp import ClientSession
@@ -38,7 +38,7 @@ class AimBot(discord.Bot):
             self.load_extension(cog)
         except Exception as e:
             e = getattr(e, "original", e)
-            print("".join(format_exception(type(e), e, e.__traceback__)))
+            print("".join(traceback.format_exception(type(e), e, e.__traceback__)))
 
     async def on_ready(self):
         if self.on_ready_fired:
@@ -83,7 +83,7 @@ class AimBot(discord.Bot):
             guild = f"`{ctx.guild.name} ({ctx.guild_id})`"
         else:
             guild = "None (DMs)"
-        formatted_error = ''.join(format_exception(type(error), error, error.__traceback__))
+        formatted_error = ''.join(traceback.format_exception(type(error), error, error.__traceback__))
         error_embed = discord.Embed(
             title=f"{error.__class__.__name__}",
             description=str(error),
