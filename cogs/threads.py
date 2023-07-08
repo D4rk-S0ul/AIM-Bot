@@ -150,11 +150,19 @@ class Threads(core.Cog):
             ), ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
-        await core.add_to_thread_directory(thread)
+        thread_added: bool = await core.add_to_thread_directory(thread)
+        if thread_added:
+            await ctx.followup.send(embed=discord.Embed(
+                title="Thread Added",
+                description=f"Added thread <#{thread.id}> to the thread directory successfully!",
+                color=discord.Color.green(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
         await ctx.followup.send(embed=discord.Embed(
-            title="Thread Added",
-            description=f"Added thread <#{thread.id}> to the thread directory successfully!",
-            color=discord.Color.green(),
+            title="Error",
+            description=f"Failed to add thread <#{thread.id}> to the thread directory!",
+            color=discord.Color.red(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
 
@@ -181,11 +189,19 @@ class Threads(core.Cog):
             ), ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
-        await core.remove_from_thread_directory(thread)
+        thread_removed: bool = await core.remove_from_thread_directory(thread)
+        if thread_removed:
+            await ctx.followup.send(embed=discord.Embed(
+                title="Thread Removed",
+                description=f"Removed thread <#{thread.id}> from the thread directory successfully!",
+                color=discord.Color.green(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
         await ctx.followup.send(embed=discord.Embed(
-            title="Thread Removed",
-            description=f"Removed thread <#{thread.id}> from the thread directory successfully!",
-            color=discord.Color.green(),
+            title="Error",
+            description=f"Failed to remove thread <#{thread.id}> from the thread directory!",
+            color=discord.Color.red(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
 
