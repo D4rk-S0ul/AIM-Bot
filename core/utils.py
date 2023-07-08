@@ -283,19 +283,22 @@ def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:
     return True
 
 
-async def remove_from_thread_directory(thread: discord.Thread) -> None:
+async def remove_from_thread_directory(thread: discord.Thread) -> bool:
     """Removes a thread from the thread directory.
 
     Parameters
     ----------
     thread
         The thread to remove."""
-    thread_dir_msg = await get_thread_dir_msg(thread.guild)
-    initial_embed = thread_dir_msg.embeds[0]
-    thread_ids = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
+    thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
+    if thread_dir_msg is None:
+        return False
+    initial_embed: discord.Embed = thread_dir_msg.embeds[0]
+    thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
     if thread.id not in thread_ids:
-        return
+        return False
     thread_ids.remove(thread.id)
-    parent_ids = await get_parent_ids(thread_ids, thread)
-    thread_directory_embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
+    parent_ids: list[int] = await get_parent_ids(thread_ids, thread)
+    thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
+    return True
