@@ -3,7 +3,6 @@ import discord
 __all__ = (
     "add_members",
     "add_to_thread_directory",
-    "BotMissingPermissions",
     "get_permissions",
     "get_tag",
     "get_tutorial_embed",
@@ -196,7 +195,7 @@ def get_ping_role(guild: discord.Guild) -> discord.Role | None:
 
 def get_tag() -> dict[str, str]:
     """Gets a tag for the bot."""
-    tags = {
+    tags: dict[str, str] = {
         "Bastion Route Spreadsheet": "https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0"
                                      "-6YhztMqa_wZ8W0/edit?usp=sharing",
         "Blaze Fight": "https://youtu.be/dUMclLehKXE",
@@ -266,7 +265,7 @@ async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
     return await channel.fetch_message(message_id)
 
 
-def is_valid_thread(thread) -> bool:
+def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:
     """Checks members should be added to a thread.
 
     Parameters
@@ -297,18 +296,3 @@ async def remove_from_thread_directory(thread: discord.Thread) -> None:
     parent_ids = await get_parent_ids(thread_ids, thread)
     thread_directory_embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
-
-
-# exceptions
-class BotMissingPermissions(discord.DiscordException):
-    def __init__(self, permissions) -> None:
-        missing = [
-            f"**{perm.replace('_', ' ').replace('guild', 'server').title()}**"
-            for perm in permissions
-        ]
-        sub = (
-            f"{', '.join(missing[:-1])} and {missing[-1]}"
-            if len(missing) > 1
-            else missing[0]
-        )
-        super().__init__(f"I require {sub} permissions to run this command.")
