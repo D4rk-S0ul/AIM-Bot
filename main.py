@@ -1,8 +1,8 @@
-from dotenv import load_dotenv
+import dotenv
 
-from core import AimBot
+import core
 
-load_dotenv(".env")
+dotenv.load_dotenv(".env")
 
 if __name__ == "__main__":
-    AimBot().run("AIM_TOKEN")
+    core.AimBot().run("AIM_TOKEN")
