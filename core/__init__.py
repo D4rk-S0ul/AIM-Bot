@@ -20,4 +20,4 @@ class Cog(commands.Cog):
     """Base class for all cogs"""
 
     def __init__(self, bot: AimBot) -> None:
-        self.bot = bot
+        self.bot: AimBot = bot
