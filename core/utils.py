@@ -1,5 +1,4 @@
 import discord
-from discord import DiscordException
 
 __all__ = (
     "add_members",
@@ -301,7 +300,7 @@ async def remove_from_thread_directory(thread: discord.Thread) -> None:
 
 
 # exceptions
-class BotMissingPermissions(DiscordException):
+class BotMissingPermissions(discord.DiscordException):
     def __init__(self, permissions) -> None:
         missing = [
             f"**{perm.replace('_', ' ').replace('guild', 'server').title()}**"
