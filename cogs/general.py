@@ -13,7 +13,7 @@ class General(core.Cog):
 
         Parameters
         ------------
-        ctx: core.discord.ApplicationContext
+        ctx: discord.ApplicationContext
             The context used for command invocation."""
         await ctx.respond(embed=discord.Embed(
             title="Ping",
@@ -143,7 +143,7 @@ class General(core.Cog):
                 timestamp=discord.utils.utcnow()
             ), ephemeral=True)
             return
-        image_url = None
+        image_url: str | None = None
         lines = tags[tag].split("\r\n")
         for line in lines:
             if line.endswith(".png"):
