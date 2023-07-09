@@ -101,6 +101,11 @@ class Threads(core.Cog):
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
         await core.add_to_thread_directory(thread)
+        if thread.guild.id != 933075515881951292:
+            return
+        if thread.name.startswith("🔔"):
+            return
+        await thread.edit(name=f"🔔{thread.name}")
 
     thread_group = discord.SlashCommandGroup(
         name="thread",
