@@ -22,15 +22,8 @@ class Threads(core.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to add a bell (🔔) to."""
+        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
         if thread is None:
-            thread = ctx.channel
-        if not isinstance(thread, discord.Thread):
-            await ctx.respond(embed=discord.Embed(
-                title="Error",
-                description="This command can only be used in threads!",
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
             return
         await thread.edit(name=f"🔔{thread.name}")
         await ctx.respond(embed=discord.Embed(
@@ -51,15 +44,8 @@ class Threads(core.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to remove the bell (🔔) from."""
+        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
         if thread is None:
-            thread = ctx.channel
-        if not isinstance(thread, discord.Thread):
-            await ctx.respond(embed=discord.Embed(
-                title="Error",
-                description="This command can only be used in threads!",
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
             return
         await thread.edit(name=thread.name.replace("🔔", ""))
         await ctx.respond(embed=discord.Embed(
@@ -97,15 +83,8 @@ class Threads(core.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to add members to."""
+        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
         if thread is None:
-            thread = ctx.channel
-        if not isinstance(thread, discord.Thread):
-            await ctx.respond(embed=discord.Embed(
-                title="Error",
-                description="This command can only be used in threads!",
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
         await core.add_members(thread)
@@ -139,15 +118,8 @@ class Threads(core.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to add to the thread directory."""
+        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
         if thread is None:
-            thread = ctx.channel
-        if not isinstance(thread, discord.Thread):
-            await ctx.respond(embed=discord.Embed(
-                title="Error",
-                description="This command can only be used in threads!",
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
         thread_added: bool = await core.add_to_thread_directory(thread)
@@ -178,15 +150,8 @@ class Threads(core.Cog):
             The context used for command invocation.
         thread: discord.Thread
             The thread to remove from the thread directory."""
+        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
         if thread is None:
-            thread = ctx.channel
-        if not isinstance(thread, discord.Thread):
-            await ctx.respond(embed=discord.Embed(
-                title="Error",
-                description="This command can only be used in threads!",
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
-            ), ephemeral=True)
             return
         await ctx.defer(ephemeral=True)
         thread_removed: bool = await core.remove_from_thread_directory(thread)
