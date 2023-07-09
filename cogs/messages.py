@@ -81,7 +81,8 @@ class Messages(core.Cog):
             color=ctx.guild.me.color
         )
         tutorial_embed = core.get_tutorial_embed(ctx=ctx)
-        embed_tool = EmbedToolView(channel_or_message=channel, is_new_embed=True, tutorial_embed=tutorial_embed)
+        embed_tool = EmbedToolView(channel_or_message=channel, is_new_embed=True, tutorial_embed=tutorial_embed,
+                                   ctx=ctx)
         await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)
 
     @embed_group.command(name="edit", description="Edits an embed in the channel specified!")
@@ -111,7 +112,8 @@ class Messages(core.Cog):
             return
         user_embed = message.embeds[0]
         tutorial_embed = core.get_tutorial_embed(ctx=ctx)
-        embed_tool = EmbedToolView(channel_or_message=message, is_new_embed=False, tutorial_embed=tutorial_embed)
+        embed_tool = EmbedToolView(channel_or_message=message, is_new_embed=False, tutorial_embed=tutorial_embed,
+                                   ctx=ctx)
         await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)
 
 
@@ -186,7 +188,7 @@ class EmbedToolView(discord.ui.View):
     """View for the embed tool."""
 
     def __init__(self, *args, channel_or_message: discord.abc.GuildChannel | discord.Message, is_new_embed: bool,
-                 tutorial_embed: discord.Embed, **kwargs):
+                 tutorial_embed: discord.Embed, ctx: discord.ApplicationContext, **kwargs):
         """Initializes the view.
 
         Parameters
@@ -194,7 +196,11 @@ class EmbedToolView(discord.ui.View):
         channel_or_message: discord.abc.GuildChannel or discord.Message
             The channel to send the embed in or the message to edit.
         is_new_embed: bool
-            Whether the embed is new or not. Decides whether to send or edit the embed."""
+            Whether the embed is new or not. Decides whether to send or edit the embed.
+        tutorial_embed: discord.Embed
+            The tutorial embed to show.
+        ctx: discord.ApplicationContext
+            The context used for command invocation."""
         super().__init__(*args, disable_on_timeout=True, **kwargs)
         self.is_new_embed: bool = is_new_embed
         if self.is_new_embed:
@@ -203,6 +209,7 @@ class EmbedToolView(discord.ui.View):
             self.message = channel_or_message
             self.channel = self.message.channel
         self.tutorial_embed: discord.Embed = tutorial_embed
+        self.ctx: discord.ApplicationContext = ctx
         self.tutorial_hidden: bool = False
         self.author_hidden: bool = True
         self.timestamp_hidden: bool = True
@@ -298,11 +305,31 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
+        fields = interaction.message.embeds[0].fields
+        if not fields:
+            await interaction.response.send_message(embed=discord.Embed(
+                title="Error",
+                description="There are no fields to remove.",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        options = []
+        for index, field in enumerate(fields):
+            options.append(discord.SelectOption(label=field.name, description=field.value, value=str(index)))
         await interaction.response.send_message(embed=discord.Embed(
-            title="Coming Soon",
-            description="My developer is currently working on this feature. It will be added soon!",
-            color=discord.Color.yellow(),
+            title="Remove a Field",
+            description="Select the field you want to remove.",
+            color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
+        ), view=RemoveFieldView(
+            ctx=self.ctx,
+            user_embed=interaction.message.embeds[0],
+            tutorial_embed=tutorial_embed,
+            options=options
         ), ephemeral=True)
 
     @discord.ui.button(label="ﾠﾠﾠEditﾠﾠﾠ", style=discord.ButtonStyle.gray, row=1)
@@ -315,11 +342,31 @@ class EmbedToolView(discord.ui.View):
             The button that was clicked.
         interaction: discord.Interaction
             The interaction that clicked the button."""
+        fields = interaction.message.embeds[0].fields
+        if not fields:
+            await interaction.response.send_message(embed=discord.Embed(
+                title="Error",
+                description="There are no fields to edit.",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        tutorial_embed = None
+        if not self.tutorial_hidden:
+            tutorial_embed = self.tutorial_embed
+        options = []
+        for index, field in enumerate(fields):
+            options.append(discord.SelectOption(label=field.name, description=field.value, value=str(index)))
         await interaction.response.send_message(embed=discord.Embed(
-            title="Coming Soon",
-            description="My developer is currently working on this feature. It will be added soon!",
-            color=discord.Color.yellow(),
+            title="Edit a Field",
+            description="Select the field you want to edit.",
+            color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
+        ), view=EditFieldView(
+            ctx=self.ctx,
+            user_embed=interaction.message.embeds[0],
+            tutorial_embed=tutorial_embed,
+            options=options
         ), ephemeral=True)
 
     @discord.ui.button(label="IMAGESﾠﾠ", style=discord.ButtonStyle.blurple, disabled=True, row=2)
@@ -732,6 +779,165 @@ class AddFieldModal(discord.ui.Modal):
             await interaction.response.edit_message(embeds=[user_embed, self.tutorial_embed])
             return
         await interaction.response.edit_message(embed=user_embed)
+
+
+class RemoveFieldView(discord.ui.View):
+    """View for removing a field from an embed."""
+
+    def __init__(self, *args, ctx: discord.ApplicationContext, user_embed: discord.Embed, tutorial_embed=None,
+                 options: list[discord.SelectOption], **kwargs):
+        """Initialize the view.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial.
+        options: list[discord.SelectOption]
+            The options to show in the select."""
+        self.ctx: discord.ApplicationContext = ctx
+        self.user_embed: discord.Embed = user_embed
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(*args, **kwargs)
+        self.remove_field.options = options
+
+    @discord.ui.string_select(placeholder="Please select a field to remove...")
+    async def remove_field(self, select: discord.ui.Select, interaction: discord.Interaction) -> None:
+        """Callback for when a field is selected to be removed.
+
+        Parameters
+        ------------
+        select: discord.ui.Select
+            The select that was used to select the field.
+        interaction: discord.Interaction
+            The interaction that selected the field."""
+        print("remove field inside view")
+        await interaction.response.defer()
+        field_index: int = int(select.values[0])
+        self.user_embed.remove_field(field_index)
+        if self.tutorial_embed:
+            await self.ctx.edit(embeds=[self.user_embed, self.tutorial_embed])
+            return
+        await self.ctx.edit(embed=self.user_embed)
+        await interaction.delete_original_response()
+
+
+class EditFieldView(discord.ui.View):
+    """View for editing a field from an embed."""
+
+    def __init__(self, *args, ctx: discord.ApplicationContext, user_embed: discord.Embed, tutorial_embed=None,
+                 options: list[discord.SelectOption], **kwargs):
+        """Initialize the view.
+
+        Parameters
+        ------------
+        ctx: discord.ApplicationContext
+            The context used for command invocation.
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial.
+        options: list[discord.SelectOption]
+            The options to show in the select."""
+        self.ctx: discord.ApplicationContext = ctx
+        self.user_embed: discord.Embed = user_embed
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        super().__init__(*args, **kwargs)
+        self.edit_field.options = options
+
+    @discord.ui.string_select(placeholder="Please select a field to remove...")
+    async def edit_field(self, select: discord.ui.Select, interaction: discord.Interaction) -> None:
+        """Callback for when a field is selected to be removed.
+
+        Parameters
+        ------------
+        select: discord.ui.Select
+            The select that was used to select the field.
+        interaction: discord.Interaction
+            The interaction that selected the field."""
+        field_index: int = int(select.values[0])
+        await interaction.response.send_modal(
+            EditFieldModal(
+                ctx=self.ctx,
+                title="Edit a Field",
+                user_embed=self.user_embed,
+                tutorial_embed=self.tutorial_embed,
+                field_index=field_index)
+        )
+        await interaction.delete_original_response()
+
+
+class EditFieldModal(discord.ui.Modal):
+    """Modal for editing a field in an embed."""
+
+    def __init__(self, *args, ctx: discord.ApplicationContext, user_embed: discord.Embed, tutorial_embed=None,
+                 field_index: int, **kwargs):
+        """Initialize the modal.
+
+        Parameters
+        ------------
+        tutorial_embed: discord.Embed | None
+            The embed to show in the tutorial."""
+        self.ctx: discord.ApplicationContext = ctx
+        self.user_embed: discord.Embed = user_embed
+        self.tutorial_embed: discord.Embed | None = tutorial_embed
+        self.field_index: int = field_index
+        super().__init__(
+            discord.ui.InputText(
+                label="Field Title:",
+                placeholder="Please enter the title of the field...",
+                style=discord.InputTextStyle.long,
+                max_length=256,
+                value=self.user_embed.fields[self.field_index].name,
+                required=False
+            ),
+            discord.ui.InputText(
+                label="Field Value:",
+                placeholder="Please enter the value of the field...",
+                style=discord.InputTextStyle.long,
+                max_length=1024,
+                value=self.user_embed.fields[self.field_index].value,
+                required=False
+            ),
+            discord.ui.InputText(
+                label="Inline:",
+                placeholder="Whether the field should be inline (True/False)...",
+                style=discord.InputTextStyle.short,
+                max_length=5,
+                value=str(self.user_embed.fields[self.field_index].inline),
+                required=True
+            ),
+            *args,
+            **kwargs
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        """Callback for when the modal is submitted.
+
+        Parameters
+        ------------
+        interaction: discord.Interaction
+            The interaction that submitted the modal."""
+        await interaction.response.defer()
+        title = self.children[0].value
+        value = self.children[1].value
+        inline_str = self.children[2].value.lower()
+        if inline_str in ["true", "1"]:
+            inline = True
+        elif inline_str in ["false", "0"]:
+            inline = False
+        else:
+            await interaction.response.send_message(embed=discord.Embed(
+                title="Invalid Inline",
+                description="The inline value you entered is invalid. Please try again using True or False.",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            ), ephemeral=True)
+            return
+        self.user_embed.set_field_at(index=self.field_index, name=title, value=value, inline=inline)
+        if self.tutorial_embed:
+            await self.ctx.edit(embeds=[self.user_embed, self.tutorial_embed])
+            return
+        await self.ctx.edit(embed=self.user_embed)
 
 
 class FooterTextModal(discord.ui.Modal):
