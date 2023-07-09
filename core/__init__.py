@@ -11,6 +11,7 @@ __all__ = (
     "get_permissions",
     "get_tag",
     "get_tutorial_embed",
+    "get_valid_thread",
     "is_valid_thread",
     "remove_from_thread_directory"
 )

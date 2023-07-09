@@ -6,6 +6,7 @@ __all__ = (
     "get_permissions",
     "get_tag",
     "get_tutorial_embed",
+    "get_valid_thread",
     "is_valid_thread",
     "remove_from_thread_directory",
 )
@@ -266,6 +267,28 @@ async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
         return None
     channel = guild.get_channel(channel_id)
     return await channel.fetch_message(message_id)
+
+
+async def get_valid_thread(ctx: discord.ApplicationContext, thread: discord.Thread) -> discord.Thread| None:
+    """Gets a valid thread or None if the thread is invalid.
+
+    Parameters
+    ----------
+    ctx
+        The context of the interaction.
+    thread
+        The thread to validate."""
+    if thread is None:
+        thread = ctx.channel
+    if not isinstance(thread, discord.Thread):
+        await ctx.respond(embed=discord.Embed(
+            title="Error",
+            description="This command can only be used in threads!",
+            color=discord.Color.red(),
+            timestamp=discord.utils.utcnow()
+        ), ephemeral=True)
+        return None
+    return thread
 
 
 def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:
