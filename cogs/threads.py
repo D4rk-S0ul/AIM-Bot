@@ -63,9 +63,15 @@ class Threads(core.Cog):
         ------------
         thread: discord.Thread
             The thread that was created."""
-        if core.is_valid_thread(thread):
-            await core.add_members(thread)
-            await core.add_to_thread_directory(thread)
+        if not core.is_valid_thread(thread):
+            return
+        await core.add_members(thread)
+        await core.add_to_thread_directory(thread)
+        if thread.guild.id != 933075515881951292:
+            return
+        if thread.name.startswith("🔔"):
+            return
+        await thread.edit(name=f"🔔{thread.name}")
 
     add_group = discord.SlashCommandGroup(
         name="add",
