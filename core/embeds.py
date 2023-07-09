@@ -18,6 +18,10 @@ class Embed(discord.Embed):
         super().__init__(**kwargs)
         self.timestamp: datetime.datetime = discord.utils.utcnow()
 
+    async def respond(self, *, ctx: discord.ApplicationContext, ephemeral: bool):
+        """Sends the embed as an ephemeral response to the interaction."""
+        return await ctx.respond(embed=self, ephemeral=ephemeral)
+
 
 class GreenEmbed(Embed):
     """Embed with a green color and a timestamp."""
