@@ -269,7 +269,7 @@ async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
     return await channel.fetch_message(message_id)
 
 
-async def get_valid_thread(ctx: discord.ApplicationContext, thread: discord.Thread) -> discord.Thread| None:
+async def get_valid_thread(*, ctx: discord.ApplicationContext, thread: discord.Thread) -> discord.Thread | None:
     """Gets a valid thread or None if the thread is invalid.
 
     Parameters
