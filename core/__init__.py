@@ -2,6 +2,7 @@ from discord.ext import commands
 
 from .bot import AimBot
 from .utils import *
+from .thread import *
 
 __all__ = (
     "add_members",
@@ -13,7 +14,8 @@ __all__ = (
     "get_tutorial_embed",
     "get_valid_thread",
     "is_valid_thread",
-    "remove_from_thread_directory"
+    "remove_from_thread_directory",
+    "Thread"
 )
 
 
