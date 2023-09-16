@@ -13,6 +13,31 @@ __all__ = (
 
 
 # functions
+async def add_feedback_thread_to_feedback_thread_directory(thread: discord.Thread, thread_dir_msg: discord.Message,
+                                                           thread_ids: list[int]) -> bool:
+    """Adds the feedback thread to the feedback thread directory.
+
+    Parameters
+    ------------
+    thread: discord.Thread
+        The feedback thread to add to the feedback thread directory.
+    thread_dir_msg: discord.Message
+        The message containing the feedback thread directory.
+    thread_ids: list[int]
+        The list of thread ids in the feedback thread directory.
+
+    Returns
+    -----------
+    bool
+        Whether the feedback thread was added to the feedback thread directory successfully."""
+    if thread.id in thread_ids:
+        thread_ids.remove(thread.id)
+    thread_ids.append(thread.id)
+    thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(thread_ids, thread.guild)
+    await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
+    return True
+
+
 async def add_members(thread: discord.Thread) -> None:
     """Adds members to the thread specified.
 
@@ -61,12 +86,19 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
     Parameters
     ------------
     thread: discord.Thread
-        The thread to add to the thread directory."""
+        The thread to add to the thread directory.
+
+    Returns
+    -----------
+    bool
+        Whether the thread was added to the thread directory successfully."""
     thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
     if thread_dir_msg is None:
         return False
     initial_embed: discord.Embed = thread_dir_msg.embeds[0]
     thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
+    if thread.guild.id == 933075515881951292:
+        return await add_feedback_thread_to_feedback_thread_directory(thread, thread_dir_msg, thread_ids)
     if thread.id in thread_ids:
         return True
     thread_ids.append(thread.id)
@@ -74,6 +106,38 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
     thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
+
+
+async def get_feedback_thread_directory_embed(thread_ids: list[int], guild: discord.Guild) -> discord.Embed:
+    """Gets the feedback thread directory embed.
+
+    Parameters
+    ------------
+    thread_ids: list[int]
+        The thread ids to get the message parts for.
+    guild: discord.Guild
+        The guild to get the thread directory embed for.
+
+    Returns
+    -----------
+    discord.Embed
+        The feedback thread directory embed."""
+    thread_directory_embed = discord.Embed(
+        title="Feedback Thread Directory",
+        description="A list of all feedback threads of this server, sorted by the time they have been waiting for "
+                    "feedback. The threads at the top have been waiting the longest.",
+        color=guild.me.color,
+        timestamp=discord.utils.utcnow()
+    )
+    field_value = "\n".join(
+        [f"- <#{thread_id}>" for thread_id in thread_ids]
+    )
+    thread_directory_embed.add_field(
+        name=f"Feedback Threads",
+        value=field_value,
+        inline=False
+    )
+    return thread_directory_embed
 
 
 async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int],
@@ -87,7 +151,12 @@ async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int
     thread_ids: list[int]
         The thread ids to get the message parts for.
     guild: discord.Guild
-        The guild to get the thread directory embed for."""
+        The guild to get the thread directory embed for.
+
+    Returns
+    -----------
+    discord.Embed
+        The thread directory embed."""
     thread_directory_embed = discord.Embed(
         title="Thread Directory",
         description="A list of all threads of this server, sorted by the parent channels of the threads.",
@@ -95,13 +164,13 @@ async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int
         timestamp=discord.utils.utcnow()
     )
     for parent_id in parent_ids:
-        filed_value = "\n".join(
+        field_value = "\n".join(
             [f"- <#{thread_id}>" for thread_id in thread_ids
              if (await guild.fetch_channel(thread_id)).parent.id == parent_id]
         )
         thread_directory_embed.add_field(
             name=f"<#{parent_id}>",
-            value=filed_value,
+            value=field_value,
             inline=False
         )
     return thread_directory_embed
@@ -113,7 +182,12 @@ def get_tutorial_embed(ctx: discord.ApplicationContext) -> discord.Embed:
     Parameters
     ------------
     ctx: discord.ApplicationContext
-        The context used for command invocation."""
+        The context used for command invocation.
+
+    Returns
+    -----------
+    discord.Embed
+        The tutorial embed."""
     tutorial_embed = discord.Embed(
         title="Title",
         description="Description",
@@ -142,7 +216,12 @@ async def get_parent_ids(thread_ids: list[int], thread: discord.Thread) -> list[
     thread_ids: list[int]
         The thread ids to get the parent ids of.
     thread: discord.Thread
-        The thread to get the parent ids for."""
+        The thread to get the parent ids for.
+
+    Returns
+    -----------
+    list[int]
+        The parent ids of the thread ids specified."""
     parent_ids = []
     for thread_id in thread_ids:
         thread = await thread.guild.fetch_channel(thread_id)
@@ -159,7 +238,12 @@ def get_permissions(user: discord.Member, include: int = 0) -> str:
     user: discord.Member
         The user to get the permissions for.
     include: int
-        The permissions to include."""
+        The permissions to include.
+
+    Returns
+    -----------
+    str
+        The permissions for the user specified."""
     permissions = user.guild_permissions
     if permissions.administrator:
         return "- Administrator"
@@ -198,7 +282,11 @@ def get_ping_role(guild: discord.Guild) -> discord.Role | None:
 
 
 def get_tag() -> dict[str, str]:
-    """Gets a tag for the bot."""
+    """Gets a tag for the bot.
+
+    Returns
+    ------------
+    dict[str, str]"""
     tags: dict[str, str] = {
         "Bastion Route Spreadsheet": "https://docs.google.com/spreadsheets/d/1qLgp5uhMOKuerNZaec1dpoECpJI0"
                                      "-6YhztMqa_wZ8W0/edit?usp=sharing",
@@ -254,10 +342,15 @@ async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
 
     Parameters
     ----------
-    guild
-        The guild to get the thread directory message for."""
+    guild: discord.Guild
+        The guild to get the thread directory message for.
+
+    Returns
+    -------
+    discord.Message | None
+        The thread directory message for the guild, or None if it doesn't exist."""
     thread_dirs = {
-        933075515881951292: [None, None],  # RIP
+        933075515881951292: [1152697393825976440, 1152698281147760670],  # RIP
         959162264081014814: [959198464900747304, 1126961535605014609],  # SEA
         849650258786779196: [1041033326846296164, 1126961177990287441],  # EAR
         915333299981934692: [922938837049683968, 1121089178122330276]  # TEST
@@ -274,10 +367,15 @@ async def get_valid_thread(*, ctx: discord.ApplicationContext, thread: discord.T
 
     Parameters
     ----------
-    ctx
+    ctx: discord.ApplicationContext
         The context of the interaction.
-    thread
-        The thread to validate."""
+    thread: discord.Thread
+        The thread to validate.
+
+    Returns
+    -------
+    discord.Thread | None
+        The valid thread, or None if the thread is invalid."""
     if thread is None:
         thread = ctx.channel
     if not isinstance(thread, discord.Thread):
@@ -296,7 +394,7 @@ def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:
 
     Parameters
     ----------
-    thread
+    thread: discord.Thread | discord.abc.GuildChannel
         The thread to check."""
     if not isinstance(thread, discord.Thread):
         return False
@@ -306,13 +404,40 @@ def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:
     return True
 
 
+async def remove_feedback_thread_from_feedback_thread_directory(thread: discord.Thread, thread_dir_msg: discord.Message,
+                                                                thread_ids: list[int]) -> bool:
+    """Removes a feedback thread from the feedback thread directory.
+
+    Parameters
+    ----------
+    thread: discord.Thread
+        The thread to remove.
+    thread_dir_msg: discord.Message
+        The thread directory message.
+    thread_ids: list[int]
+        The thread ids.
+
+    Returns
+    -------
+    bool
+        Whether the thread was removed successfully."""
+    thread_directory_embed = await get_feedback_thread_directory_embed(thread_ids, thread.guild)
+    await thread_dir_msg.edit(embed=thread_directory_embed)
+    return True
+
+
 async def remove_from_thread_directory(thread: discord.Thread) -> bool:
     """Removes a thread from the thread directory.
 
     Parameters
     ----------
-    thread
-        The thread to remove."""
+    thread: discord.Thread
+        The thread to remove.
+
+    Returns
+    -------
+    bool
+        Whether the thread was removed successfully."""
     thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
     if thread_dir_msg is None:
         return False
@@ -321,6 +446,8 @@ async def remove_from_thread_directory(thread: discord.Thread) -> bool:
     if thread.id not in thread_ids:
         return False
     thread_ids.remove(thread.id)
+    if thread.guild.id == 933075515881951292:
+        return await remove_feedback_thread_from_feedback_thread_directory(thread, thread_dir_msg, thread_ids)
     parent_ids: list[int] = await get_parent_ids(thread_ids, thread)
     thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)

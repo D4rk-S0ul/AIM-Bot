@@ -78,6 +78,30 @@ class Threads(core.Cog):
         description="Group of add commands!"
     )
 
+    @core.Cog.listener()
+    async def on_raw_thread_update(self, payload: discord.RawThreadUpdateEvent):
+        """Event for when a thread is updated.
+
+        Parameters
+        ------------
+        payload: discord.RawThreadUpdateEvent
+            The payload of the thread update."""
+        applied_tags: list[int] = [int(tag) for tag in payload.data.get("applied_tags")]
+        if applied_tags is None:
+            return
+        if 1132640937076609126 and 1132640430090113024 in applied_tags:
+            return
+        thread: discord.Thread | None = payload.thread
+        if thread is None:
+            thread = self.bot.get_channel(payload.thread_id)
+        if 1132640937076609126 in applied_tags:
+            await core.remove_from_thread_directory(thread)
+            return
+        if 1132640430090113024 in applied_tags:
+            await core.add_members(thread)
+            await core.add_to_thread_directory(thread)
+            return
+
     @add_group.command(name="members", description="Adds the members to the thread specified!")
     async def add_members(self, ctx: discord.ApplicationContext,
                           thread: discord.Option(discord.Thread, "Please enter the thread!", required=False)):
