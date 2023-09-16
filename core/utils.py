@@ -72,12 +72,33 @@ async def add_members(thread: discord.Thread) -> None:
             counter += 1
     if len(msg_content) != 0:
         await ping_msg.edit(content=msg_content)
-    await ping_msg.edit(content=None, embed=discord.Embed(
+    embed_description = "Successfully added people to the thread and set auto-archive duration to the max!"
+    message = ""
+    if thread.guild.id == 933075515881951292:
+        embed_description += "\n\nPlease use the template above for your feedback. Simply right-click on this" \
+                             "message and then click Copy Text to copy the template to your clipboard."
+        message = """## <:Overworld:1132644632489103371>  Overworld
+-
+## <:Nether:1132644630576517190>  Going to Bastion
+-
+## <:Bastion:1138327109929025536>  Bastion Split
+-
+## <:Nether:1132644630576517190>  Going to Fortress
+-
+## <:Fortress:1138327332688511027>  Fortress Split
+-
+## <:Triangulation:1138327300736290906>  Finding/Going to Stronghold
+-
+## <:Stronghold:1138327270625378324>  Stronghold Split
+-
+## <:End:1132644627506278451>  End Split
+-"""
+    await ping_msg.edit(embed=discord.Embed(
         title="Members Added",
-        description="Successfully added people to the thread and set auto-archive duration to the max!",
+        description=embed_description,
         color=discord.Color.green(),
         timestamp=discord.utils.utcnow()
-    ))
+    ), content=message)
 
 
 async def add_to_thread_directory(thread: discord.Thread) -> bool:
