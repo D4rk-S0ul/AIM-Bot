@@ -99,6 +99,16 @@ class Threads(core.Cog):
             await thread.unarchive()
             return
 
+    @core.Cog.listener()
+    async def on_thread_delete(self, thread: discord.Thread):
+        """Event for when a thread is deleted.
+
+        Parameters
+        ------------
+        thread: discord.Thread
+            The thread that was deleted."""
+        await core.remove_from_thread_directory(thread)
+
     @add_group.command(name="members", description="Adds the members to the thread specified!")
     async def add_members(self, ctx: discord.ApplicationContext,
                           thread: discord.Option(discord.Thread, "Please enter the thread!", required=False)):
