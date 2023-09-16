@@ -96,10 +96,12 @@ class Threads(core.Cog):
             thread = self.bot.get_channel(payload.thread_id)
         if 1132640937076609126 in applied_tags:
             await core.remove_from_thread_directory(thread)
+            await thread.archive()
             return
         if 1132640430090113024 in applied_tags:
             await core.add_members(thread)
             await core.add_to_thread_directory(thread)
+            await thread.unarchive()
             return
 
     @add_group.command(name="members", description="Adds the members to the thread specified!")
@@ -125,11 +127,6 @@ class Threads(core.Cog):
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
         await core.add_to_thread_directory(thread)
-        if thread.guild.id != 933075515881951292:
-            return
-        if thread.name.startswith("🔔"):
-            return
-        await thread.edit(name=f"🔔{thread.name}")
 
     thread_group = discord.SlashCommandGroup(
         name="thread",
