@@ -6,55 +6,6 @@ import core
 class Threads(core.Cog):
     """Manage threads and add members!"""
 
-    bell_group = discord.SlashCommandGroup(
-        name="bell",
-        description="Group of add/remove bell (🔔) commands!"
-    )
-
-    @bell_group.command(name="add", description="Adds a bell (🔔) to the thread specified!")
-    async def bell_add(self, ctx: discord.ApplicationContext,
-                       thread: discord.Option(discord.Thread, "Please enter the thread!", required=False)):
-        """Command for adding a bell (🔔) to the thread specified.
-
-        Parameters
-        ------------
-        ctx: discord.ApplicationContext
-            The context used for command invocation.
-        thread: discord.Thread
-            The thread to add a bell (🔔) to."""
-        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
-        if thread is None:
-            return
-        await thread.edit(name=f"🔔{thread.name}")
-        await ctx.respond(embed=discord.Embed(
-            title="Bell Added",
-            description=f"Added a bell (🔔) to thread <#{thread.id}> successfully!",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
-        ), ephemeral=True)
-
-    @bell_group.command(name="remove", description="Removes the bell (🔔) from the thread specified!")
-    async def bell_remove(self, ctx: discord.ApplicationContext,
-                          thread: discord.Option(discord.Thread, "Please enter the thread!", required=False)):
-        """Command for removing the bell (🔔) from the thread specified.
-
-        Parameters
-        ------------
-        ctx: discord.ApplicationContext
-            The context used for command invocation.
-        thread: discord.Thread
-            The thread to remove the bell (🔔) from."""
-        thread: discord.Thread | None = await core.get_valid_thread(ctx=ctx, thread=thread)
-        if thread is None:
-            return
-        await thread.edit(name=thread.name.replace("🔔", ""))
-        await ctx.respond(embed=discord.Embed(
-            title="Bell Removed",
-            description=f"Removed the bell (🔔) from thread <#{thread.id}> successfully!",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
-        ), ephemeral=True)
-
     @core.Cog.listener()
     async def on_thread_create(self, thread: discord.Thread):
         """Event for when a thread is created.
@@ -74,29 +25,30 @@ class Threads(core.Cog):
     )
 
     @core.Cog.listener()
-    async def on_raw_thread_update(self, payload: discord.RawThreadUpdateEvent):
+    async def on_thread_update(self, before: discord.Thread, after: discord.Thread):
         """Event for when a thread is updated.
 
         Parameters
         ------------
-        payload: discord.RawThreadUpdateEvent
-            The payload of the thread update."""
-        applied_tags: list[int] = [int(tag) for tag in payload.data.get("applied_tags")]
-        if applied_tags is None:
+        before: discord.Thread
+            The thread before the update.
+        after: discord.Thread
+            The thread after the update."""
+        if not core.is_valid_thread(after):
             return
-        if 1132640937076609126 and 1132640430090113024 in applied_tags:
+        if after.guild.id != 933075515881951292:
             return
-        thread: discord.Thread | None = payload.thread
-        if thread is None:
-            thread = self.bot.get_channel(payload.thread_id)
-        if 1132640937076609126 in applied_tags:
-            await core.remove_from_thread_directory(thread)
-            await thread.archive()
+        before_tag_ids = [tag.id for tag in before.applied_tags]
+        after_tag_ids = [tag.id for tag in after.applied_tags]
+        if before_tag_ids == after_tag_ids:
             return
-        if 1132640430090113024 in applied_tags:
-            await core.add_members(thread)
-            await core.add_to_thread_directory(thread)
-            await thread.unarchive()
+        bell_tag_id = 1132640430090113024
+        if bell_tag_id in after_tag_ids and bell_tag_id not in before_tag_ids:
+            await core.add_members(after)
+            await core.add_to_thread_directory(after)
+            return
+        if bell_tag_id not in after_tag_ids and bell_tag_id in before_tag_ids:
+            await core.remove_from_thread_directory(after)
             return
 
     @core.Cog.listener()
