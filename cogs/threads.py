@@ -40,15 +40,20 @@ class Threads(core.Cog):
             return
         before_tag_ids = [tag.id for tag in before.applied_tags]
         after_tag_ids = [tag.id for tag in after.applied_tags]
+        bell_tag_id = 1132640430090113024
+        if after.archived and not before.archived and bell_tag_id in after_tag_ids:
+            await after.unarchive()
+            return
         if before_tag_ids == after_tag_ids:
             return
-        bell_tag_id = 1132640430090113024
         if bell_tag_id in after_tag_ids and bell_tag_id not in before_tag_ids:
+            await after.unarchive()
             await core.add_members(after)
             await core.add_to_thread_directory(after)
             return
         if bell_tag_id not in after_tag_ids and bell_tag_id in before_tag_ids:
             await core.remove_from_thread_directory(after)
+            await after.archive()
             return
 
     @core.Cog.listener()
