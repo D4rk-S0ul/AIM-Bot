@@ -6,7 +6,7 @@ import traceback
 import discord
 from aiohttp import ClientSession
 
-import core
+import core.config
 
 
 class AimBot(discord.Bot):
@@ -15,7 +15,7 @@ class AimBot(discord.Bot):
     def __init__(self):
         super().__init__(
             activity=discord.CustomActivity(
-                f"/help - Version {core.version}"
+                f"/help - Version {core.config.version}"
             ),
             help_command=None,
             intents=discord.Intents(
