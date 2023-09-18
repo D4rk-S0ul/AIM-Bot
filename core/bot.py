@@ -1,5 +1,6 @@
 import os
 import platform
+import sys
 import traceback
 
 import discord
@@ -85,13 +86,44 @@ class AimBot(discord.Bot):
             guild = "None (DMs)"
         formatted_error = ''.join(traceback.format_exception(type(error), error, error.__traceback__))
         error_embed = discord.Embed(
-            title=f"{error.__class__.__name__}",
+            title=error.__class__.__name__,
             description=str(error),
             color=discord.Color.red(),
             timestamp=discord.utils.utcnow()
         )
         error_embed.add_field(name="Command:", value=f"`/{ctx.command.qualified_name}`", inline=True)
         error_embed.add_field(name="Guild:", value=f"`{guild}`", inline=True)
+        error_embed.add_field(name="Error:", value=f"```py\n{formatted_error}```", inline=False)
+        if len(error_embed.fields[2].value) > 1024:
+            error_embed.remove_field(2)
+            error_embed.add_field(
+                name="Error:",
+                value=f"```py\n{formatted_error[:1011]}```",
+                inline=False
+            )
+            for i in range(1011, len(formatted_error), 1011):
+                error_embed.add_field(
+                    name="",
+                    value=f"```py\n{formatted_error[i:i + 1011]}```",
+                    inline=False
+                )
+        return await self.errors_webhook.send(
+            embed=error_embed,
+            avatar_url=self.user.display_avatar.url
+        )
+
+    async def on_error(self, event: str, *args, **kwargs):
+        _, error, error_traceback = sys.exc_info()
+        formatted_error = ''.join(traceback.format_exception(type(error), error, error_traceback))
+        error_embed = discord.Embed(
+            title=error.__class__.__name__,
+            description=str(error),
+            color=discord.Color.red(),
+            timestamp=discord.utils.utcnow()
+        )
+        error_embed.add_field(name="Event:", value=f"```py\n{event}```", inline=True)
+        error_embed.add_field(name="Args:", value=f"```py\n{args}```", inline=True)
+        error_embed.add_field(name="KwArgs:", value=f"```py\n{kwargs}```", inline=True)
         error_embed.add_field(name="Error:", value=f"```py\n{formatted_error}```", inline=False)
         if len(error_embed.fields[2].value) > 1024:
             error_embed.remove_field(2)
