@@ -6,14 +6,16 @@ import traceback
 import discord
 from aiohttp import ClientSession
 
+import core
+
 
 class AimBot(discord.Bot):
     on_ready_fired: bool = False
 
     def __init__(self):
         super().__init__(
-            activity=discord.Activity(
-                type=discord.ActivityType.listening, name=f"/help"
+            activity=discord.CustomActivity(
+                f"/help - Version {core.version}"
             ),
             help_command=None,
             intents=discord.Intents(
