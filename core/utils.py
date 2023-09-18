@@ -11,6 +11,8 @@ __all__ = (
     "remove_from_thread_directory",
 )
 
+import core
+
 
 # functions
 async def add_feedback_thread_to_feedback_thread_directory(thread: discord.Thread, thread_dir_msg: discord.Message,
@@ -74,7 +76,7 @@ async def add_members(thread: discord.Thread) -> None:
         await ping_msg.edit(content=msg_content)
     embed_description = "Successfully added people to the thread and set auto-archive duration to the max!"
     message = ""
-    if thread.guild.id == 933075515881951292:
+    if thread.guild.id == core.config.rip_guild_id:
         embed_description += "\n\nPlease use the template above for your feedback. Simply right-click on this" \
                              "message and then click Copy Text to copy the template to your clipboard."
         message = """## <:Overworld:1132644632489103371>  Overworld
@@ -118,7 +120,7 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
         return False
     initial_embed: discord.Embed = thread_dir_msg.embeds[0]
     thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
-    if thread.guild.id == 933075515881951292:
+    if thread.guild.id == core.config.rip_guild_id:
         return await add_feedback_thread_to_feedback_thread_directory(thread, thread_dir_msg, thread_ids)
     if thread.id in thread_ids:
         return True
@@ -467,7 +469,7 @@ async def remove_from_thread_directory(thread: discord.Thread) -> bool:
     if thread.id not in thread_ids:
         return False
     thread_ids.remove(thread.id)
-    if thread.guild.id == 933075515881951292:
+    if thread.guild.id == core.config.rip_guild_id:
         return await remove_feedback_thread_from_feedback_thread_directory(thread, thread_dir_msg, thread_ids)
     parent_ids: list[int] = await get_parent_ids(thread_ids, thread)
     thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
