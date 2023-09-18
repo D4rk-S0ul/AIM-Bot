@@ -17,7 +17,10 @@ class Threads(core.Cog):
         if not core.is_valid_thread(thread):
             return
         await core.add_members(thread)
-        await core.add_to_thread_directory(thread)
+        tag_ids = [tag.id for tag in thread.applied_tags]
+        bell_tag_id = 1132640430090113024
+        if bell_tag_id in tag_ids:
+            await core.add_to_thread_directory(thread)
 
     add_group = discord.SlashCommandGroup(
         name="add",
