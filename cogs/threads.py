@@ -44,9 +44,6 @@ class Threads(core.Cog):
         before_tag_ids = [tag.id for tag in before.applied_tags]
         after_tag_ids = [tag.id for tag in after.applied_tags]
         bell_tag_id = 1132640430090113024
-        if after.archived and not before.archived and bell_tag_id in after_tag_ids:
-            await after.unarchive()
-            return
         if before_tag_ids == after_tag_ids:
             return
         if bell_tag_id in after_tag_ids and bell_tag_id not in before_tag_ids:
