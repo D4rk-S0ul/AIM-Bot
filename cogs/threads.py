@@ -18,8 +18,7 @@ class Threads(core.Cog):
             return
         await core.add_members(thread)
         tag_ids = [tag.id for tag in thread.applied_tags]
-        bell_tag_id = 1132640430090113024
-        if bell_tag_id in tag_ids:
+        if core.config.bell_tag_id in tag_ids:
             await core.add_to_thread_directory(thread)
 
     add_group = discord.SlashCommandGroup(
@@ -39,19 +38,18 @@ class Threads(core.Cog):
             The thread after the update."""
         if not core.is_valid_thread(after):
             return
-        if after.guild.id != 933075515881951292:
+        if after.guild.id != core.config.rip_guild_id:
             return
         before_tag_ids = [tag.id for tag in before.applied_tags]
         after_tag_ids = [tag.id for tag in after.applied_tags]
-        bell_tag_id = 1132640430090113024
         if before_tag_ids == after_tag_ids:
             return
-        if bell_tag_id in after_tag_ids and bell_tag_id not in before_tag_ids:
+        if core.config.bell_tag_id in after_tag_ids and core.config.bell_tag_id not in before_tag_ids:
             await after.unarchive()
             await core.add_members(after)
             await core.add_to_thread_directory(after)
             return
-        if bell_tag_id not in after_tag_ids and bell_tag_id in before_tag_ids:
+        if core.config.bell_tag_id not in after_tag_ids and core.config.bell_tag_id in before_tag_ids:
             await core.remove_from_thread_directory(after)
             await after.archive()
             return
