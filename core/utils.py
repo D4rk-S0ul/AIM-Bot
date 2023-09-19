@@ -74,7 +74,7 @@ async def add_members(thread: discord.Thread) -> None:
             counter += 1
     if len(msg_content) != 0:
         await ping_msg.edit(content=msg_content)
-    embed_description = f"Successfully added users to the thread and set auto-archive duration to" \
+    embed_description = f"Successfully added users to the thread and set auto-archive duration to " \
                         f"{thread.auto_archive_duration // 1440} days!"
     message = ""
     if thread.guild.id == core.config.rip_guild_id:
