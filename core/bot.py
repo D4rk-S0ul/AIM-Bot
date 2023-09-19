@@ -20,7 +20,9 @@ class AimBot(discord.Bot):
             help_command=None,
             intents=discord.Intents(
                 guilds=True,
-                members=True
+                members=True,
+                messages=True,
+                message_content=True
             ),
             owner_ids=[672768917885681678],
         )

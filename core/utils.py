@@ -7,6 +7,7 @@ __all__ = (
     "get_tag",
     "get_tutorial_embed",
     "get_valid_thread",
+    "is_feedback",
     "is_valid_thread",
     "remove_from_thread_directory",
 )
@@ -48,7 +49,6 @@ async def add_members(thread: discord.Thread) -> None:
     thread: discord.Thread
         The thread to add members to."""
     await thread.join()
-    await thread.edit(auto_archive_duration=10080)
 
     ping_role = get_ping_role(thread.guild)
 
@@ -74,25 +74,33 @@ async def add_members(thread: discord.Thread) -> None:
             counter += 1
     if len(msg_content) != 0:
         await ping_msg.edit(content=msg_content)
-    embed_description = "Successfully added people to the thread and set auto-archive duration to the max!"
+    embed_description = f"Successfully added users to the thread and set auto-archive duration to" \
+                        f"{thread.auto_archive_duration // 1440} days!"
     message = ""
     if thread.guild.id == core.config.rip_guild_id:
         embed_description += "\n\nPlease use the template above for your feedback. Simply right-click on this" \
                              "message and then click Copy Text to copy the template to your clipboard."
         message = """## <:Overworld:1132644632489103371>  Overworld
 -
+
 ## <:Nether:1132644630576517190>  Going to Bastion
 -
+
 ## <:Bastion:1138327109929025536>  Bastion Split
 -
+
 ## <:Nether:1132644630576517190>  Going to Fortress
 -
+
 ## <:Fortress:1138327332688511027>  Fortress Split
 -
+
 ## <:Triangulation:1138327300736290906>  Finding/Going to Stronghold
 -
+
 ## <:Stronghold:1138327270625378324>  Stronghold Split
 -
+
 ## <:End:1132644627506278451>  End Split
 -"""
     await ping_msg.edit(embed=discord.Embed(
@@ -410,6 +418,16 @@ async def get_valid_thread(*, ctx: discord.ApplicationContext, thread: discord.T
         ), ephemeral=True)
         return None
     return thread
+
+
+def is_feedback(message_content: str) -> bool:
+    """Checks if a message is feedback.
+
+    Parameters
+    ----------
+    message_content: str
+        The content of the message to check."""
+    return any(feedback_string in message_content for feedback_string in core.config.feedback_strings)
 
 
 def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:

@@ -16,15 +16,17 @@ class Threads(core.Cog):
             The thread that was created."""
         if not core.is_valid_thread(thread):
             return
-        await core.add_members(thread)
+        if thread.guild.id != core.config.rip_guild_id:
+            await thread.edit(auto_archive_duration=10080)
+            await core.add_members(thread)
+            return
         tag_ids = [tag.id for tag in thread.applied_tags]
         if core.config.bell_tag_id in tag_ids:
+            await thread.edit(auto_archive_duration=10080)
+            await core.add_members(thread)
             await core.add_to_thread_directory(thread)
-
-    add_group = discord.SlashCommandGroup(
-        name="add",
-        description="Group of add commands!"
-    )
+            return
+        await thread.edit(auto_archive_duration=1440)
 
     @core.Cog.listener()
     async def on_thread_update(self, before: discord.Thread, after: discord.Thread):
@@ -49,12 +51,14 @@ class Threads(core.Cog):
             return
         if core.config.bell_tag_id in after_tag_ids and core.config.bell_tag_id not in before_tag_ids:
             await after.unarchive()
+            await after.edit(auto_archive_duration=10080)
             await core.add_members(after)
             await core.add_to_thread_directory(after)
             return
         if core.config.bell_tag_id not in after_tag_ids and core.config.bell_tag_id in before_tag_ids:
+            await after.edit(auto_archive_duration=1440)
             await core.remove_from_thread_directory(after)
-            await after.archive()
+            print("Bell tag removed")
             return
 
     @core.Cog.listener()
@@ -66,6 +70,34 @@ class Threads(core.Cog):
         thread: discord.Thread
             The thread that was deleted."""
         await core.remove_from_thread_directory(thread)
+
+    @core.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        """Event for when a feedback message is sent.
+
+        Parameters
+        ------------
+        message: discord.Message
+            The message that was sent."""
+        if message.guild.id != core.config.rip_guild_id:
+            return
+        if message.author.bot:
+            return
+        if not core.is_valid_thread(message.channel):
+            return
+        if message.channel.parent_id != core.config.feedback_channel_id:
+            return
+        print(message.content)
+        if core.is_feedback(message.content):
+            print("Feedback received")
+            tags: list[discord.ForumTag] = [tag for tag in message.channel.applied_tags if
+                                            tag.id != core.config.bell_tag_id]
+            await message.channel.edit(applied_tags=tags)
+
+    add_group = discord.SlashCommandGroup(
+        name="add",
+        description="Group of add commands!"
+    )
 
     @add_group.command(name="members", description="Adds the members to the thread specified!")
     async def add_members(self, ctx: discord.ApplicationContext,
