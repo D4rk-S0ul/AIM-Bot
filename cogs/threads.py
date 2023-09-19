@@ -58,7 +58,6 @@ class Threads(core.Cog):
         if core.config.bell_tag_id not in after_tag_ids and core.config.bell_tag_id in before_tag_ids:
             await after.edit(auto_archive_duration=1440)
             await core.remove_from_thread_directory(after)
-            print("Bell tag removed")
             return
 
     @core.Cog.listener()
@@ -87,9 +86,7 @@ class Threads(core.Cog):
             return
         if message.channel.parent_id != core.config.feedback_channel_id:
             return
-        print(message.content)
         if core.is_feedback(message.content):
-            print("Feedback received")
             tags: list[discord.ForumTag] = [tag for tag in message.channel.applied_tags if
                                             tag.id != core.config.bell_tag_id]
             await message.channel.edit(applied_tags=tags)
