@@ -2,6 +2,7 @@ import discord
 
 __all__ = (
     "add_members",
+    "add_to_feedback_thread_directory",
     "add_to_thread_directory",
     "get_permissions",
     "get_tag",
@@ -9,6 +10,7 @@ __all__ = (
     "get_valid_thread",
     "is_feedback",
     "is_valid_thread",
+    "remove_from_feedback_thread_directory",
     "remove_from_thread_directory",
 )
 
@@ -16,27 +18,27 @@ import core
 
 
 # functions
-async def add_feedback_thread_to_feedback_thread_directory(thread: discord.Thread, thread_dir_msg: discord.Message,
-                                                           thread_ids: list[int]) -> bool:
+async def add_to_feedback_thread_directory(thread: discord.Thread) -> bool:
     """Adds the feedback thread to the feedback thread directory.
 
     Parameters
     ------------
     thread: discord.Thread
         The feedback thread to add to the feedback thread directory.
-    thread_dir_msg: discord.Message
-        The message containing the feedback thread directory.
-    thread_ids: list[int]
-        The list of thread ids in the feedback thread directory.
 
     Returns
     -----------
     bool
         Whether the feedback thread was added to the feedback thread directory successfully."""
-    if thread.id in thread_ids:
-        thread_ids.remove(thread.id)
-    thread_ids.append(thread.id)
-    thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(thread_ids, thread.guild)
+    thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
+    if thread_dir_msg is None:
+        return False
+    initial_field_value: str = thread_dir_msg.embeds[0].fields[0].value
+    if str(thread.id) in initial_field_value:
+        return True
+    lines: list[str] = initial_field_value.splitlines()
+    lines.append(f"- <#{thread.id}> - Waiting since {discord.utils.format_dt(discord.utils.utcnow(), style='R')}")
+    thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
 
@@ -128,8 +130,6 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
         return False
     initial_embed: discord.Embed = thread_dir_msg.embeds[0]
     thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
-    if thread.guild.id == core.config.rip_guild_id:
-        return await add_feedback_thread_to_feedback_thread_directory(thread, thread_dir_msg, thread_ids)
     if thread.id in thread_ids:
         return True
     thread_ids.append(thread.id)
@@ -139,13 +139,13 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
     return True
 
 
-async def get_feedback_thread_directory_embed(thread_ids: list[int], guild: discord.Guild) -> discord.Embed:
+async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.Guild) -> discord.Embed:
     """Gets the feedback thread directory embed.
 
     Parameters
     ------------
-    thread_ids: list[int]
-        The thread ids to get the message parts for.
+    lines: list[str]
+        The lines to add to the feedback thread directory embed.
     guild: discord.Guild
         The guild to get the thread directory embed for.
 
@@ -160,9 +160,7 @@ async def get_feedback_thread_directory_embed(thread_ids: list[int], guild: disc
         color=guild.me.color,
         timestamp=discord.utils.utcnow()
     )
-    field_value = "\n".join(
-        [f"- <#{thread_id}>" for thread_id in thread_ids]
-    )
+    field_value = "\n".join(lines)
     thread_directory_embed.add_field(
         name=f"Feedback Threads",
         value=field_value,
@@ -445,25 +443,27 @@ def is_valid_thread(thread: discord.Thread | discord.abc.GuildChannel) -> bool:
     return True
 
 
-async def remove_feedback_thread_from_feedback_thread_directory(thread: discord.Thread, thread_dir_msg: discord.Message,
-                                                                thread_ids: list[int]) -> bool:
+async def remove_from_feedback_thread_directory(thread: discord.Thread) -> bool:
     """Removes a feedback thread from the feedback thread directory.
 
     Parameters
     ----------
     thread: discord.Thread
         The thread to remove.
-    thread_dir_msg: discord.Message
-        The thread directory message.
-    thread_ids: list[int]
-        The thread ids.
 
     Returns
     -------
     bool
         Whether the thread was removed successfully."""
-    thread_directory_embed = await get_feedback_thread_directory_embed(thread_ids, thread.guild)
-    await thread_dir_msg.edit(embed=thread_directory_embed)
+    thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
+    if thread_dir_msg is None:
+        return False
+    initial_field_value: str = thread_dir_msg.embeds[0].fields[0].value
+    if str(thread.id) not in initial_field_value:
+        return True
+    lines: list[str] = [line for line in initial_field_value.splitlines() if str(thread.id) not in line]
+    thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
+    await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
 
 
@@ -485,10 +485,8 @@ async def remove_from_thread_directory(thread: discord.Thread) -> bool:
     initial_embed: discord.Embed = thread_dir_msg.embeds[0]
     thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
     if thread.id not in thread_ids:
-        return False
+        return True
     thread_ids.remove(thread.id)
-    if thread.guild.id == core.config.rip_guild_id:
-        return await remove_feedback_thread_from_feedback_thread_directory(thread, thread_dir_msg, thread_ids)
     parent_ids: list[int] = await get_parent_ids(thread_ids, thread)
     thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)

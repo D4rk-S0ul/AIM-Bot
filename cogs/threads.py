@@ -24,7 +24,7 @@ class Threads(core.Cog):
         if core.config.bell_tag_id in tag_ids:
             await thread.edit(auto_archive_duration=10080)
             await core.add_members(thread)
-            await core.add_to_thread_directory(thread)
+            await core.add_to_feedback_thread_directory(thread)
             return
         await thread.edit(auto_archive_duration=1440)
 
@@ -53,11 +53,11 @@ class Threads(core.Cog):
             await after.unarchive()
             await after.edit(auto_archive_duration=10080)
             await core.add_members(after)
-            await core.add_to_thread_directory(after)
+            await core.add_to_feedback_thread_directory(after)
             return
         if core.config.bell_tag_id not in after_tag_ids and core.config.bell_tag_id in before_tag_ids:
             await after.edit(auto_archive_duration=1440)
-            await core.remove_from_thread_directory(after)
+            await core.remove_from_feedback_thread_directory(after)
             return
 
     @core.Cog.listener()
@@ -68,7 +68,9 @@ class Threads(core.Cog):
         ------------
         thread: discord.Thread
             The thread that was deleted."""
-        await core.remove_from_thread_directory(thread)
+        if not thread.guild.id == core.config.rip_guild_id:
+            return
+        await core.remove_from_feedback_thread_directory(thread)
 
     @core.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -78,9 +80,9 @@ class Threads(core.Cog):
         ------------
         message: discord.Message
             The message that was sent."""
-        if message.guild.id != core.config.rip_guild_id:
-            return
         if message.author.bot:
+            return
+        if message.guild.id != core.config.rip_guild_id:
             return
         if not core.is_valid_thread(message.channel):
             return
@@ -118,6 +120,9 @@ class Threads(core.Cog):
             color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
+        if thread.guild.id == core.config.rip_guild_id:
+            await core.add_to_feedback_thread_directory(thread)
+            return
         await core.add_to_thread_directory(thread)
 
     thread_group = discord.SlashCommandGroup(
@@ -146,7 +151,10 @@ class Threads(core.Cog):
         if thread is None:
             return
         await ctx.defer(ephemeral=True)
-        thread_added: bool = await core.add_to_thread_directory(thread)
+        if thread.guild.id == core.config.rip_guild_id:
+            thread_added = await core.add_to_feedback_thread_directory(thread)
+        else:
+            thread_added: bool = await core.add_to_thread_directory(thread)
         if thread_added:
             await ctx.followup.send(embed=discord.Embed(
                 title="Thread Added",
@@ -178,7 +186,10 @@ class Threads(core.Cog):
         if thread is None:
             return
         await ctx.defer(ephemeral=True)
-        thread_removed: bool = await core.remove_from_thread_directory(thread)
+        if thread.guild.id == core.config.rip_guild_id:
+            thread_removed = await core.remove_from_feedback_thread_directory(thread)
+        else:
+            thread_removed: bool = await core.remove_from_thread_directory(thread)
         if thread_removed:
             await ctx.followup.send(embed=discord.Embed(
                 title="Thread Removed",

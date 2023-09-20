@@ -6,6 +6,7 @@ from .utils import *
 
 __all__ = (
     "add_members",
+    "add_to_feedback_thread_directory",
     "add_to_thread_directory",
     "AimBot",
     "Cog",
@@ -15,6 +16,7 @@ __all__ = (
     "get_valid_thread",
     "is_feedback",
     "is_valid_thread",
+    "remove_from_feedback_thread_directory",
     "remove_from_thread_directory"
 )
 
