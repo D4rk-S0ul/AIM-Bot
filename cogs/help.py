@@ -3,39 +3,6 @@ import discord
 import core
 
 
-class HelpSelect(discord.ui.Select):
-    def __init__(self, cog: core.Cog) -> None:
-        super().__init__(
-            placeholder="Choose a category",
-            options=[
-                discord.SelectOption(
-                    label=cog_name,
-                    description=cog.__doc__,
-                )
-                for cog_name, cog in cog.bot.cogs.items()
-                if cog.__cog_commands__ and cog_name not in ["Help"]
-            ],
-        )
-        self.cog = cog
-
-    async def callback(self, interaction: discord.Interaction):
-        cog = self.cog.bot.get_cog(self.values[0])
-        assert cog
-        embed = discord.Embed(
-            title=f"{cog.__cog_name__} Commands",
-            description="\n".join(
-                f"`/{command.qualified_name}`: {command.description}"
-                for command in cog.walk_commands()
-            ),
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow(),
-        )
-        await interaction.response.send_message(
-            embed=embed,
-            ephemeral=True,
-        )
-
-
 class Help(core.Cog):
     """Get help about the bot, a command or a command category!"""
 
@@ -47,20 +14,11 @@ class Help(core.Cog):
         ------------
         ctx: discord.ApplicationContext
             The context used for command invocation."""
-        assert self.bot.user
-        embed = discord.Embed(
-            title=self.bot.user.name,
-            description="Use the menu below to view commands.",
-            color=discord.Color.green()
-        )
-        embed.set_thumbnail(url=self.bot.user.display_avatar.url)
-        embed.add_field(name="Server Count", value=str(len(self.bot.guilds)))
-        embed.add_field(name="User Count", value=str(len(self.bot.users)))
-        embed.add_field(name="Ping", value=f"{self.bot.latency * 1000:.2f}ms")
+        help_embed = core.HelpEmbed(bot=self.bot)
 
-        view = discord.ui.View(HelpSelect(self))
+        help_view = discord.ui.View(core.HelpSelect(self))
 
-        await ctx.respond(embed=embed, view=view, ephemeral=True)
+        await ctx.respond(embed=help_embed, view=help_view, ephemeral=True)
 
 
 def setup(bot):
