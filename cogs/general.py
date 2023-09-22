@@ -17,7 +17,7 @@ class General(core.Cog):
             The context used for command invocation."""
         await ctx.respond(embed=discord.Embed(
             title="Ping",
-            description=f"{round(self.bot.latency * 1000)}ms",
+            description=f"{self.bot.latency * 1000:.2f}ms",
             color=discord.Color.green(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
