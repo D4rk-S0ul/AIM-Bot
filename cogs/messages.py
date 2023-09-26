@@ -80,7 +80,7 @@ class Messages(core.Cog):
             description='Use the buttons below to edit the embed.\nPress "Tutorial" to hide/show the embed below.',
             color=ctx.guild.me.color
         )
-        tutorial_embed = core.get_tutorial_embed(ctx=ctx)
+        tutorial_embed = core.TutorialEmbed(me=ctx.guild.me)
         embed_tool = EmbedToolView(channel_or_message=channel, is_new_embed=True, tutorial_embed=tutorial_embed,
                                    ctx=ctx)
         await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)
@@ -111,7 +111,7 @@ class Messages(core.Cog):
             ), ephemeral=True)
             return
         user_embed = message.embeds[0]
-        tutorial_embed = core.get_tutorial_embed(ctx=ctx)
+        tutorial_embed = core.TutorialEmbed(me=ctx.guild.me)
         embed_tool = EmbedToolView(channel_or_message=message, is_new_embed=False, tutorial_embed=tutorial_embed,
                                    ctx=ctx)
         await ctx.respond(embeds=[user_embed, tutorial_embed], view=embed_tool, ephemeral=True)

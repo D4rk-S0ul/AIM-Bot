@@ -15,7 +15,6 @@ __all__ = (
     "Embed",
     "get_permissions",
     "get_tag",
-    "get_tutorial_embed",
     "get_valid_thread",
     "GreenEmbed",
     "HelpEmbed",

@@ -6,7 +6,6 @@ __all__ = (
     "add_to_thread_directory",
     "get_permissions",
     "get_tag",
-    "get_tutorial_embed",
     "get_valid_thread",
     "is_feedback",
     "is_valid_thread",
@@ -203,38 +202,6 @@ async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int
             inline=False
         )
     return thread_directory_embed
-
-
-def get_tutorial_embed(ctx: discord.ApplicationContext) -> discord.Embed:
-    """Returns the tutorial embed.
-
-    Parameters
-    ------------
-    ctx: discord.ApplicationContext
-        The context used for command invocation.
-
-    Returns
-    -----------
-    discord.Embed
-        The tutorial embed."""
-    tutorial_embed = discord.Embed(
-        title="Title",
-        description="Description",
-        color=ctx.guild.me.color,
-        timestamp=discord.utils.utcnow()
-    )
-    tutorial_embed.add_field(name="Inline Field 1", value="← Color sets color of the bar on the left!")
-    tutorial_embed.add_field(name="Inline Field 2", value="Value 2")
-    tutorial_embed.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
-    tutorial_embed.add_field(name="Non-inline Field", value="Value", inline=False)
-    tutorial_embed.set_author(name="Author", icon_url=ctx.guild.me.avatar.url)
-    tutorial_embed.set_footer(text="Footer", icon_url="https://cdn.discordapp.com/attachments/751512715872436416"
-                                                      "/1125701630273261629/13YRA70M.png")
-    tutorial_embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416"
-                                     "/1125132998967304412/t6HnzvR8.png")
-    tutorial_embed.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799"
-                                 "/kJ9NYtR1.png")
-    return tutorial_embed
 
 
 async def get_parent_ids(thread_ids: list[int], thread: discord.Thread) -> list[int]:
