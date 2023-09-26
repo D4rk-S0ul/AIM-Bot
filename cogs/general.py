@@ -15,11 +15,9 @@ class General(core.Cog):
         ------------
         ctx: discord.ApplicationContext
             The context used for command invocation."""
-        await ctx.respond(embed=discord.Embed(
+        await ctx.respond(embed=core.GreenEmbed(
             title="Ping",
-            description=f"{self.bot.latency * 1000:.2f} ms",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            description=f"{self.bot.latency * 1000:.2f} ms"
         ), ephemeral=True)
 
     user_group = discord.SlashCommandGroup(
@@ -45,13 +43,11 @@ class General(core.Cog):
         created_at = discord.utils.format_dt(user.created_at, style="F")
         account_age = discord.utils.format_dt(user.created_at, style="R")
 
-        user_info_embed = discord.Embed(
+        user_info_embed = core.GreenEmbed(
             title="User Information",
             description=f"""{user.mention}
             **ID:** {user.id}
-            **Nickname:** {user.nick or "_No nickname_"}""",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            **Nickname:** {user.nick or "_No nickname_"}"""
         )
 
         user_info_embed.add_field(name="Account Created", value=f"{created_at} ({account_age})")
@@ -89,11 +85,9 @@ class General(core.Cog):
             channel = ctx.channel
         message = await channel.fetch_message(message_id)
         await message.pin()
-        await ctx.respond(embed=discord.Embed(
+        await ctx.respond(embed=core.GreenEmbed(
             title="Message Pinned",
-            description=f"[Jump to message]({message.jump_url})",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            description=f"[Jump to message]({message.jump_url})"
         ), ephemeral=True)
 
     @commands.slash_command(description="Unpins the message specified!")
@@ -114,11 +108,9 @@ class General(core.Cog):
             channel = ctx.channel
         message = await channel.fetch_message(message_id)
         await message.unpin()
-        await ctx.respond(embed=discord.Embed(
+        await ctx.respond(embed=core.GreenEmbed(
             title="Message Unpinned",
-            description=f"[Jump to message]({message.jump_url})",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            description=f"[Jump to message]({message.jump_url})"
         ), ephemeral=True)
 
     @commands.slash_command(description="Sends a tag!")
@@ -136,11 +128,9 @@ class General(core.Cog):
             The name of the tag to send. Autocompletes from the tags in config.tags."""
         tags = core.get_tag()
         if tag not in tags:
-            await ctx.respond(embed=discord.Embed(
+            await ctx.respond(embed=core.RedEmbed(
                 title="Tag not found",
-                description=f"Tag `{tag}` not found!",
-                color=discord.Color.red(),
-                timestamp=discord.utils.utcnow()
+                description=f"Tag `{tag}` not found!"
             ), ephemeral=True)
             return
         image_url: str | None = None
@@ -150,20 +140,13 @@ class General(core.Cog):
                 image_url = line
                 tags[tag] = tags[tag].replace(line, "")
                 break
-        if image_url:
-            await ctx.respond(embed=discord.Embed(
-                title=tag,
-                description=tags[tag],
-                color=discord.Color.green(),
-                timestamp=discord.utils.utcnow()
-            ).set_image(url=image_url))
-            return
-        await ctx.respond(embed=discord.Embed(
+        tag_embed = core.GreenEmbed(
             title=tag,
-            description=tags[tag],
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
-        ))
+            description=tags[tag]
+        )
+        if image_url:
+            tag_embed.set_image(url=image_url)
+        await ctx.respond(embed=tag_embed)
 
 
 def setup(bot):

@@ -114,11 +114,9 @@ class Threads(core.Cog):
             return
         await ctx.defer(ephemeral=True)
         await core.add_members(thread)
-        await ctx.followup.send(embed=discord.Embed(
+        await ctx.followup.send(embed=core.GreenEmbed(
             title="Members Added",
-            description=f"Added members to thread <#{thread.id}> successfully!",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            description=f"Added members to thread <#{thread.id}> successfully!"
         ), ephemeral=True)
         if thread.guild.id == core.config.rip_guild_id:
             await core.add_to_feedback_thread_directory(thread)
@@ -156,18 +154,14 @@ class Threads(core.Cog):
         else:
             thread_added: bool = await core.add_to_thread_directory(thread)
         if thread_added:
-            await ctx.followup.send(embed=discord.Embed(
+            await ctx.followup.send(embed=core.GreenEmbed(
                 title="Thread Added",
-                description=f"Added thread <#{thread.id}> to the thread directory successfully!",
-                color=discord.Color.green(),
-                timestamp=discord.utils.utcnow()
+                description=f"Added thread <#{thread.id}> to the thread directory successfully!"
             ), ephemeral=True)
             return
-        await ctx.followup.send(embed=discord.Embed(
+        await ctx.followup.send(embed=core.RedEmbed(
             title="Error",
-            description=f"Failed to add thread <#{thread.id}> to the thread directory!",
-            color=discord.Color.red(),
-            timestamp=discord.utils.utcnow()
+            description=f"Failed to add thread <#{thread.id}> to the thread directory!"
         ), ephemeral=True)
 
     @thread_directory_group.command(name="remove", description="Removes the thread from the thread directory!")
@@ -191,18 +185,14 @@ class Threads(core.Cog):
         else:
             thread_removed: bool = await core.remove_from_thread_directory(thread)
         if thread_removed:
-            await ctx.followup.send(embed=discord.Embed(
+            await ctx.followup.send(embed=core.GreenEmbed(
                 title="Thread Removed",
-                description=f"Removed thread <#{thread.id}> from the thread directory successfully!",
-                color=discord.Color.green(),
-                timestamp=discord.utils.utcnow()
+                description=f"Removed thread <#{thread.id}> from the thread directory successfully!"
             ), ephemeral=True)
             return
-        await ctx.followup.send(embed=discord.Embed(
+        await ctx.followup.send(embed=core.RedEmbed(
             title="Error",
-            description=f"Failed to remove thread <#{thread.id}> from the thread directory!",
-            color=discord.Color.red(),
-            timestamp=discord.utils.utcnow()
+            description=f"Failed to remove thread <#{thread.id}> from the thread directory!"
         ), ephemeral=True)
 
 
