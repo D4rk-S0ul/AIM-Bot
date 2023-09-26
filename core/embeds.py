@@ -341,3 +341,51 @@ class TutorialEmbed(Embed):
         self.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132998967304412"
                                "/t6HnzvR8.png")
         self.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799/kJ9NYtR1.png")
+
+
+class BugReportEmbed(YellowEmbed):
+    """Represents a custom PyCord bug report embed."""
+
+    def __init__(self, *, bug_name: str, bug_description: str, steps_to_reproduce: str | None,
+                 author: discord.Member | discord.User, **kwargs) -> None:
+        """Initialises a new bug report embed.
+
+        Parameters
+        ----------
+        bug_name: :class:`str`
+            The name of the bug.
+        bug_description: :class:`str`
+            The description of the bug.
+        steps_to_reproduce: Optional[:class:`str`]
+            The steps to reproduce the bug.
+        author: Union[:class:`discord.Member`, :class:`discord.User`]
+            The author of the bug report.
+        **kwargs: Any"""
+        super().__init__(**kwargs)
+        self.title: str = f"Bug Report: {bug_name}"
+        self.description: str = bug_description
+        if steps_to_reproduce:
+            self.add_field(name="Steps to Reproduce:", value=steps_to_reproduce, inline=False)
+        self.set_author(name=author.display_name, icon_url=author.display_avatar.url)
+
+
+class FeatureRequestEmbed(YellowEmbed):
+    """Represents a custom PyCord feature request embed."""
+
+    def __init__(self, *, feature_name: str, feature_description: str, author: discord.Member | discord.User,
+                 **kwargs) -> None:
+        """Initialises a new feature request embed.
+
+        Parameters
+        ----------
+        feature_name: :class:`str`
+            The name of the feature.
+        feature_description: :class:`str`
+            The description of the feature.
+        author: Union[:class:`discord.Member`, :class:`discord.User`]
+            The author of the feature request.
+        **kwargs: Any"""
+        super().__init__(**kwargs)
+        self.title: str = f"Feature Request: {feature_name}"
+        self.description: str = feature_description
+        self.set_author(name=author.display_name, icon_url=author.display_avatar.url)

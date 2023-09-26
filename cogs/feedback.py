@@ -75,29 +75,22 @@ class BugReportModal(discord.ui.Modal):
                 ------------
                 interaction: discord.Interaction
                     The interaction that submitted the modal."""
-        name = self.children[0].value
-        description = self.children[1].value
-        steps_to_reproduce = self.children[2].value
+        bug_name: str = self.children[0].value
+        bug_description: str = self.children[1].value
+        steps_to_reproduce: str | None = self.children[2].value
+        author: discord.Member | discord.User = interaction.user
 
-        bug_report_embed = discord.Embed(
-            title=f"Bug Report: {name}",
-            color=discord.Color.yellow(),
-            timestamp=discord.utils.utcnow()
-        )
-        bug_report_embed.add_field(name="Description:", value=description, inline=False)
-        if steps_to_reproduce:
-            bug_report_embed.add_field(name="Steps to Reproduce:", value=steps_to_reproduce, inline=False)
+        bug_report_embed = core.BugReportEmbed(bug_name=bug_name, bug_description=bug_description,
+                                               steps_to_reproduce=steps_to_reproduce, author=author)
 
         await interaction.client.errors_webhook.send(
             embed=bug_report_embed,
             avatar_url=interaction.client.user.display_avatar.url
         )
 
-        await interaction.response.send_message(embed=discord.Embed(
+        await interaction.response.send_message(embed=core.GreenEmbed(
             title="Bug Reported",
-            description=f"My developer has been notified of the bug!",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            description=f"My developer has been notified of the bug!"
         ), ephemeral=True)
 
 
@@ -130,22 +123,17 @@ class FeatureRequestModal(discord.ui.Modal):
                     The interaction that submitted the modal."""
         name = self.children[0].value
         description = self.children[1].value
+        author = interaction.user
 
-        feature_request_embed = discord.Embed(
-            title=f"Feature Request: {name}",
-            description=description,
-            color=discord.Color.yellow(),
-            timestamp=discord.utils.utcnow()
-        )
+        feature_request_embed = core.FeatureRequestEmbed(feature_name=name, feature_description=description,
+                                                         author=author)
 
         await interaction.client.errors_webhook.send(
             embed=feature_request_embed,
             avatar_url=interaction.client.user.display_avatar.url
         )
 
-        await interaction.response.send_message(embed=discord.Embed(
+        await interaction.response.send_message(embed=core.GreenEmbed(
             title="Feature Requested",
-            description=f"My developer has been notified of the feature request!",
-            color=discord.Color.green(),
-            timestamp=discord.utils.utcnow()
+            description=f"My developer has been notified of the feature request!"
         ), ephemeral=True)
