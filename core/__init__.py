@@ -26,6 +26,7 @@ __all__ = (
     "RedEmbed",
     "remove_from_feedback_thread_directory",
     "remove_from_thread_directory",
+    "TutorialEmbed",
     "YellowEmbed"
 )
 

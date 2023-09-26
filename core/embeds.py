@@ -296,3 +296,30 @@ class HelpSelect(discord.ui.Select):
             embed=embed,
             ephemeral=True,
         )
+
+
+class TutorialEmbed(Embed):
+    """Represents a custom PyCord tutorial embed."""
+
+    def __init__(self, *, me: discord.Member, **kwargs) -> None:
+        """Initialises a new tutorial embed.
+
+        Parameters
+        ----------
+        me: :class:`discord.Member`
+            The member instance of the bot.
+        **kwargs: Any"""
+        super().__init__(**kwargs)
+        self.title: str = "Title"
+        self.description: str = "Description"
+        self.color: discord.Color = me.color
+        self.add_field(name="Inline Field 1", value="← Color sets color of the bar on the left!")
+        self.add_field(name="Inline Field 2", value="Value 2")
+        self.add_field(name="Inline Field 3", value="Inline fields will be next to each other!")
+        self.add_field(name="Non-inline Field", value="Value", inline=False)
+        self.set_author(name="Author", icon_url=me.avatar.url)
+        self.set_footer(text="Footer", icon_url="https://cdn.discordapp.com/attachments/751512715872436416"
+                                                "/1125701630273261629/13YRA70M.png")
+        self.set_thumbnail(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132998967304412"
+                               "/t6HnzvR8.png")
+        self.set_image(url="https://cdn.discordapp.com/attachments/751512715872436416/1125132939160731799/kJ9NYtR1.png")
