@@ -10,23 +10,23 @@ __all__ = (
     "add_to_feedback_thread_directory",
     "add_to_thread_directory",
     "AimBot",
+    "BlurpleEmbed",
     "Cog",
     "Embed",
-    "ErrorEmbed",
     "get_permissions",
     "get_tag",
     "get_tutorial_embed",
     "get_valid_thread",
+    "GreenEmbed",
     "HelpEmbed",
     "HelpSelect",
     "HelpSelectEmbed",
     "is_feedback",
     "is_valid_thread",
-    "ProgressEmbed",
+    "RedEmbed",
     "remove_from_feedback_thread_directory",
     "remove_from_thread_directory",
-    "SuccessEmbed",
-    "WarningEmbed"
+    "YellowEmbed"
 )
 
 

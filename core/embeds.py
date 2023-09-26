@@ -44,7 +44,7 @@ class Embed(discord.Embed):
         self.timestamp: datetime.datetime = discord.utils.utcnow()
 
 
-class SuccessEmbed(Embed):
+class GreenEmbed(Embed):
     """Represents a custom PyCord success embed with the current timestamp and green color.
 
     For ease of use, all parameters that expect a :class:`str` are implicitly
@@ -79,7 +79,7 @@ class SuccessEmbed(Embed):
         self.color: discord.Color = discord.Color.green()
 
 
-class WarningEmbed(Embed):
+class YellowEmbed(Embed):
     """Represents a custom PyCord warning embed with the current timestamp and yellow color.
 
     For ease of use, all parameters that expect a :class:`str` are implicitly
@@ -121,7 +121,7 @@ class WarningEmbed(Embed):
         self.color: discord.Color = discord.Color.yellow()
 
 
-class ErrorEmbed(Embed):
+class RedEmbed(Embed):
     """Represents a custom PyCord error embed with the current timestamp and red color.
 
     For ease of use, all parameters that expect a :class:`str` are implicitly
@@ -163,7 +163,7 @@ class ErrorEmbed(Embed):
         self.color: discord.Color = discord.Color.red()
 
 
-class ProgressEmbed(Embed):
+class BlurpleEmbed(Embed):
     """Represents a custom PyCord progress embed with the current timestamp and blurple color.
 
     For ease of use, all parameters that expect a :class:`str` are implicitly
@@ -205,7 +205,7 @@ class ProgressEmbed(Embed):
         self.color: discord.Color = discord.Color.blurple()
 
 
-class HelpEmbed(SuccessEmbed):
+class HelpEmbed(GreenEmbed):
     """Represents a custom PyCord help embed."""
 
     def __init__(self, *, bot: AimBot, **kwargs) -> None:
@@ -226,7 +226,7 @@ class HelpEmbed(SuccessEmbed):
         self.add_field(name="Ping", value=f"{self.bot.latency * 1000:.2f} ms")
 
 
-class HelpSelectEmbed(SuccessEmbed):
+class HelpSelectEmbed(GreenEmbed):
     """Represents a custom PyCord help select embed.
 
     For ease of use, all parameters that expect a :class:`str` are implicitly
