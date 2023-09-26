@@ -13,6 +13,7 @@ __all__ = (
     "BlurpleEmbed",
     "Cog",
     "Embed",
+    "EmbedToolEmbed",
     "get_permissions",
     "get_tag",
     "get_valid_thread",
