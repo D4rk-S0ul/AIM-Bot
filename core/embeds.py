@@ -298,6 +298,24 @@ class HelpSelect(discord.ui.Select):
         )
 
 
+class EmbedToolEmbed(Embed):
+    """Represents a custom PyCord embed tool embed."""
+
+    def __init__(self, *, me: discord.Member, **kwargs) -> None:
+        """Initialises a new embed tool embed.
+
+        Parameters
+        ----------
+        me: :class:`discord.Member`
+            The member instance of the bot.
+        **kwargs: Any"""
+        super().__init__(**kwargs)
+        self.title: str = "Embed Tool"
+        self.description: str = ('Use the buttons below to edit the embed.\nPress "Tutorial" to hide/show the embed '
+                                 'below.')
+        self.color: discord.Color = me.color
+
+
 class TutorialEmbed(Embed):
     """Represents a custom PyCord tutorial embed."""
 

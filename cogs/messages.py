@@ -75,11 +75,7 @@ class Messages(core.Cog):
             The channel to send the embed to."""
         if channel is None:
             channel = ctx.channel
-        user_embed = discord.Embed(
-            title="Embed Tool",
-            description='Use the buttons below to edit the embed.\nPress "Tutorial" to hide/show the embed below.',
-            color=ctx.guild.me.color
-        )
+        user_embed = core.EmbedToolEmbed(me=ctx.guild.me)
         tutorial_embed = core.TutorialEmbed(me=ctx.guild.me)
         embed_tool = EmbedToolView(channel_or_message=channel, is_new_embed=True, tutorial_embed=tutorial_embed,
                                    ctx=ctx)
