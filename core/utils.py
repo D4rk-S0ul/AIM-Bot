@@ -165,6 +165,19 @@ async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.G
         value=field_value,
         inline=False
     )
+    if len(thread_directory_embed.fields[0].value) > 1024:
+        thread_directory_embed.remove_field(2)
+        thread_directory_embed.add_field(
+            name="Error:",
+            value=field_value[:1024],
+            inline=False
+        )
+        for i in range(1024, len(field_value), 1024):
+            thread_directory_embed.add_field(
+                name="",
+                value=field_value[i:i + 1024],
+                inline=False
+            )
     return thread_directory_embed
 
 
