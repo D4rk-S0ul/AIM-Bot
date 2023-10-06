@@ -59,6 +59,7 @@ class AimBot(discord.Bot):
         msg = f"""{self.user.name} is online now!
             BotID: {self.user.id}
             Ping: {round(self.latency * 1000)} ms
+            Bot Version: {core.config.version}
             Python Version: {platform.python_version()}
             PyCord API version: {discord.__version__}"""
         print(f"\n\n{msg}\n\n")
