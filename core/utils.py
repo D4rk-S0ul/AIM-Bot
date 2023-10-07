@@ -32,10 +32,11 @@ async def add_to_feedback_thread_directory(thread: discord.Thread) -> bool:
     thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
     if thread_dir_msg is None:
         return False
-    initial_field_value: str = thread_dir_msg.embeds[0].fields[0].value
-    if str(thread.id) in initial_field_value:
-        return True
-    lines: list[str] = initial_field_value.splitlines()
+    lines: list[str] = []
+    for field in thread_dir_msg.embeds[0].fields:
+        if str(thread.id) in field.value:
+            return True
+        lines.extend(field.value.splitlines())
     lines.append(f"- <#{thread.id}> - Waiting since {discord.utils.format_dt(discord.utils.utcnow(), style='R')}")
     thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
@@ -159,25 +160,22 @@ async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.G
         color=guild.me.color,
         timestamp=discord.utils.utcnow()
     )
-    field_value = "\n".join(lines)
-    thread_directory_embed.add_field(
-        name=f"Feedback Threads",
-        value=field_value,
-        inline=False
-    )
-    if len(thread_directory_embed.fields[0].value) > 1024:
-        thread_directory_embed.remove_field(2)
+    field_values: list[str] = []
+    field_value: str = ""
+    for line in lines:
+        if len(field_value + line) > 1024:
+            field_values.append(f"{field_value}\n")
+            field_value = f"{line}\n"
+        else:
+            field_value += f"{line}\n"
+    if field_value != "":
+        field_values.append(field_value)
+    for i, field_value in enumerate(field_values):
         thread_directory_embed.add_field(
-            name="Error:",
-            value=field_value[:1024],
+            name="Feedback Threads" if i == 0 else "",
+            value=field_value,
             inline=False
         )
-        for i in range(1024, len(field_value), 1024):
-            thread_directory_embed.add_field(
-                name="",
-                value=field_value[i:i + 1024],
-                inline=False
-            )
     return thread_directory_embed
 
 
@@ -362,7 +360,7 @@ async def get_thread_dir_msg(guild: discord.Guild) -> discord.Message | None:
         933075515881951292: [1152697393825976440, 1152718564944511037],  # RIP
         959162264081014814: [959198464900747304, 1126961535605014609],  # SEA
         849650258786779196: [1041033326846296164, 1126961177990287441],  # EAR
-        915333299981934692: [922938837049683968, 1121089178122330276]  # TEST
+        915333299981934692: [1160158020295217223, 1160158296834064384]  # TEST
     }
     channel_id, message_id = thread_dirs.get(guild.id)
     if channel_id is None or message_id is None:
@@ -438,10 +436,9 @@ async def remove_from_feedback_thread_directory(thread: discord.Thread) -> bool:
     thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
     if thread_dir_msg is None:
         return False
-    initial_field_value: str = thread_dir_msg.embeds[0].fields[0].value
-    if str(thread.id) not in initial_field_value:
-        return True
-    lines: list[str] = [line for line in initial_field_value.splitlines() if str(thread.id) not in line]
+    lines: list[str] = []
+    for field in thread_dir_msg.embeds[0].fields:
+        lines.extend([line for line in field.value.splitlines() if str(thread.id) not in line])
     thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
