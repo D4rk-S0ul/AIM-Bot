@@ -95,7 +95,8 @@ class Threads(core.Cog):
 
     add_group = discord.SlashCommandGroup(
         name="add",
-        description="Group of add commands!"
+        description="Group of add commands!",
+        default_member_permissions=discord.Permissions(administrator=True)
     )
 
     @add_group.command(name="members", description="Adds the members to the thread specified!")
