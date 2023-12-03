@@ -104,6 +104,9 @@ async def add_members(thread: discord.Thread) -> None:
 -
 
 ## <:End:1132644627506278451>  End Split
+-
+
+## <:Backseatega:933142144699494410> Reoccurring Themes
 -"""
     await ping_msg.edit(embed=discord.Embed(
         title="Members Added",
