@@ -96,7 +96,8 @@ class Threads(core.Cog):
     add_group = discord.SlashCommandGroup(
         name="add",
         description="Group of add commands!",
-        default_member_permissions=discord.Permissions(administrator=True)
+        default_member_permissions=discord.Permissions(administrator=True),
+        guild_only=True
     )
 
     @add_group.command(name="members", description="Adds the members to the thread specified!")
@@ -127,7 +128,8 @@ class Threads(core.Cog):
     thread_group = discord.SlashCommandGroup(
         name="thread",
         description="Group of thread commands!",
-        default_member_permissions=discord.Permissions(administrator=True)
+        default_member_permissions=discord.Permissions(administrator=True),
+        guild_only=True
     )
 
     thread_directory_group = thread_group.create_subgroup(
