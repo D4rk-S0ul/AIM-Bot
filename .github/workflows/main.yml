@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.vps_user }}
         password: ${{ secrets.vps_password }}
         port:  ${{ secrets.vps_port }}
-        local-dir: ./root/AIM-Bot/
+        local-dir: ./AIM-Bot/
 
     - name: ♻️ Update Requirements
       run: |
