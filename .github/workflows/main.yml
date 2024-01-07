@@ -7,25 +7,19 @@ on:
 
 jobs:
   deployment:
-    name: 🎉 Deploy
+    name: 🎉 Deployment
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get Latest Code
-      uses: actions/checkout@v3
-    
-    - name: 📂 Sync Files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+    - name: Deploy using ssh
+      uses: appleboy/ssh-action@master
       with:
-        server: ${{ secrets.vps_host }}
-        username: ${{ secrets.vps_user }}
-        password: ${{ secrets.vps_password }}
-        port:  ${{ secrets.vps_port }}
-        local-dir: ./AIM-Bot/
-
-    - name: ♻️ Update Requirements
-      run: |
-        python3 -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: 🚀 Run AIM-Bot
-      run: python3 main.py
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_SSHKEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          screen -x aim
+          git pull
+          python3 -m pip install -U pip
+          pip install -r requirements.txt
+          python3 main.py
