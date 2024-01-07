@@ -3,21 +3,22 @@ name: AIM Bot push-deployment
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  deployment:
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy AIM-Bot to VPS
-      uses: appleboy/ssh-action@master
-      with:
-        username: ${{ secrets.VPS_USER }}
-        host: ${{ secrets.VPS_HOST }}
-        key: ${{ secrets.VPS_SSHKEY }}
-        port: ${{ secrets.VPS_PORT }}
-        script: |
-          screen -x aim
-          ^C
-          git pull
-          pip install -r requirements.txt
-          python3 main.py
+    - name: 🔗 Connect to VPS
+      run: |
+        ssh ${{ secrets.VPS }}@${{ secrets.VPS_HOST }}
+        ${{ secrets.VPS_SSHKEY }}
+    - name: 🚚 Get Latest Code
+      run: |
+        git pull
+    - name: ♻️ Update requirements
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: 🚀 Deploy AIM-Bot
+      run: pyton3 main.py
