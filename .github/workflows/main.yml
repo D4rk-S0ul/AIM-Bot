@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: 🔗 Connect to VPS
       run: |
-        ssh ${{ secrets.VPS_HOST }}
+        ssh -tt ${{ secrets.VPS_HOST }}
         ${{ secrets.VPS_PASSWORD }}
     - name: 🚚 Get Latest Code
       run: |
