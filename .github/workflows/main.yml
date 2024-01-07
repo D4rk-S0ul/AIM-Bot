@@ -7,18 +7,25 @@ on:
 
 jobs:
   deployment:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: 🔗 Connect to VPS
-      run: |
-        ssh -tt ${{ secrets.VPS_HOST }}
-        ${{ secrets.VPS_PASSWORD }}
     - name: 🚚 Get Latest Code
-      run: |
-        git pull
-    - name: ♻️ Update requirements
+      uses: actions/checkout@v3
+    
+    - name: 📂 Sync Files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.vps_host }}
+        username: ${{ secrets.vps_user }}
+        password: ${{ secrets.vps_password }}
+        port:  ${{ secrets.vps_port }}
+        local-dir: ~/AIM-Bot/
+
+    - name: ♻️ Update Requirements
       run: |
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: 🚀 Deploy AIM-Bot
-      run: pyton3 main.py
+
+    - name: 🚀 Run AIM-Bot
+      run: python3 main.py
