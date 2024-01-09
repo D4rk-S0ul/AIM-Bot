@@ -107,6 +107,9 @@ async def add_members(thread: discord.Thread) -> None:
 -
 
 ## <:Backseatega:933142144699494410> Reoccurring Themes
+-
+
+## <:YouTube:1191724962868904037> Video Feedback
 -"""
     await ping_msg.edit(embed=discord.Embed(
         title="Members Added",
