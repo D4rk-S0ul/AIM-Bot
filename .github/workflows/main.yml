@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: ❌ Stop existing screen session
+      - name: Stop existing screen session
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -19,7 +19,7 @@ jobs:
           port: 22
           script: screen -S github_aim -X quit || true
 
-      - name: 🚀 Start new screen session and deploy
+      - name: Start new screen session and deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
