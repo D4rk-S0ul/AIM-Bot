@@ -17,6 +17,7 @@ jobs:
         key: ${{ secrets.PRIVATE_SSH_KEY }}
         port: 22
         script: |
+          screen -S github_aim -X quit || true
           screen -dmS github_aim bash -c '
             cd ~/AIM-Bot;
             git pull;
