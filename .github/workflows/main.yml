@@ -21,3 +21,4 @@ jobs:
             cd ~/AIM-Bot;
             git pull;
             python3 main.py;
+            exec sh'
