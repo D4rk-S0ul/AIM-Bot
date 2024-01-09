@@ -1,4 +1,4 @@
-name: Deploy AIM Bot to VPS
+name: 🚀 Deploy AIM Bot to VPS
 
 on:
   push:
@@ -8,18 +8,27 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
-    steps:       
-    - name: Deploy using ssh
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.PRIVATE_SSH_KEY }}
-        port: 22
-        script: |
-          screen -S github_aim -X quit || true
-          screen -dmS github_aim bash -c '
-            cd ~/AIM-Bot;
-            git pull;
-            python3 main.py;
-            exec sh'
+    steps:
+
+      - name: ❌ Stop existing screen session
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          port: 22
+          script: screen -S github_aim -X quit || true
+
+      - name: 🚀 Start new screen session and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          port: 22
+          script: |
+            screen -dmS github_aim bash -c '
+              cd ~/AIM-Bot;
+              git pull;
+              python3 main.py;
+              exec sh'
