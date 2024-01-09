@@ -3,6 +3,7 @@ name: Deploy AIM Bot to VPS
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deployment:
@@ -16,7 +17,8 @@ jobs:
         key: ${{ secrets.PRIVATE_SSH_KEY }}
         port: 22
         script: |
-          screen -x aim
-          ^C
-          git pull
-          python3 main.py
+          screen -dmS aim bash -c '
+            cd ~/AIM-Bot;
+            git pull;
+            python3 main.py;
+            exec sh'
