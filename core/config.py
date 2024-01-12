@@ -1,9 +1,12 @@
 version: str = "2.3.4"
 
 bell_tag_id = 1132640430090113024
+
 rip_guild_id = 933075515881951292
+
 rip_ticket_channel_id = 933089346255478854
 rip_mod_role_id = 933098293146292325
+
 feedback_channel_id = 1019760331532275732
 feedback_strings = [
     "## Feedback",
