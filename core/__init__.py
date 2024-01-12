@@ -7,6 +7,7 @@ from .utils import *
 
 __all__ = (
     "add_members",
+    "add_mods",
     "add_to_feedback_thread_directory",
     "add_to_thread_directory",
     "AimBot",

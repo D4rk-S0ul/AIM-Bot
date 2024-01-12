@@ -20,6 +20,10 @@ class Threads(core.Cog):
             await thread.edit(auto_archive_duration=10080)
             await core.add_members(thread)
             return
+        if thread.parent_id == core.config.feedback_channel_id:
+            await thread.edit(auto_archive_duration=10080)
+            await core.add_mods(thread)
+            return
         tag_ids = [tag.id for tag in thread.applied_tags]
         if core.config.bell_tag_id in tag_ids:
             await thread.edit(auto_archive_duration=10080)
@@ -69,6 +73,8 @@ class Threads(core.Cog):
         thread: discord.Thread
             The thread that was deleted."""
         if not thread.guild.id == core.config.rip_guild_id:
+            return
+        if thread.parent_id == core.config.rip_ticket_channel_id:
             return
         await core.remove_from_feedback_thread_directory(thread)
 

@@ -2,6 +2,7 @@ import discord
 
 __all__ = (
     "add_members",
+    "add_mods",
     "add_to_feedback_thread_directory",
     "add_to_thread_directory",
     "get_permissions",
@@ -38,7 +39,7 @@ async def add_to_feedback_thread_directory(thread: discord.Thread) -> bool:
             return True
         lines.extend(field.value.splitlines())
     lines.append(f"- <#{thread.id}> - Waiting since {discord.utils.format_dt(discord.utils.utcnow(), style='R')}")
-    thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
+    thread_directory_embed: core.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
 
@@ -58,11 +59,9 @@ async def add_members(thread: discord.Thread) -> None:
 
     if not member_mentions:
         return
-    ping_msg: discord.Message = await thread.send(embed=discord.Embed(
+    ping_msg: discord.Message = await thread.send(embed=core.BlurpleEmbed(
         title="Adding Members",
         description="Adding members to the thread...",
-        color=discord.Color.blurple(),
-        timestamp=discord.utils.utcnow()
     ))
     msg_content = ""
     counter = 0
@@ -111,12 +110,33 @@ async def add_members(thread: discord.Thread) -> None:
 
 ## <:YouTube:1191724962868904037> Video Feedback
 -"""
-    await ping_msg.edit(embed=discord.Embed(
+    await ping_msg.edit(embed=core.GreenEmbed(
         title="Members Added",
-        description=embed_description,
-        color=discord.Color.green(),
-        timestamp=discord.utils.utcnow()
+        description=embed_description
     ), content=message)
+
+
+async def add_mods(thread: discord.Thread) -> None:
+    """Adds mods to the thread specified.
+
+    Parameters
+    ------------
+    thread: discord.Thread
+        The thread to add mods to."""
+    await thread.join()
+
+    mod_role = thread.guild.get_role(core.config.rip_mod_role_id)
+
+    ping_msg: discord.Message = await thread.send(embed=core.BlurpleEmbed(
+        title="Adding Mods",
+        description="Adding mods to the thread...",
+    ), content=mod_role.mention)
+
+    await ping_msg.edit(embed=core.GreenEmbed(
+        title="Mods Added",
+        description="Successfully added mods to the thread and set auto-archive duration to "
+                    f"{thread.auto_archive_duration // 1440} days!"
+    ), content=None)
 
 
 async def add_to_thread_directory(thread: discord.Thread) -> bool:
@@ -134,18 +154,18 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
     thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
     if thread_dir_msg is None:
         return False
-    initial_embed: discord.Embed = thread_dir_msg.embeds[0]
+    initial_embed: core.Embed = thread_dir_msg.embeds[0]
     thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
     if thread.id in thread_ids:
         return True
     thread_ids.append(thread.id)
     parent_ids: list[int] = await get_parent_ids(thread_ids, thread)
-    thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
+    thread_directory_embed: core.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
 
 
-async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.Guild) -> discord.Embed:
+async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.Guild) -> core.Embed:
     """Gets the feedback thread directory embed.
 
     Parameters
@@ -157,14 +177,13 @@ async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.G
 
     Returns
     -----------
-    discord.Embed
+    core.Embed
         The feedback thread directory embed."""
-    thread_directory_embed = discord.Embed(
+    thread_directory_embed = core.Embed(
         title="Feedback Thread Directory",
         description="A list of all feedback threads of this server, sorted by the time they have been waiting for "
                     "feedback. The threads at the top have been waiting the longest.",
-        color=guild.me.color,
-        timestamp=discord.utils.utcnow()
+        color=guild.me.color
     )
     field_values: list[str] = []
     field_value: str = ""
@@ -186,7 +205,7 @@ async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.G
 
 
 async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int],
-                                     guild: discord.Guild) -> discord.Embed:
+                                     guild: discord.Guild) -> core.Embed:
     """Gets the thread directory embed.
 
     Parameters
@@ -200,13 +219,12 @@ async def get_thread_directory_embed(parent_ids: list[int], thread_ids: list[int
 
     Returns
     -----------
-    discord.Embed
+    core.Embed
         The thread directory embed."""
-    thread_directory_embed = discord.Embed(
+    thread_directory_embed = core.Embed(
         title="Thread Directory",
         description="A list of all threads of this server, sorted by the parent channels of the threads.",
-        color=guild.me.color,
-        timestamp=discord.utils.utcnow()
+        color=guild.me.color
     )
     for parent_id in parent_ids:
         field_value = "\n".join(
@@ -392,11 +410,9 @@ async def get_valid_thread(*, ctx: discord.ApplicationContext, thread: discord.T
     if thread is None:
         thread = ctx.channel
     if not isinstance(thread, discord.Thread):
-        await ctx.respond(embed=discord.Embed(
+        await ctx.respond(embed=core.RedEmbed(
             title="Error",
-            description="This command can only be used in threads!",
-            color=discord.Color.red(),
-            timestamp=discord.utils.utcnow()
+            description="This command can only be used in threads!"
         ), ephemeral=True)
         return None
     return thread
@@ -445,7 +461,7 @@ async def remove_from_feedback_thread_directory(thread: discord.Thread) -> bool:
     lines: list[str] = []
     for field in thread_dir_msg.embeds[0].fields:
         lines.extend([line for line in field.value.splitlines() if str(thread.id) not in line])
-    thread_directory_embed: discord.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
+    thread_directory_embed: core.Embed = await get_feedback_thread_directory_embed(lines, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
 
@@ -465,12 +481,12 @@ async def remove_from_thread_directory(thread: discord.Thread) -> bool:
     thread_dir_msg: discord.Message | None = await get_thread_dir_msg(thread.guild)
     if thread_dir_msg is None:
         return False
-    initial_embed: discord.Embed = thread_dir_msg.embeds[0]
+    initial_embed: core.Embed = thread_dir_msg.embeds[0]
     thread_ids: list[int] = [int(line[4:-1]) for field in initial_embed.fields for line in field.value.splitlines()]
     if thread.id not in thread_ids:
         return True
     thread_ids.remove(thread.id)
     parent_ids: list[int] = await get_parent_ids(thread_ids, thread)
-    thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
+    thread_directory_embed: core.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
