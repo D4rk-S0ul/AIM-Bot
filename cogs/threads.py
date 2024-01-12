@@ -20,7 +20,7 @@ class Threads(core.Cog):
             await thread.edit(auto_archive_duration=10080)
             await core.add_members(thread)
             return
-        if thread.parent_id == core.config.feedback_channel_id:
+        if thread.parent_id == core.config.rip_ticket_channel_id:
             await thread.edit(auto_archive_duration=10080)
             await core.add_mods(thread)
             return
