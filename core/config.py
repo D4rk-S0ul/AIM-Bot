@@ -1,4 +1,4 @@
-version: str = "2.3.3"
+version: str = "2.3.4"
 
 bell_tag_id = 1132640430090113024
 rip_guild_id = 933075515881951292

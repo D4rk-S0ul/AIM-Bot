@@ -136,7 +136,9 @@ async def add_mods(thread: discord.Thread) -> None:
         description="Adding mods to the thread...",
         color=discord.Color.blurple(),
         timestamp=discord.utils.utcnow()
-    ), content=mod_role.mention)
+    ))
+
+    await ping_msg.edit(content=mod_role.mention)
 
     await ping_msg.edit(embed=discord.Embed(
         title="Mods Added",
