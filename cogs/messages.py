@@ -386,7 +386,7 @@ class EmbedToolView(discord.ui.View):
             The interaction that clicked the button."""
         try:
             initial_image_url = interaction.message.embeds[0].image.url
-        except discord.NotFound:
+        except AttributeError:
             initial_image_url = None
         tutorial_embed = None
         if not self.tutorial_hidden:
