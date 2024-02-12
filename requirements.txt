@@ -1,2 +1,2 @@
-py-cord==2.4.1
-python-dotenv==1.0.0
+py-cord@ git+https://github.com/Pycord-Development/pycord@8a7ea476ac4c51bce80bfedb5c77739e51eeec6b
+python-dotenv==1.0.1

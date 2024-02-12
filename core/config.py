@@ -1,4 +1,4 @@
-version: str = "2.3.7"
+version: str = "2.3.8"
 
 bell_tag_id = 1132640430090113024
 
