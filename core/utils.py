@@ -198,6 +198,7 @@ async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.G
     )
     field_values: list[str] = []
     field_value: str = ""
+    number_of_threads: int = len(lines)
     for line in lines:
         if len(field_value + line) > 1024:
             field_values.append(f"{field_value}\n")
@@ -208,7 +209,7 @@ async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.G
         field_values.append(field_value)
     for i, field_value in enumerate(field_values):
         thread_directory_embed.add_field(
-            name="Feedback Threads" if i == 0 else "",
+            name=f"Feedback Threads ({number_of_threads})" if i == 0 else "",
             value=field_value,
             inline=False
         )
