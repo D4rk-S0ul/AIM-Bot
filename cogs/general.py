@@ -83,7 +83,14 @@ class General(core.Cog):
             The channel to pin the message in."""
         if not channel:
             channel = ctx.channel
-        message = await channel.fetch_message(message_id)
+        try:
+            message = await channel.fetch_message(message_id)
+        except discord.NotFound:
+            await ctx.respond(embed=core.RedEmbed(
+                title="Message not found",
+                description=f"Message with ID `{message_id}` not found!"
+            ), ephemeral=True)
+            return
         await message.pin()
         await ctx.respond(embed=core.GreenEmbed(
             title="Message Pinned",
