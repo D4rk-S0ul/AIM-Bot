@@ -99,6 +99,19 @@ class Threads(core.Cog):
                                             tag.id != core.config.bell_tag_id]
             await message.channel.edit(applied_tags=tags)
 
+    @core.Cog.listener()
+    async def on_raw_member_remove(self, payload: discord.RawMemberRemoveEvent):
+        """Event for when a member leaves the guild.
+
+        Parameters
+        ------------
+        payload: discord.RawMemberRemoveEvent
+            The payload for the member that left."""
+        if payload.guild_id != core.config.rip_guild_id:
+            return
+        guild = self.bot.get_guild(payload.guild_id)
+        [await thread.delete() for thread in guild.threads if payload.user.id == thread.owner_id]
+
     add_group = discord.SlashCommandGroup(
         name="add",
         description="Group of add commands!",
