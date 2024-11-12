@@ -94,10 +94,10 @@ class Threads(core.Cog):
             return
         if message.channel.parent_id != core.config.feedback_channel_id:
             return
-        if core.is_feedback(message.content):
-            tags: list[discord.ForumTag] = [tag for tag in message.channel.applied_tags if
-                                            tag.id != core.config.bell_tag_id]
-            await message.channel.edit(applied_tags=tags)
+        if not core.is_feedback(message.content):
+            return
+
+        await core.feedback_received(message)
 
     @core.Cog.listener()
     async def on_raw_member_remove(self, payload: discord.RawMemberRemoveEvent):

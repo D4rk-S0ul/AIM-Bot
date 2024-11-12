@@ -5,6 +5,7 @@ __all__ = (
     "add_mods",
     "add_to_feedback_thread_directory",
     "add_to_thread_directory",
+    "feedback_received",
     "get_permissions",
     "get_tag",
     "get_valid_thread",
@@ -173,6 +174,26 @@ async def add_to_thread_directory(thread: discord.Thread) -> bool:
     thread_directory_embed: discord.Embed = await get_thread_directory_embed(parent_ids, thread_ids, thread.guild)
     await thread_dir_msg.edit(embed=thread_directory_embed, content=None)
     return True
+
+
+async def feedback_received(message: discord.Message) -> None:
+    """Marks feedback as received.
+
+    Parameters
+    ------------
+    message: discord.Message
+        The message that was recognized as feedback."""
+    tags: list[discord.ForumTag] = [tag for tag in message.channel.applied_tags if
+                                    tag.id != core.config.bell_tag_id]
+    await message.channel.edit(applied_tags=tags)
+    await message.channel.send(
+        content=message.channel.owner.mention,
+        embed=core.GreenEmbed(
+            title="Feedback Received",
+            description=f"""Feedback has been detected in this thread and the `:bell: Waiting for Feedback` tag has been removed.
+    If this is incorrect or you would like to receive further feedback, feel free to reapply the tag!""",
+        ),
+    )
 
 
 async def get_feedback_thread_directory_embed(lines: list[str], guild: discord.Guild) -> discord.Embed:
