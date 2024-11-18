@@ -183,6 +183,8 @@ async def feedback_received(message: discord.Message) -> None:
     ------------
     message: discord.Message
         The message that was recognized as feedback."""
+    if core.config.bell_tag_id not in [tag.id for tag in message.channel.applied_tags]:
+        return
     tags: list[discord.ForumTag] = [tag for tag in message.channel.applied_tags if
                                     tag.id != core.config.bell_tag_id]
     await message.channel.edit(applied_tags=tags)
@@ -190,7 +192,7 @@ async def feedback_received(message: discord.Message) -> None:
         content=message.channel.owner.mention,
         embed=core.GreenEmbed(
             title="Feedback Received",
-            description=f"""Feedback has been detected in this thread and the `:bell: Waiting for Feedback` tag has been removed.
+            description=f"""Feedback has been detected in this thread and the `🔔 Waiting for Feedback` tag has been removed.
     If this is incorrect or you would like to receive further feedback, feel free to reapply the tag!""",
         ),
     )
