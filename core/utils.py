@@ -82,7 +82,7 @@ async def add_members(thread: discord.Thread) -> None:
                         f"{thread.auto_archive_duration // 1440} days!"
     message = ""
     if thread.guild.id == core.config.rip_guild_id:
-        embed_description += "\n\nPlease use the template above for your feedback. Simply right-click on this" \
+        embed_description += "\n\nPlease use the template above for your feedback. Simply right-click on this " \
                              "message and then click Copy Text to copy the template to your clipboard."
         message = """## <:Overworld:1132644632489103371>  Overworld
 -
