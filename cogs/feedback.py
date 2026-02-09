@@ -106,7 +106,7 @@ class FeatureRequestModal(discord.ui.Modal):
                 max_length=2000,
             ),
             discord.ui.InputText(
-                label="Bug Description:",
+                label="Feature Description:",
                 placeholder="Please enter a description of the feature...",
                 style=discord.InputTextStyle.long,
                 max_length=2000,
