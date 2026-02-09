@@ -1,6 +1,7 @@
 import os
 import platform
 import sys
+import textwrap
 import traceback
 
 import discord
@@ -70,14 +71,23 @@ class AimBot(discord.Bot):
             {error.status} {error.__class__.__name__}"""
             if error.text:
                 description += f": {error.text}"
-            return await ctx.respond(
-                embed=discord.Embed(
-                    title="HTTP Exception",
-                    description=description,
-                    color=discord.Color.red(),
-                    timestamp=discord.utils.utcnow()
-                )
+
+            description_chunks = textwrap.wrap(description, 1014, break_long_words=False, break_on_hyphens=False)
+
+            error_embed = discord.Embed(
+                title="HTTP Exception",
+                color=discord.Color.red(),
+                timestamp=discord.utils.utcnow()
             )
+            for i, chunk in enumerate(description_chunks):
+                error_embed.add_field(
+                    name="",
+                    value=f"```py\n{chunk}```",
+                    inline=False
+                )
+
+            return await ctx.respond(embed=error_embed)
+
 
         await ctx.respond(embed=discord.Embed(
             title="Error",
@@ -85,33 +95,39 @@ class AimBot(discord.Bot):
             color=discord.Color.yellow(),
             timestamp=discord.utils.utcnow()
         ), ephemeral=True)
+
         if ctx.guild is not None:
             guild = f"`{ctx.guild.name} ({ctx.guild_id})`"
         else:
             guild = "None (DMs)"
+
+        error_description = str(error)
         formatted_error = ''.join(traceback.format_exception(type(error), error, error.__traceback__))
+
+        error_chunks = textwrap.wrap(formatted_error, 1014, break_long_words=False, break_on_hyphens=False)
+
         error_embed = discord.Embed(
             title=error.__class__.__name__,
-            description=str(error),
+            description=error_description,
             color=discord.Color.red(),
             timestamp=discord.utils.utcnow()
         )
         error_embed.add_field(name="Command:", value=f"`/{ctx.command.qualified_name}`", inline=True)
         error_embed.add_field(name="Guild:", value=f"`{guild}`", inline=True)
-        error_embed.add_field(name="Error:", value=f"```py\n{formatted_error}```", inline=False)
-        if len(error_embed.fields[2].value) > 1024:
-            error_embed.remove_field(2)
-            error_embed.add_field(
-                name="Error:",
-                value=f"```py\n{formatted_error[:1011]}```",
-                inline=False
-            )
-            for i in range(1011, len(formatted_error), 1011):
+
+        for i, chunk in enumerate(error_chunks):
+            if i == 0:
+                error_embed.add_field(
+                    name="Error:",
+                    value=f"```py\n{chunk}```",
+                    inline=False)
+            else:
                 error_embed.add_field(
                     name="",
-                    value=f"```py\n{formatted_error[i:i + 1011]}```",
+                    value=f"```py\n{chunk}```",
                     inline=False
                 )
+
         return await self.errors_webhook.send(
             embed=error_embed,
             avatar_url=self.user.display_avatar.url
@@ -119,30 +135,35 @@ class AimBot(discord.Bot):
 
     async def on_error(self, event: str, *args, **kwargs):
         _, error, error_traceback = sys.exc_info()
+
+        error_description = str(error)
         formatted_error = ''.join(traceback.format_exception(type(error), error, error_traceback))
+
+        error_chunks = textwrap.wrap(formatted_error, 1014, break_long_words=False, break_on_hyphens=False)
+
         error_embed = discord.Embed(
             title=error.__class__.__name__,
-            description=str(error),
+            description=error_description,
             color=discord.Color.red(),
             timestamp=discord.utils.utcnow()
         )
         error_embed.add_field(name="Event:", value=f"```py\n{event}```", inline=True)
         error_embed.add_field(name="Args:", value=f"```py\n{args}```", inline=True)
         error_embed.add_field(name="KwArgs:", value=f"```py\n{kwargs}```", inline=True)
-        error_embed.add_field(name="Error:", value=f"```py\n{formatted_error}```", inline=False)
-        if len(error_embed.fields[2].value) > 1024:
-            error_embed.remove_field(2)
-            error_embed.add_field(
-                name="Error:",
-                value=f"```py\n{formatted_error[:1011]}```",
-                inline=False
-            )
-            for i in range(1011, len(formatted_error), 1011):
+
+        for i, chunk in enumerate(error_chunks):
+            if i == 0:
+                error_embed.add_field(
+                    name="Error:",
+                    value=f"```py\n{chunk}```",
+                    inline=False)
+            else:
                 error_embed.add_field(
                     name="",
-                    value=f"```py\n{formatted_error[i:i + 1011]}```",
+                    value=f"```py\n{chunk}```",
                     inline=False
                 )
+
         return await self.errors_webhook.send(
             embed=error_embed,
             avatar_url=self.user.display_avatar.url
